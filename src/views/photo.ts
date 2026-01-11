@@ -92,6 +92,9 @@ export async function renderPhotoView(
   const dock = el('div', { className: 'dock' })
   const dockInner = el('div', { className: 'glass dockInner' })
 
+  const dockLeft = el('div', { className: 'dockLeft' })
+  const dockRight = el('div', { className: 'dockRight' })
+
   const backBtn = el('button', { className: 'btn', type: 'button' }, ['返回'])
   backBtn.addEventListener('click', async () => {
     window.location.hash = '#/'
@@ -428,7 +431,10 @@ export async function renderPhotoView(
     }
   })
 
-  dockInner.append(backBtn, fitBtn, metaList, downloadBtn)
+  dockLeft.append(backBtn, fitBtn)
+  dockRight.append(downloadBtn)
+
+  dockInner.append(dockLeft, metaList, dockRight)
   dock.append(dockInner)
 
   shell.append(bg, content, dock)
