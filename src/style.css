@@ -129,6 +129,7 @@ button:focus-visible {
   border-radius: 999px;
   padding: 10px 14px;
   font: inherit;
+  white-space: nowrap;
   cursor: pointer;
   transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
     background 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -402,7 +403,24 @@ button:focus-visible {
 }
 
 .dockInner.isStacked .dockLeft {
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dockInner.isStacked .dockLeft .btn {
+  flex: 0 0 auto;
+}
+
+.dockInner.isStacked .dockLeft::-webkit-scrollbar {
+  height: 6px;
+}
+
+.dockInner.isStacked .dockLeft::-webkit-scrollbar-thumb {
+  background: rgba(17, 17, 17, 0.18);
+  border-radius: 999px;
 }
 
 .dockInner.isStacked .dockMeta {
