@@ -12,6 +12,17 @@ function parseHttpDate(value: string | null): Date | null {
   return Number.isNaN(dt.getTime()) ? null : dt
 }
 
+function earliestDate(...candidates: Array<Date | null | undefined>): Date | null {
+  let best: Date | null = null
+  for (const dt of candidates) {
+    if (!(dt instanceof Date)) continue
+    const t = dt.getTime()
+    if (Number.isNaN(t)) continue
+    if (!best || t < best.getTime()) best = dt
+  }
+  return best
+}
+
 function formatExposureTime(seconds: number): string {
   if (!Number.isFinite(seconds) || seconds <= 0) return ''
   if (seconds >= 1) return `${seconds.toFixed(seconds < 2 ? 1 : 0)}s`
@@ -32,15 +43,15 @@ export async function readShootDateTime(url: string): Promise<Date | null> {
       'ModifyDate',
     ])
 
-    const candidate = (data as any)?.DateTimeOriginal ??
-      (data as any)?.CreateDate ??
-      (data as any)?.ModifyDate
-
-    if (candidate instanceof Date && !Number.isNaN(candidate.getTime())) return candidate
-
-    // Fallback for photos without EXIF datetime: try HTTP Last-Modified.
+    const raw = data as any
     const lastModified = parseHttpDate(response.headers.get('last-modified'))
-    return lastModified
+
+    return earliestDate(
+      raw?.DateTimeOriginal instanceof Date ? raw.DateTimeOriginal : null,
+      raw?.CreateDate instanceof Date ? raw.CreateDate : null,
+      raw?.ModifyDate instanceof Date ? raw.ModifyDate : null,
+      lastModified,
+    )
   } catch {
     return null
   }
@@ -66,12 +77,13 @@ export async function readPhotoMetadata(url: string): Promise<PhotoMetadata> {
     ])
 
     const raw = data as any
-    const dateCandidate: unknown = raw?.DateTimeOriginal ?? raw?.CreateDate ?? raw?.ModifyDate
-    const exifDate = dateCandidate instanceof Date && !Number.isNaN(dateCandidate.getTime())
-      ? dateCandidate
-      : null
     const fallback = parseHttpDate(response.headers.get('last-modified'))
-    const date = exifDate ?? fallback
+    const date = earliestDate(
+      raw?.DateTimeOriginal instanceof Date ? raw.DateTimeOriginal : null,
+      raw?.CreateDate instanceof Date ? raw.CreateDate : null,
+      raw?.ModifyDate instanceof Date ? raw.ModifyDate : null,
+      fallback,
+    )
 
     const fields: Array<{ label: string; value: string }> = []
     if (raw?.Make || raw?.Model) fields.push({ label: '相机', value: [ raw?.Model].filter(Boolean).join(' ') })

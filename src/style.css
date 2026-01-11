@@ -353,25 +353,38 @@ button:focus-visible {
   padding: 12px 12px;
   display: grid;
   grid-template-columns: auto 1fr auto;
+  grid-template-areas: 'left meta right';
   align-items: center;
   gap: 12px;
 }
 
-.dockLeft,
-.dockRight {
+.dockLeft {
+  grid-area: left;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
+.dockRight {
+  grid-area: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .dockMeta {
+  grid-area: meta;
   min-width: 0;
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 10px;
   justify-content: center;
   color: rgba(17, 17, 17, 0.7);
   font-size: 13px;
+
+  /* Wide mode: keep single-line; if it overflows JS will switch to stacked. */
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .dockMetaItem {
@@ -380,41 +393,35 @@ button:focus-visible {
   white-space: nowrap;
 }
 
-@media (max-width: 560px) {
-  /* Mobile: metadata on the first row, actions on the second row. */
-  .dockInner {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 10px;
-  }
+/* Stacked layout (narrow screens or when metadata is too long) */
+.dockInner.isStacked {
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'meta meta'
+    'left right';
+}
 
-  .dockMeta {
-    grid-column: 1 / 3;
-    grid-row: 1;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 2px;
-    scrollbar-width: none;
-  }
+.dockInner.isStacked .dockLeft {
+  flex-wrap: wrap;
+}
 
-  .dockMeta::-webkit-scrollbar {
-    display: none;
-  }
+.dockInner.isStacked .dockMeta {
+  justify-content: flex-start;
+  overflow-x: auto;
+  overflow-y: hidden;
+  text-overflow: initial;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 2px;
+}
 
-  .dockLeft {
-    grid-column: 1;
-    grid-row: 2;
-    justify-self: start;
-  }
+/* Make the metadata row feel like a scrollable strip */
+.dockInner.isStacked .dockMeta::-webkit-scrollbar {
+  height: 6px;
+}
 
-  .dockRight {
-    grid-column: 2;
-    grid-row: 2;
-    justify-self: end;
-  }
+.dockInner.isStacked .dockMeta::-webkit-scrollbar-thumb {
+  background: rgba(17, 17, 17, 0.22);
+  border-radius: 999px;
 }
 
 .empty {
