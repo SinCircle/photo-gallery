@@ -11,11 +11,11 @@ function downloadBlob(blob: Blob, fileName: string) {
   URL.revokeObjectURL(objectUrl)
 }
 
-function guessStem(fileName: string): string {
-  const idx = fileName.lastIndexOf('.')
-  if (idx <= 0) return fileName
-  return fileName.slice(0, idx)
-}
+// function guessStem(fileName: string): string {
+//   const idx = fileName.lastIndexOf('.')
+//   if (idx <= 0) return fileName
+//   return fileName.slice(0, idx)
+// }
 
 async function loadImage(url: string): Promise<HTMLImageElement> {
   return await new Promise((resolve, reject) => {
