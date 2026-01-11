@@ -408,15 +408,14 @@ button:focus-visible {
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 2px;
+
+  /* Hide scrollbar but keep scrollability */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/old Edge */
 }
 
 .dockInner.isStacked .dockMeta::-webkit-scrollbar {
-  height: 6px;
-}
-
-.dockInner.isStacked .dockMeta::-webkit-scrollbar-thumb {
-  background: rgba(17, 17, 17, 0.22);
-  border-radius: 999px;
+  display: none; /* Chrome/Safari/Edge */
 }
 
 .empty {
