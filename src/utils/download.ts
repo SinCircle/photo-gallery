@@ -11,11 +11,11 @@ function downloadBlob(blob: Blob, fileName: string) {
   URL.revokeObjectURL(objectUrl)
 }
 
-function guessStem(fileName: string): string {
-  const idx = fileName.lastIndexOf('.')
-  if (idx <= 0) return fileName
-  return fileName.slice(0, idx)
-}
+// function guessStem(fileName: string): string {
+//   const idx = fileName.lastIndexOf('.')
+//   if (idx <= 0) return fileName
+//   return fileName.slice(0, idx)
+// }
 
 async function loadImage(url: string): Promise<HTMLImageElement> {
   return await new Promise((resolve, reject) => {
@@ -99,12 +99,8 @@ export async function downloadWithBorder(params: {
   )
 
   if (!blob) throw new Error('Failed to generate download')
-
-  const stem = guessStem(params.fileName).trim() || 'photo'
-  const now = new Date()
-  const pad = (n: number, len = 2) => String(n).padStart(len, '0')
-  const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}${pad(now.getMilliseconds(), 3)}`
-
-  const fileName = `${stem}-border-${stamp}.jpg`
-  downloadBlob(blob, fileName)
+const now = new Date()
+const pad = (n: number, len = 2) => String(n).padStart(len, '0')
+const fileName = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}${pad(now.getMilliseconds(), 3)}.jpg`
+downloadBlob(blob, fileName)
 }
