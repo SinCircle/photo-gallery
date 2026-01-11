@@ -92,6 +92,9 @@ export async function renderPhotoView(
   const dock = el('div', { className: 'dock' })
   const dockInner = el('div', { className: 'glass dockInner' })
 
+  const dockLeft = el('div', { className: 'dockLeft' })
+  const dockRight = el('div', { className: 'dockRight' })
+
   const backBtn = el('button', { className: 'btn', type: 'button' }, ['返回'])
   backBtn.addEventListener('click', async () => {
     window.location.hash = '#/'
@@ -99,6 +102,20 @@ export async function renderPhotoView(
 
   const metaList = el('div', { className: 'dockMeta', hidden: true })
   const metaPromise = readPhotoMetadata(photo.url)
+
+  const updateDockStacking = () => {
+    const isNarrow = window.matchMedia('(max-width: 640px)').matches
+
+    if (isNarrow) {
+      dockInner.classList.add('isStacked')
+      return
+    }
+
+    dockInner.classList.remove('isStacked')
+    const metaOverflows =
+      !metaList.hidden && metaList.scrollWidth > metaList.clientWidth + 4
+    if (metaOverflows) dockInner.classList.add('isStacked')
+  }
 
   let mode: FitMode = 'contain'
   let scale = 1
@@ -420,7 +437,7 @@ export async function renderPhotoView(
     downloadBtn.disabled = true
     try {
       const meta = await metaPromise
-      const stamp = "SinCircle" + "  " + (meta.date ? formatDateTime(meta.date) : undefined)
+      const stamp = meta.date ? `SinCircle  ${formatDateTime(meta.date)}` : 'SinCircle'
       await downloadWithBorder({ url: photo.url, fileName: photo.fileName, stampText: stamp })
     } finally {
       downloadBtn.disabled = false
@@ -428,7 +445,9 @@ export async function renderPhotoView(
     }
   })
 
-  dockInner.append(backBtn, fitBtn, metaList, downloadBtn)
+  dockLeft.append(backBtn, fitBtn)
+  dockRight.append(downloadBtn)
+  dockInner.append(dockLeft, metaList, dockRight)
   dock.append(dockInner)
 
   shell.append(bg, content, dock)
@@ -436,19 +455,23 @@ export async function renderPhotoView(
 
   // Re-layout when dock wraps (e.g., narrow widths).
   const ro = new ResizeObserver(() => {
+    updateDockStacking()
     if (boxReady) relayout(false)
   })
   ro.observe(dockInner)
+
+  window.addEventListener('resize', updateDockStacking)
 
   // Populate metadata (show only what exists).
   void (async () => {
     const meta = await metaPromise
     const items: Array<{ label: string; value: string }> = []
     if (meta.date) items.push({ label: '日期', value: formatDateTime(meta.date) })
-    if (meta.fields) items.push(...meta.fields)
+    items.push(...meta.fields)
 
     if (items.length === 0) {
       metaList.hidden = true
+      updateDockStacking()
       return
     }
 
@@ -458,5 +481,7 @@ export async function renderPhotoView(
         el('span', { className: 'dockMetaItem' }, [`${it.label}：${it.value}`]),
       ),
     )
+
+    requestAnimationFrame(() => updateDockStacking())
   })()
 }

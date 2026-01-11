@@ -129,6 +129,7 @@ button:focus-visible {
   border-radius: 999px;
   padding: 10px 14px;
   font: inherit;
+  white-space: nowrap;
   cursor: pointer;
   transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
     background 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -351,26 +352,71 @@ button:focus-visible {
   max-width: 1100px;
   margin: 0 auto;
   padding: 12px 12px;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: 'left meta right';
   align-items: center;
   gap: 12px;
 }
 
+.dockLeft {
+  grid-area: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dockRight {
+  grid-area: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .dockMeta {
-  flex: 1;
+  grid-area: meta;
   min-width: 0;
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 10px;
   justify-content: center;
   color: rgba(17, 17, 17, 0.7);
   font-size: 13px;
+
+  /* Wide mode: keep single-line; if it overflows JS will switch to stacked. */
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .dockMetaItem {
   font-family: var(--stamp-font);
   letter-spacing: 0.02em;
   white-space: nowrap;
+}
+
+/* Stacked layout: first row is horizontally scrollable metadata, second row is buttons */
+.dockInner.isStacked {
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'meta meta'
+    'left right';
+}
+
+.dockInner.isStacked .dockMeta {
+  justify-content: flex-start;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 2px;
+}
+
+.dockInner.isStacked .dockMeta::-webkit-scrollbar {
+  height: 6px;
+}
+
+.dockInner.isStacked .dockMeta::-webkit-scrollbar-thumb {
+  background: rgba(17, 17, 17, 0.22);
+  border-radius: 999px;
 }
 
 .empty {
