@@ -3,7 +3,9 @@ import { clear, el } from '../utils/dom'
 import { pickReadableInkFromBottomLeft } from '../utils/color'
 import { getThumbnailObjectUrl } from '../utils/thumbs'
 import { formatDateOnly, readShootDateTime } from '../utils/exif'
- 
+
+const TRANSPARENT_PIXEL =
+  'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='
 
 let cachedRoot: HTMLElement | null = null
 let cachedKey = ''
@@ -73,6 +75,14 @@ export async function renderGalleryView(container: HTMLElement) {
         const dateEl = tile.querySelector('[data-role="date"]') as HTMLElement | null
         const photoUrl = tile.getAttribute('data-url')
 
+        const markDone = (key: 'thumb' | 'date') => {
+          tile.dataset[key] = '1'
+          if (tile.dataset.thumb === '1' && tile.dataset.date === '1') {
+            tile.classList.add('isReady')
+            io.unobserve(tile)
+          }
+        }
+
         if (img && photoUrl && !img.dataset.loaded) {
           img.dataset.loaded = '1'
           void (async () => {
@@ -82,18 +92,23 @@ export async function renderGalleryView(container: HTMLElement) {
                 'load',
                 () => {
                   const ink = pickReadableInkFromBottomLeft(img)
+          
                   if (dateEl) {
                     dateEl.style.color = ink.color
                     dateEl.style.textShadow = `0 1px 10px ${ink.shadow}`
                   }
+
+                  markDone('thumb')
                 },
                 { once: true },
               )
 
+              // Gallery should display thumbnails only.
               img.src = thumbUrl
-            } catch {
-              // If thumbnail generation fails, fall back to original.
-              img.src = photoUrl
+            } catch (err) {
+              console.warn('[gallery] thumbnail failed', err)
+              io.unobserve(tile)
+              tile.remove()
             }
           })()
         }
@@ -101,17 +116,25 @@ export async function renderGalleryView(container: HTMLElement) {
         if (dateEl && photoUrl && !dateEl.dataset.loaded) {
           dateEl.dataset.loaded = '1'
           void (async () => {
-            const hit = dateCache.get(photoUrl)
-            if (hit) {
-              dateEl.textContent = hit
-              return
-            }
+            try {
+              const hit = dateCache.get(photoUrl)
+              if (hit) {
+                dateEl.textContent = hit
+                markDone('date')
+                return
+              }
 
-            const dt = await readShootDateTime(photoUrl)
-            if (dt) {
-              const text = formatDateOnly(dt)
-              dateCache.set(photoUrl, text)
-              dateEl.textContent = text
+              const dt = await readShootDateTime(photoUrl)
+              if (dt) {
+                const text = formatDateOnly(dt)
+                dateCache.set(photoUrl, text)
+                dateEl.textContent = text
+              } else {
+                dateEl.textContent = ''
+              }
+            } finally {
+              // Consider date “done” even if EXIF is missing.
+              markDone('date')
             }
           })()
         }
@@ -136,6 +159,8 @@ export async function renderGalleryView(container: HTMLElement) {
       loading: 'lazy',
       decoding: 'async',
     })
+    // Prevent some browsers from rendering a broken image icon before src is set.
+    img.src = TRANSPARENT_PIXEL
     const date = el('div', { className: 'tileDate', title: '拍摄日期' }, [''])
     date.setAttribute('data-role', 'date')
     media.append(img, date)
