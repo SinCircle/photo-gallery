@@ -1,0 +1,20 @@
+{
+  "name": "photo-gallery",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k \"node scripts/watch-images.mjs\" \"vite\"",
+    "prebuild": "node scripts/sync-images.mjs",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "typescript": "~5.9.3",
+    "vite": "^7.2.4"
+  },
+  "dependencies": {
+    "exifr": "^7.1.3"
+  }
+}

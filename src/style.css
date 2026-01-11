@@ -1,0 +1,372 @@
+:root {
+  --bg: #f4f4f4;
+  --surface: #ffffff;
+  --ink: #111111;
+  --ink-muted: rgba(17, 17, 17, 0.64);
+  --hairline: rgba(17, 17, 17, 0.12);
+
+  --glass: rgba(255, 255, 255, 0.7);
+  --glass-strong: rgba(255, 255, 255, 0.86);
+
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 12px 38px rgba(0, 0, 0, 0.06);
+
+  --dock-h: 118px;
+  --photo-gutter: 18px;
+
+  --frame: clamp(14px, 2.2vw, 26px); /* preview white border thickness (CSS) */
+  --stamp-font: 'Cinzel Decorative', 'Cormorant SC', ui-serif, Georgia, 'Times New Roman', serif;
+
+  color-scheme: light;
+  font-family: 'Cormorant Garamond', ui-serif, Georgia, 'Times New Roman', serif;
+  line-height: 1.5;
+  font-weight: 500;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+body.isPhoto {
+  overflow: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid rgba(17, 17, 17, 0.55);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+#app {
+  min-height: 100%;
+}
+
+.shell {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 18px 18px 12px;
+}
+
+.glass {
+  background: var(--glass);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.topbarInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.brandTitle {
+  font-family: 'Cinzel', ui-serif, Georgia, 'Times New Roman', serif;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.brandSub {
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--hairline);
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 10px 14px;
+  font: inherit;
+  cursor: pointer;
+  transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    background 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.content {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 12px 18px 28px;
+  flex: 1;
+}
+
+.contentNoTopbar {
+  padding-top: 18px;
+}
+
+.contentWithDock {
+  padding-bottom: 118px;
+}
+
+.contentFull {
+  max-width: none;
+}
+
+/* Gallery */
+.masonry {
+  column-gap: 14px;
+  columns: 1;
+}
+
+@media (min-width: 560px) {
+  .masonry {
+    columns: 2;
+  }
+}
+
+@media (min-width: 860px) {
+  .masonry {
+    columns: 3;
+  }
+}
+
+.tile {
+  display: block;
+  break-inside: avoid;
+  margin: 0 0 14px;
+}
+
+.tileMedia {
+  position: relative;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: var(--shadow);
+}
+
+.tile img {
+  width: 100%;
+  height: auto;
+  display: block;
+  vertical-align: middle;
+}
+
+.tileDate {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  font-family: 'Cinzel Decorative', 'Cormorant SC', ui-serif, Georgia, 'Times New Roman', serif;
+  font-weight: 700;
+  font-size: clamp(12px, 1.3vw, 16px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.38);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Preview */
+.previewWrap {
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+}
+
+/* Photo view (borderless) */
+.photoShell {
+  position: relative;
+}
+
+.photoShell .content {
+  padding: 0;
+  margin: 0;
+}
+
+.photoShell .contentWithDock {
+  padding-bottom: 0;
+}
+
+.photoBg {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(42px);
+  transform: scale(1.12);
+  opacity: 0.92;
+}
+
+.photoBg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(244, 244, 244, 0.58);
+}
+
+.photoStage {
+  position: fixed;
+  inset: 0;
+  border-radius: 0;
+  overflow: hidden;
+  touch-action: none;
+  z-index: 1;
+}
+
+.photoPan {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  will-change: transform;
+  transition: transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.photoZoom {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform;
+  transition: transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.photoImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  user-select: none;
+}
+
+.photoImgLow {
+  opacity: 1;
+  transition: opacity 260ms ease;
+}
+
+.photoImgHigh {
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+
+.photoStage.hiReady .photoImgLow {
+  opacity: 1;
+}
+
+.photoStage.hiReady .photoImgHigh {
+  opacity: 1;
+}
+
+.photoStage.hiDone .photoImgLow {
+  opacity: 0;
+}
+
+.photoStage.noAnim .photoPan,
+.photoStage.noAnim .photoZoom {
+  transition: none;
+}
+
+.photoStage.isDragging .photoPan,
+.photoStage.isDragging .photoZoom {
+  transition: none;
+}
+
+
+/* Bottom dock (photo view) */
+.dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 14px 18px;
+  z-index: 20;
+}
+
+.dockInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 12px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dockMeta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  color: rgba(17, 17, 17, 0.7);
+  font-size: 13px;
+}
+
+.dockMetaItem {
+  font-family: var(--stamp-font);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.empty {
+  padding: 24px 18px;
+  text-align: center;
+  color: var(--ink-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+}
