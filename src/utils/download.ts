@@ -99,8 +99,12 @@ export async function downloadWithBorder(params: {
   )
 
   if (!blob) throw new Error('Failed to generate download')
-const now = new Date()
-const pad = (n: number, len = 2) => String(n).padStart(len, '0')
-const fileName = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}${pad(now.getMilliseconds(), 3)}.jpg`
-downloadBlob(blob, fileName)
+
+  const stem = guessStem(params.fileName).trim() || 'photo'
+  const now = new Date()
+  const pad = (n: number, len = 2) => String(n).padStart(len, '0')
+  const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}${pad(now.getMilliseconds(), 3)}`
+
+  const fileName = `${stem}-border-${stamp}.jpg`
+  downloadBlob(blob, fileName)
 }
