@@ -2,11 +2,21 @@ export type Photo = {
   id: string
   url: string
   fileName: string
+  isFeatured: boolean
+}
+
+function rawFileNameFromPath(path: string): string {
+  const parts = path.split('/')
+  return parts[parts.length - 1] ?? path
 }
 
 function fileNameFromPath(path: string): string {
-  const parts = path.split('/')
-  return parts[parts.length - 1] ?? path
+  const raw = rawFileNameFromPath(path)
+  return raw.startsWith('!') ? raw.slice(1) : raw
+}
+
+function isFeaturedFromPath(path: string): boolean {
+  return rawFileNameFromPath(path).startsWith('!')
 }
 
 function isSafeRelativePath(p: string): boolean {
@@ -37,6 +47,7 @@ export async function getAllPhotos(): Promise<Photo[]> {
         id: encodeURIComponent(rel),
         url: photoUrlFromRelativePath(rel),
         fileName: fileNameFromPath(rel),
+        isFeatured: isFeaturedFromPath(rel),
       }))
 
     photos.sort((a, b) => a.fileName.localeCompare(b.fileName, undefined, { numeric: true }))
@@ -54,6 +65,7 @@ export function getPhotoById(photoId: string): Photo | undefined {
       id: encodeURIComponent(decoded),
       url: photoUrlFromRelativePath(decoded),
       fileName: fileNameFromPath(decoded),
+      isFeatured: isFeaturedFromPath(decoded),
     }
   } catch {
     return undefined

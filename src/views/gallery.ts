@@ -150,6 +150,7 @@ export async function renderGalleryView(container: HTMLElement) {
       className: 'tile',
       title: photo.fileName,
     })
+    if (photo.isFeatured) link.classList.add('isFeatured')
     link.setAttribute('data-photo-id', photo.id)
     link.setAttribute('data-url', photo.url)
 
