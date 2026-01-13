@@ -1,4 +1,3 @@
-import { getPhotoById } from '../photos'
 import { clear, el } from '../utils/dom'
 import { downloadWithBorder } from '../utils/download'
 import { formatDateTime, readPhotoMetadata } from '../utils/exif'
