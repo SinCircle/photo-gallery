@@ -46,7 +46,11 @@ export async function renderPhotoView(
 
   const content = el('main', { className: 'content contentWithDock contentFull' })
 
-  const photo = getPhotoById(params.photoId)
+  // Get photo from the full list to have thumbUrl
+  const { getAllPhotos } = await import('../photos')
+  const allPhotos = await getAllPhotos()
+  const photo = allPhotos.find(p => p.id === params.photoId)
+  
   if (!photo) {
     content.append(
       el('div', { className: 'glass empty' }, [
@@ -275,7 +279,7 @@ export async function renderPhotoView(
   } else {
     void (async () => {
       try {
-        lowSrc = await getThumbnailObjectUrl(photo.url)
+        lowSrc = await getThumbnailObjectUrl(photo.url, photo.thumbUrl)
         imgLow.src = lowSrc
         bg.style.backgroundImage = `url(${lowSrc})`
       } catch {

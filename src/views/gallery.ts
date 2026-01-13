@@ -87,7 +87,11 @@ export async function renderGalleryView(container: HTMLElement) {
           img.dataset.loaded = '1'
           void (async () => {
             try {
-              const thumbUrl = await getThumbnailObjectUrl(photoUrl)
+              // Get the photo object to access thumbUrl
+              const photoId = tile.getAttribute('data-photo-id')
+              const photoThumbUrl = tile.getAttribute('data-thumb-url') || undefined
+              
+              const thumbUrl = await getThumbnailObjectUrl(photoUrl, photoThumbUrl)
               img.addEventListener(
                 'load',
                 () => {
@@ -153,6 +157,9 @@ export async function renderGalleryView(container: HTMLElement) {
     if (photo.isFeatured) link.classList.add('isFeatured')
     link.setAttribute('data-photo-id', photo.id)
     link.setAttribute('data-url', photo.url)
+    if (photo.thumbUrl) {
+      link.setAttribute('data-thumb-url', photo.thumbUrl)
+    }
 
     const media = el('div', { className: 'tileMedia' })
     const img = el('img', {

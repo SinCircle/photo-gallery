@@ -49,11 +49,23 @@ npm run preview
 
 - `scripts/sync-images.mjs`
 	- 把 `images/` 复制到 `public/images/`
-	- 生成 `public/images-manifest.json`
+	- **自动生成缩略图**：调用 `images/generate_thumbs.py` 预生成缩略图到 `images/thumbnails/`
+	- 生成 `public/images-manifest.json`（包含原图和缩略图路径）
 - `scripts/watch-images.mjs`
 	- 开发时监听 `images/`，变更后自动触发同步
 
-通常你只需要维护 `images/`；`public/images/` 和 `public/images-manifest.json` 属于构建产物。
+**缩略图优化**：为了在画廊首页只加载小缩略图（而非完整图片），现在会：
+1. 使用 Python 脚本在服务器端预生成 720x720 的缩略图
+2. 缩略图保存在 `images/thumbnails/` 并复制到 `public/images/thumbnails/`
+3. 前端优先加载预生成的缩略图，失败时才在客户端动态生成
+4. 只有在查看单张照片时才加载完整图片
+
+**依赖**：需要安装 Python 和 Pillow 库来生成缩略图：
+```bash
+pip install Pillow
+```
+
+通常你只需要维护 `images/`；`public/images/`、`images/thumbnails/` 和 `public/images-manifest.json` 属于构建产物。
 
 ## 个性化配置
 

@@ -1,6 +1,7 @@
 export type Photo = {
   id: string
   url: string
+  thumbUrl?: string
   fileName: string
   isFeatured: boolean
 }
@@ -41,14 +42,37 @@ export async function getAllPhotos(): Promise<Photo[]> {
     const images = Array.isArray(json.images) ? (json.images as unknown[]) : []
 
     const photos = images
-      .filter((x): x is string => typeof x === 'string')
-      .filter(isSafeRelativePath)
-      .map((rel) => ({
-        id: encodeURIComponent(rel),
-        url: photoUrlFromRelativePath(rel),
-        fileName: fileNameFromPath(rel),
-        isFeatured: isFeaturedFromPath(rel),
-      }))
+      .map((x) => {
+        // Support both old format (string) and new format (object with path & thumb)
+        if (typeof x === 'string') {
+          if (!isSafeRelativePath(x)) return null
+          return {
+            id: encodeURIComponent(x),
+            url: photoUrlFromRelativePath(x),
+            fileName: fileNameFromPath(x),
+            isFeatured: isFeaturedFromPath(x),
+          }
+        }
+        
+        if (typeof x === 'object' && x !== null) {
+          const obj = x as Record<string, unknown>
+          const pathStr = typeof obj.path === 'string' ? obj.path : ''
+          const thumbStr = typeof obj.thumb === 'string' ? obj.thumb : ''
+          
+          if (!pathStr || !isSafeRelativePath(pathStr)) return null
+          
+          return {
+            id: encodeURIComponent(pathStr),
+            url: photoUrlFromRelativePath(pathStr),
+            thumbUrl: thumbStr && isSafeRelativePath(thumbStr) ? photoUrlFromRelativePath(thumbStr) : undefined,
+            fileName: fileNameFromPath(pathStr),
+            isFeatured: isFeaturedFromPath(pathStr),
+          }
+        }
+        
+        return null
+      })
+      .filter((x): x is Photo => x !== null)
 
     photos.sort((a, b) => a.fileName.localeCompare(b.fileName, undefined, { numeric: true }))
     return photos
@@ -64,6 +88,7 @@ export function getPhotoById(photoId: string): Photo | undefined {
     return {
       id: encodeURIComponent(decoded),
       url: photoUrlFromRelativePath(decoded),
+      thumbUrl: undefined, // Will be populated by getAllPhotos if available
       fileName: fileNameFromPath(decoded),
       isFeatured: isFeaturedFromPath(decoded),
     }

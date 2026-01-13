@@ -32,7 +32,23 @@ function thumbRequestKey(originalUrl: string): Request {
   return new Request(`${originalUrl}?__thumb=1`)
 }
 
-export async function getThumbnailObjectUrl(originalUrl: string): Promise<string> {
+export async function getThumbnailObjectUrl(originalUrl: string, pregenThumbUrl?: string): Promise<string> {
+  // If a pre-generated thumbnail URL is provided, try to use it first
+  if (pregenThumbUrl) {
+    try {
+      const res = await fetch(pregenThumbUrl, { cache: 'force-cache' })
+      if (res.ok) {
+        const blob = await res.blob()
+        const obj = URL.createObjectURL(blob)
+        mem.set(originalUrl, obj)
+        return obj
+      }
+    } catch (err) {
+      console.warn('Failed to load pre-generated thumbnail, falling back to client-side generation:', err)
+    }
+  }
+  
+  // Fallback to original behavior: generate thumbnail on client side
   const cachedMem = mem.get(originalUrl)
   if (cachedMem) return cachedMem
 
