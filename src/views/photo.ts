@@ -376,6 +376,12 @@ export async function renderPhotoView(
     // otherwise panoramas can behave incorrectly.
     updateRedundantMode(stageW, stageH)
     const currentScale = computeScaleFor(mode, stageW, stageH)
+    
+    // 保存当前视图中心在图片上的位置（相对于图片的坐标）
+    const oldSafe = safeMetrics(stageW, stageH, mode)
+    const viewCenterX = -translateX / currentScale
+    const viewCenterY = -(translateY + oldSafe.centerOffsetY) / currentScale
+    
     let candidate = mode
     for (let i = 0; i < FIT_ORDER.length; i++) {
       candidate = nextFitMode(candidate)
@@ -389,7 +395,18 @@ export async function renderPhotoView(
 
     mode = candidate
     fitBtn.textContent = `比例：${labelForMode(mode)}`
-    relayout(true)
+    
+    // 计算新的缩放比例和偏移
+    const newScale = computeScaleFor(mode, stageW, stageH)
+    const newSafe = safeMetrics(stageW, stageH, mode)
+    
+    // 根据保存的图片坐标，计算新的平移量，使该点保持在视图中心
+    translateX = -viewCenterX * newScale
+    translateY = -viewCenterY * newScale - newSafe.centerOffsetY
+    
+    // 使用 clampPan 和 apply 来应用新的变换
+    clampPan(stageW, stageH)
+    apply(stageW, stageH)
   })
 
   // Drag/pan when image can exceed safe area.
