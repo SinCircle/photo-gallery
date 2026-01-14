@@ -74,7 +74,7 @@ export async function getAllPhotos(): Promise<Photo[]> {
       })
       .filter((x): x is Photo => x !== null)
 
-    photos.sort((a, b) => a.fileName.localeCompare(b.fileName, undefined, { numeric: true }))
+    photos.sort((a, b) => b.fileName.localeCompare(a.fileName, undefined, { numeric: true }))
     return photos
   } catch {
     return []
