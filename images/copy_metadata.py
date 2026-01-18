@@ -25,6 +25,11 @@ def resolve_image_path(input_path, base_dir):
         Path对象或None
     """
     input_path = input_path.strip()
+
+    # 如果用户在路径两侧包含双引号（例如从其他地方复制的 "C:\\path with spaces\\file.jpg"），
+    # 则去掉两侧的双引号以便正确解析路径
+    if input_path.startswith('"') and input_path.endswith('"') and len(input_path) >= 2:
+        input_path = input_path[1:-1].strip()
     
     # 尝试作为绝对路径
     abs_path = Path(input_path)
