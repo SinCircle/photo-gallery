@@ -33,53 +33,23 @@ function thumbRequestKey(originalUrl: string): Request {
 }
 
 export async function getThumbnailObjectUrl(originalUrl: string, pregenThumbUrl?: string): Promise<string> {
-  // If a pre-generated thumbnail URL is provided, try to use it first
-  if (pregenThumbUrl) {
-    try {
-      const res = await fetch(pregenThumbUrl, { cache: 'force-cache' })
-      if (res.ok) {
-        const blob = await res.blob()
-        const obj = URL.createObjectURL(blob)
-        mem.set(originalUrl, obj)
-        return obj
-      }
-    } catch (err) {
-      console.warn('Failed to load pre-generated thumbnail, falling back to client-side generation:', err)
+  // Ensure a pre-generated thumbnail URL is provided
+  if (!pregenThumbUrl) {
+    throw new Error('Pre-generated thumbnail URL is required.');
+  }
+
+  try {
+    const res = await fetch(pregenThumbUrl, { cache: 'force-cache' })
+    if (res.ok) {
+      const blob = await res.blob()
+      const obj = URL.createObjectURL(blob)
+      mem.set(originalUrl, obj)
+      return obj
+    } else {
+      throw new Error('Failed to fetch pre-generated thumbnail.')
     }
+  } catch (err) {
+    console.error('Error loading pre-generated thumbnail:', err)
+    throw new Error('Unable to load pre-generated thumbnail.')
   }
-  
-  // Fallback to original behavior: generate thumbnail on client side
-  const cachedMem = mem.get(originalUrl)
-  if (cachedMem) return cachedMem
-
-  const cache = await caches.open(THUMB_CACHE)
-  const key = thumbRequestKey(originalUrl)
-  const hit = await cache.match(key)
-  if (hit) {
-    const blob = await hit.blob()
-    const obj = URL.createObjectURL(blob)
-    mem.set(originalUrl, obj)
-    return obj
-  }
-
-  const bmp = await loadImageBitmap(originalUrl)
-  const { w, h } = chooseThumbSize(bmp)
-  const canvas = document.createElement('canvas')
-  canvas.width = w
-  canvas.height = h
-
-  const ctx = canvas.getContext('2d')
-  if (!ctx) throw new Error('Canvas not supported')
-  ctx.imageSmoothingEnabled = true
-  ctx.imageSmoothingQuality = 'high'
-  ctx.drawImage(bmp, 0, 0, w, h)
-  bmp.close()
-
-  const blob = await canvasToBlob(canvas)
-  const headers = new Headers({ 'content-type': blob.type })
-  await cache.put(key, new Response(blob, { headers }))
-
-  const obj = URL.createObjectURL(blob)
-  mem.set(originalUrl, obj)
-  return obj
 }
