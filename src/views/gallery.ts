@@ -122,9 +122,10 @@ export async function renderGalleryView(container: HTMLElement) {
           if (photoDate) {
             try {
               const dt = new Date(photoDate)
-              if (!Number.isNaN(dt.getTime())) {
+              if (!isNaN(dt.getTime())) {
                 dateEl.textContent = formatDateOnly(dt)
               } else {
+                console.error('Invalid date:', photoDate)
                 dateEl.textContent = ''
               }
             } catch {
