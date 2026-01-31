@@ -278,7 +278,7 @@ export async function renderPhotoView(
   } else {
     void (async () => {
       try {
-        lowSrc = await getThumbnailObjectUrl(photo.url, photo.thumbUrl)
+        lowSrc = await getThumbnailObjectUrl(photo.thumbUrl);
         imgLow.src = lowSrc
         bg.style.backgroundImage = `url(${lowSrc})`
       } catch {

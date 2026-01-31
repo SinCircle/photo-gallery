@@ -87,9 +87,9 @@ export async function renderGalleryView(container: HTMLElement) {
           void (async () => {
             try {
               // Get the photo object to access thumbUrl
-              const photoThumbUrl = tile.getAttribute('data-thumb-url') || undefined
+              const photoThumbUrl = tile.getAttribute('data-thumb-url') || ''
               
-              const thumbUrl = await getThumbnailObjectUrl(photoUrl, photoThumbUrl)
+              const thumbUrl = await getThumbnailObjectUrl(photoThumbUrl)
               img.addEventListener(
                 'load',
                 () => {
