@@ -278,6 +278,9 @@ export async function renderPhotoView(
   } else {
     void (async () => {
       try {
+        if (!photo.thumbUrl) {
+          throw new Error('Thumbnail URL is undefined for the photo.');
+        }
         lowSrc = await getThumbnailObjectUrl(photo.thumbUrl);
         imgLow.src = lowSrc
         bg.style.backgroundImage = `url(${lowSrc})`
