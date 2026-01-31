@@ -32,22 +32,21 @@ function thumbRequestKey(originalUrl: string): Request {
   return new Request(`${originalUrl}?__thumb=1`)
 }
 
-export async function getThumbnailObjectUrl(originalUrl: string, pregenThumbUrl?: string): Promise<string> {
-  // Ensure a pre-generated thumbnail URL is provided
+export async function getThumbnailObjectUrl(originalUrl: string, pregenThumbUrl: string): Promise<string> {
   if (!pregenThumbUrl) {
     throw new Error('Pre-generated thumbnail URL is required.');
   }
 
   try {
     const res = await fetch(pregenThumbUrl, { cache: 'force-cache' })
-    if (res.ok) {
-      const blob = await res.blob()
-      const obj = URL.createObjectURL(blob)
-      mem.set(originalUrl, obj)
-      return obj
-    } else {
-      throw new Error('Failed to fetch pre-generated thumbnail.')
+    if (!res.ok) {
+      throw new Error(`Failed to fetch pre-generated thumbnail: ${res.statusText}`)
     }
+
+    const blob = await res.blob()
+    const obj = URL.createObjectURL(blob)
+    mem.set(originalUrl, obj)
+    return obj
   } catch (err) {
     console.error('Error loading pre-generated thumbnail:', err)
     throw new Error('Unable to load pre-generated thumbnail.')
