@@ -2,14 +2,13 @@ import { getAllPhotos } from '../photos'
 import { clear, el } from '../utils/dom'
 import { pickReadableInkFromBottomLeft } from '../utils/color'
 import { getThumbnailObjectUrl } from '../utils/thumbs'
-import { formatDateOnly, readShootDateTime } from '../utils/exif'
+import { formatDateOnly } from '../utils/exif'
 
 const TRANSPARENT_PIXEL =
   'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='
 
 let cachedRoot: HTMLElement | null = null
 let cachedKey = ''
-const dateCache = new Map<string, string>()
 let cachedScrollY = 0
 
 export async function renderGalleryView(container: HTMLElement) {
@@ -116,30 +115,25 @@ export async function renderGalleryView(container: HTMLElement) {
           })()
         }
 
-        if (dateEl && photoUrl && !dateEl.dataset.loaded) {
+        if (dateEl && !dateEl.dataset.loaded) {
           dateEl.dataset.loaded = '1'
-          void (async () => {
+          // Use pre-extracted metadata from photo object
+          const photoDate = tile.getAttribute('data-photo-date')
+          if (photoDate) {
             try {
-              const hit = dateCache.get(photoUrl)
-              if (hit) {
-                dateEl.textContent = hit
-                markDone('date')
-                return
-              }
-
-              const dt = await readShootDateTime(photoUrl)
-              if (dt) {
-                const text = formatDateOnly(dt)
-                dateCache.set(photoUrl, text)
-                dateEl.textContent = text
+              const dt = new Date(photoDate)
+              if (!Number.isNaN(dt.getTime())) {
+                dateEl.textContent = formatDateOnly(dt)
               } else {
                 dateEl.textContent = ''
               }
-            } finally {
-              // Consider date “done” even if EXIF is missing.
-              markDone('date')
+            } catch {
+              dateEl.textContent = ''
             }
-          })()
+          } else {
+            dateEl.textContent = ''
+          }
+          markDone('date')
         }
 
       }
@@ -158,6 +152,9 @@ export async function renderGalleryView(container: HTMLElement) {
     link.setAttribute('data-url', photo.url)
     if (photo.thumbUrl) {
       link.setAttribute('data-thumb-url', photo.thumbUrl)
+    }
+    if (photo.metadata?.date) {
+      link.setAttribute('data-photo-date', photo.metadata.date)
     }
 
     const media = el('div', { className: 'tileMedia' })

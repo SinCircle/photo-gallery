@@ -111,8 +111,8 @@ async function main() {
   await mkdir(sourceDir, { recursive: true })
   await mkdir(destDir, { recursive: true })
 
-  // Generate thumbnails first
-  await generateThumbnails()
+  // Generate thumbnails first (this also generates the manifest with metadata)
+  const thumbsGenerated = await generateThumbnails()
 
   await cleanDest(destDir)
   // Copy images but skip the thumbnails directory (will copy separately)
@@ -123,22 +123,31 @@ async function main() {
     await copyDir(thumbSourceDir, thumbDestDir)
   }
 
-  const images = await listRelativeImagePaths(sourceDir, sourceDir, new Set(['thumbnails']))
-  images.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+  // If generate_thumbs.py successfully created a manifest with metadata, 
+  // copy it to public/. Otherwise, fall back to basic manifest generation.
+  const sourceManifest = path.join(root, 'public', 'images-manifest.json')
   
-  // Build manifest with thumbnail info
-  const manifest = {
-    images: images.map(img => {
-      // Calculate thumbnail path (same relative path but in thumbnails/ and .jpg extension)
-      const thumbPath = `thumbnails/${img.replace(/\.[^.]+$/, '.jpg')}`
-      return {
-        path: img,
-        thumb: thumbPath
-      }
-    })
+  if (!thumbsGenerated || !(await exists(sourceManifest))) {
+    console.log('Generating basic manifest (no metadata)')
+    const images = await listRelativeImagePaths(sourceDir, sourceDir, new Set(['thumbnails']))
+    images.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+    
+    // Build manifest with thumbnail info but no metadata
+    const manifest = {
+      images: images.map(img => {
+        // Calculate thumbnail path (same relative path but in thumbnails/ and .jpg extension)
+        const thumbPath = `thumbnails/${img.replace(/\.[^.]+$/, '.jpg')}`
+        return {
+          path: img,
+          thumb: thumbPath
+        }
+      })
+    }
+    
+    await writeFile(manifestPath, JSON.stringify(manifest, null, 2), 'utf8')
+  } else {
+    console.log('Using manifest with metadata from generate_thumbs.py')
   }
-  
-  await writeFile(manifestPath, JSON.stringify(manifest, null, 2), 'utf8')
 }
 
 export async function syncImages() {

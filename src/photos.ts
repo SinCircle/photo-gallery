@@ -1,9 +1,15 @@
+export type PhotoMetadata = {
+  date: string | null
+  fields: Array<{ label: string; value: string }>
+}
+
 export type Photo = {
   id: string
   url: string
   thumbUrl?: string
   fileName: string
   isFeatured: boolean
+  metadata?: PhotoMetadata
 }
 
 function rawFileNameFromPath(path: string): string {
@@ -58,6 +64,7 @@ export async function getAllPhotos(): Promise<Photo[]> {
           const obj = x as Record<string, unknown>
           const pathStr = typeof obj.path === 'string' ? obj.path : ''
           const thumbStr = typeof obj.thumb === 'string' ? obj.thumb : ''
+          const metadata = obj.metadata as PhotoMetadata | undefined
           
           if (!pathStr || !isSafeRelativePath(pathStr)) return null
           
@@ -67,6 +74,7 @@ export async function getAllPhotos(): Promise<Photo[]> {
             thumbUrl: thumbStr && isSafeRelativePath(thumbStr) ? photoUrlFromRelativePath(thumbStr) : undefined,
             fileName: fileNameFromPath(pathStr),
             isFeatured: isFeaturedFromPath(pathStr),
+            metadata: metadata,
           }
         }
         
