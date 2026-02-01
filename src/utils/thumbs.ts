@@ -17,9 +17,12 @@ export async function getThumbnailUrl(thumbUrl: string): Promise<string> {
   const cached = mem.get(thumbUrl)
   if (cached) return cached
 
+  console.log('[thumbs] Loading thumbnail:', thumbUrl)
+
   try {
     // Fetch the pre-generated thumbnail
     const res = await fetch(thumbUrl, { cache: 'force-cache' })
+    console.log('[thumbs] Fetch response:', res.status, res.statusText)
     if (!res.ok) {
       throw new Error(`Failed to load thumbnail: ${res.status} ${res.statusText}`)
     }
@@ -30,6 +33,7 @@ export async function getThumbnailUrl(thumbUrl: string): Promise<string> {
     // Cache the object URL
     mem.set(thumbUrl, objectUrl)
     
+    console.log('[thumbs] Loaded successfully, objectUrl:', objectUrl)
     return objectUrl
   } catch (err) {
     console.error('[thumbs] Failed to load thumbnail:', thumbUrl, err)

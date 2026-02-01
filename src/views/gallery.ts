@@ -142,6 +142,8 @@ export async function renderGalleryView(container: HTMLElement) {
       continue
     }
 
+    console.log('[gallery] Creating tile for:', photo.fileName, 'thumbUrl:', photo.thumbUrl)
+
     const link = el('a', {
       href: `#/photo/${photo.id}`,
       className: 'tile',
