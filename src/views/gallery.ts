@@ -1,7 +1,7 @@
 import { getAllPhotos } from '../photos'
 import { clear, el } from '../utils/dom'
 import { pickReadableInkFromBottomLeft } from '../utils/color'
-import { getThumbnailObjectUrl } from '../utils/thumbs'
+import { loadThumbnailOnly } from '../utils/thumbs'
 import { formatDateOnly } from '../utils/exif'
 
 const TRANSPARENT_PIXEL =
@@ -72,61 +72,61 @@ export async function renderGalleryView(container: HTMLElement) {
 
         const img = tile.querySelector('img') as HTMLImageElement | null
         const dateEl = tile.querySelector('[data-role="date"]') as HTMLElement | null
-        const photoUrl = tile.getAttribute('data-url')
 
-        const markDone = (key: 'thumb' | 'date') => {
-          tile.dataset[key] = '1'
-          if (tile.dataset.thumb === '1' && tile.dataset.date === '1') {
+        if (!img || img.dataset.loaded === '1') continue
+        img.dataset.loaded = '1'
+
+        // Get the THUMBNAIL URL from the tile (NOT the original image URL!)
+        const thumbUrl = tile.getAttribute('data-thumb-url')
+        
+        if (!thumbUrl) {
+          console.warn('[Gallery] No thumbnail URL found for tile, skipping')
+          tile.classList.add('isReady')
+          io.unobserve(tile)
+          continue
+        }
+
+        void (async () => {
+          try {
+            // ONLY load the pre-generated thumbnail, NEVER the original
+            const thumbObjUrl = await loadThumbnailOnly(thumbUrl)
+            
+            img.addEventListener(
+              'load',
+              () => {
+                const ink = pickReadableInkFromBottomLeft(img)
+        
+                if (dateEl) {
+                  dateEl.style.color = ink.color
+                  dateEl.style.textShadow = `0 1px 10px ${ink.shadow}`
+                }
+
+                tile.classList.add('isReady')
+                io.unobserve(tile)
+              },
+              { once: true },
+            )
+
+            // Set thumbnail URL (never original image!)
+            img.src = thumbObjUrl
+          } catch (err) {
+            console.warn('[Gallery] Failed to load thumbnail:', err)
             tile.classList.add('isReady')
             io.unobserve(tile)
           }
-        }
-
-        if (img && photoUrl && !img.dataset.loaded) {
-          img.dataset.loaded = '1'
-          void (async () => {
-            try {
-              // Get the photo object to access thumbUrl
-              const photoThumbUrl = tile.getAttribute('data-thumb-url') || undefined
-              
-              const thumbUrl = await getThumbnailObjectUrl(photoUrl, photoThumbUrl)
-              img.addEventListener(
-                'load',
-                () => {
-                  const ink = pickReadableInkFromBottomLeft(img)
-          
-                  if (dateEl) {
-                    dateEl.style.color = ink.color
-                    dateEl.style.textShadow = `0 1px 10px ${ink.shadow}`
-                  }
-
-                  markDone('thumb')
-                },
-                { once: true },
-              )
-
-              // Gallery should display thumbnails only, never original images
-              img.src = thumbUrl
-            } catch (err) {
-              console.warn('[gallery] thumbnail failed', err)
-              io.unobserve(tile)
-              tile.remove()
-            }
-          })()
-        }
-
-        if (dateEl && !dateEl.dataset.loaded) {
-          dateEl.dataset.loaded = '1'
-          // Date is already set from metadata during tile creation
-          markDone('date')
-        }
-
+        })()
       }
     },
     { rootMargin: viewportMargin(), threshold: 0.01 },
   )
 
   for (const photo of photos) {
+    // Skip photos without thumbnail URLs
+    if (!photo.thumbUrl) {
+      console.warn(`[Gallery] Photo ${photo.fileName} has no thumbnail, skipping`)
+      continue
+    }
+
     const link = el('a', {
       href: `#/photo/${photo.id}`,
       className: 'tile',
@@ -134,10 +134,8 @@ export async function renderGalleryView(container: HTMLElement) {
     })
     if (photo.isFeatured) link.classList.add('isFeatured')
     link.setAttribute('data-photo-id', photo.id)
-    link.setAttribute('data-url', photo.url)
-    if (photo.thumbUrl) {
-      link.setAttribute('data-thumb-url', photo.thumbUrl)
-    }
+    // Store ONLY the thumbnail URL, NOT the original image URL
+    link.setAttribute('data-thumb-url', photo.thumbUrl)
 
     const media = el('div', { className: 'tileMedia' })
     const img = el('img', {
@@ -145,10 +143,10 @@ export async function renderGalleryView(container: HTMLElement) {
       loading: 'lazy',
       decoding: 'async',
     })
-    // Prevent some browsers from rendering a broken image icon before src is set.
+    // Start with transparent pixel
     img.src = TRANSPARENT_PIXEL
     
-    // Use pre-extracted metadata from manifest
+    // Use pre-extracted metadata from manifest for date display
     let dateText = ''
     if (photo.date) {
       try {
@@ -160,6 +158,7 @@ export async function renderGalleryView(container: HTMLElement) {
         // ignore invalid dates
       }
     }
+    
     const date = el('div', { className: 'tileDate', title: '拍摄日期' }, [dateText])
     date.setAttribute('data-role', 'date')
     media.append(img, date)
@@ -170,12 +169,13 @@ export async function renderGalleryView(container: HTMLElement) {
       e.preventDefault()
       cachedScrollY = window.scrollY
 
-      // Pass along whatever is currently displayed (often a cached thumbnail blob URL)
-      // to reduce the initial flash in the photo view.
+      // Pass along the thumbnail blob URL to reduce flash in photo view
       try {
-        if (img.src) sessionStorage.setItem(`photo-thumb:${photo.id}`, img.src)
+        if (img.src && img.src !== TRANSPARENT_PIXEL) {
+          sessionStorage.setItem(`photo-thumb:${photo.id}`, img.src)
+        }
       } catch {
-        // ignore
+        // ignore storage errors
       }
 
       window.location.hash = `#/photo/${photo.id}`

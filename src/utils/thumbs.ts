@@ -1,85 +1,52 @@
-const THUMB_CACHE = 'thumbs-v1'
+// Gallery thumbnail loading - ONLY loads pre-generated thumbnails
+// This module is specifically for the gallery view and NEVER loads original images
+
 const mem = new Map<string, string>()
 
-async function loadImageBitmap(url: string): Promise<ImageBitmap> {
-  const res = await fetch(url, { cache: 'force-cache' })
-  if (!res.ok) throw new Error('Failed to fetch image')
-  const blob = await res.blob()
-  return await createImageBitmap(blob)
-}
+// Transparent 1x1 pixel fallback
+const TRANSPARENT_PIXEL = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='
 
-function chooseThumbSize(bitmap: ImageBitmap): { w: number; h: number } {
-  const maxW = 720
-  const maxH = 720
-  const scale = Math.min(1, maxW / bitmap.width, maxH / bitmap.height)
-  return { w: Math.max(1, Math.round(bitmap.width * scale)), h: Math.max(1, Math.round(bitmap.height * scale)) }
-}
+/**
+ * Load ONLY the pre-generated thumbnail for gallery display.
+ * This function is designed to NEVER load original images.
+ * 
+ * @param thumbUrl - The pre-generated thumbnail URL (from manifest)
+ * @returns Object URL for the thumbnail, or transparent pixel if unavailable
+ */
+export async function loadThumbnailOnly(thumbUrl: string): Promise<string> {
+  // Check memory cache first
+  const cached = mem.get(thumbUrl)
+  if (cached) return cached
 
-async function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
-  const webp: Blob | null = await new Promise((resolve) =>
-    canvas.toBlob((b) => resolve(b), 'image/webp', 0.82),
-  )
-  if (webp) return webp
-  const jpeg: Blob | null = await new Promise((resolve) =>
-    canvas.toBlob((b) => resolve(b), 'image/jpeg', 0.84),
-  )
-  if (!jpeg) throw new Error('Failed to create thumbnail')
-  return jpeg
-}
-
-function thumbRequestKey(originalUrl: string): Request {
-  // Cache key needs to be stable; we use a query marker.
-  return new Request(`${originalUrl}?__thumb=1`)
-}
-
-export async function getThumbnailObjectUrl(originalUrl: string, pregenThumbUrl?: string): Promise<string> {
-  // If a pre-generated thumbnail URL is provided, try to use it first
-  if (pregenThumbUrl) {
-    try {
-      const res = await fetch(pregenThumbUrl, { cache: 'force-cache' })
-      if (res.ok) {
-        const blob = await res.blob()
-        const obj = URL.createObjectURL(blob)
-        mem.set(originalUrl, obj)
-        return obj
-      }
-    } catch (err) {
-      console.warn('Failed to load pre-generated thumbnail, falling back to client-side generation:', err)
+  try {
+    const res = await fetch(thumbUrl, { cache: 'force-cache' })
+    if (!res.ok) {
+      console.warn(`[Gallery] Thumbnail not found: ${thumbUrl}`)
+      return TRANSPARENT_PIXEL
     }
+    
+    const blob = await res.blob()
+    const objUrl = URL.createObjectURL(blob)
+    mem.set(thumbUrl, objUrl)
+    return objUrl
+  } catch (err) {
+    console.warn(`[Gallery] Failed to load thumbnail: ${thumbUrl}`, err)
+    return TRANSPARENT_PIXEL
+  }
+}
+
+/**
+ * Legacy function for photo detail view that generates thumbnails from originals.
+ * DO NOT USE THIS IN GALLERY VIEW.
+ */
+export async function getThumbnailObjectUrl(originalUrl: string, pregenThumbUrl?: string): Promise<string> {
+  // If we have a pre-generated thumbnail, use the new function
+  if (pregenThumbUrl) {
+    return loadThumbnailOnly(pregenThumbUrl)
   }
   
-  // Fallback to original behavior: generate thumbnail on client side
-  const cachedMem = mem.get(originalUrl)
-  if (cachedMem) return cachedMem
-
-  const cache = await caches.open(THUMB_CACHE)
-  const key = thumbRequestKey(originalUrl)
-  const hit = await cache.match(key)
-  if (hit) {
-    const blob = await hit.blob()
-    const obj = URL.createObjectURL(blob)
-    mem.set(originalUrl, obj)
-    return obj
-  }
-
-  const bmp = await loadImageBitmap(originalUrl)
-  const { w, h } = chooseThumbSize(bmp)
-  const canvas = document.createElement('canvas')
-  canvas.width = w
-  canvas.height = h
-
-  const ctx = canvas.getContext('2d')
-  if (!ctx) throw new Error('Canvas not supported')
-  ctx.imageSmoothingEnabled = true
-  ctx.imageSmoothingQuality = 'high'
-  ctx.drawImage(bmp, 0, 0, w, h)
-  bmp.close()
-
-  const blob = await canvasToBlob(canvas)
-  const headers = new Headers({ 'content-type': blob.type })
-  await cache.put(key, new Response(blob, { headers }))
-
-  const obj = URL.createObjectURL(blob)
-  mem.set(originalUrl, obj)
-  return obj
+  // For photo detail view without pre-generated thumbnail, load the original
+  // (This should only happen in the detail view, never in gallery)
+  console.warn('[Photo Detail] Loading original image:', originalUrl)
+  return originalUrl
 }
