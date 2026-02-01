@@ -36,14 +36,25 @@ function isSafeRelativePath(p: string): boolean {
   return true
 }
 
+function getBasePath(): string {
+  // Get the base path from the current location
+  // For GitHub Pages: /photo-gallery/
+  // For root deployment: /
+  const path = window.location.pathname
+  const match = path.match(/^\/[^\/]+\//)
+  return match ? match[0] : '/'
+}
+
 function photoUrlFromRelativePath(rel: string): string {
-  // `./` keeps it working under GitHub Pages subpaths.
-  return `./images/${rel}`
+  // Use dynamic base path for GitHub Pages compatibility
+  const base = getBasePath()
+  return `${base}images/${rel}`
 }
 
 export async function getAllPhotos(): Promise<Photo[]> {
   try {
-    const res = await fetch('./images-manifest.json', { cache: 'no-store' })
+    const base = getBasePath()
+    const res = await fetch(`${base}images-manifest.json`, { cache: 'no-store' })
     if (!res.ok) return []
     const json = (await res.json()) as { images?: unknown }
     const images = Array.isArray(json.images) ? (json.images as unknown[]) : []
