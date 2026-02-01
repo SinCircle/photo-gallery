@@ -2,12 +2,14 @@
 """
 Generate thumbnails for all images in the current directory.
 Thumbnails are saved to a 'thumbnails' subdirectory with the same relative paths.
+EXIF metadata is copied from original images to thumbnails.
 """
 
 import os
 import sys
 from pathlib import Path
 from PIL import Image
+import piexif
 
 MAX_SIZE = (720, 720)
 THUMB_DIR = "thumbnails"
@@ -22,7 +24,7 @@ def should_process(path: Path) -> bool:
     return ext in {'.jpg', '.jpeg', '.png', '.webp', '.heic', '.heif'}
 
 def generate_thumbnail(src_path: Path, dst_path: Path) -> bool:
-    """Generate a thumbnail for a single image."""
+    """Generate a thumbnail for a single image and copy EXIF metadata."""
     try:
         # Create destination directory if needed
         dst_path.parent.mkdir(parents=True, exist_ok=True)
@@ -33,6 +35,14 @@ def generate_thumbnail(src_path: Path, dst_path: Path) -> bool:
             dst_mtime = dst_path.stat().st_mtime
             if dst_mtime >= src_mtime:
                 return True
+        
+        # Read EXIF data from source image
+        exif_dict = None
+        try:
+            exif_dict = piexif.load(str(src_path))
+        except Exception:
+            # Some images may not have EXIF or have invalid EXIF
+            pass
         
         # Open and process image
         with Image.open(src_path) as img:
@@ -49,8 +59,16 @@ def generate_thumbnail(src_path: Path, dst_path: Path) -> bool:
             # Create thumbnail
             img.thumbnail(MAX_SIZE, Image.Resampling.LANCZOS)
             
-            # Save as JPEG
-            img.save(dst_path, 'JPEG', quality=QUALITY, optimize=True)
+            # Save as JPEG with EXIF metadata
+            if exif_dict:
+                try:
+                    exif_bytes = piexif.dump(exif_dict)
+                    img.save(dst_path, 'JPEG', quality=QUALITY, optimize=True, exif=exif_bytes)
+                except Exception:
+                    # If EXIF dump fails, save without EXIF
+                    img.save(dst_path, 'JPEG', quality=QUALITY, optimize=True)
+            else:
+                img.save(dst_path, 'JPEG', quality=QUALITY, optimize=True)
             
         print(f"Generated: {src_path.name}")
         return True

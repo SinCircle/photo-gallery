@@ -34,7 +34,7 @@ jobs:
           cache: 'pip'
 
       - name: Install Python dependencies
-        run: pip install Pillow
+        run: pip install Pillow piexif
 
       - name: Install Node dependencies
         run: npm ci

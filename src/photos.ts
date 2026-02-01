@@ -1,9 +1,16 @@
+export type PhotoMetadataField = {
+  label: string
+  value: string
+}
+
 export type Photo = {
   id: string
   url: string
   thumbUrl?: string
   fileName: string
   isFeatured: boolean
+  date?: string | null  // ISO date string from metadata
+  fields?: PhotoMetadataField[]  // Metadata fields from EXIF
 }
 
 function rawFileNameFromPath(path: string): string {
@@ -41,8 +48,8 @@ export async function getAllPhotos(): Promise<Photo[]> {
     const json = (await res.json()) as { images?: unknown }
     const images = Array.isArray(json.images) ? (json.images as unknown[]) : []
 
-    const photos = images
-      .map((x) => {
+    const photos: Photo[] = images
+      .map((x): Photo | null => {
         // Support both old format (string) and new format (object with path & thumb)
         if (typeof x === 'string') {
           if (!isSafeRelativePath(x)) return null
@@ -51,6 +58,8 @@ export async function getAllPhotos(): Promise<Photo[]> {
             url: photoUrlFromRelativePath(x),
             fileName: fileNameFromPath(x),
             isFeatured: isFeaturedFromPath(x),
+            date: null,
+            fields: [],
           }
         }
         
@@ -58,6 +67,8 @@ export async function getAllPhotos(): Promise<Photo[]> {
           const obj = x as Record<string, unknown>
           const pathStr = typeof obj.path === 'string' ? obj.path : ''
           const thumbStr = typeof obj.thumb === 'string' ? obj.thumb : ''
+          const dateStr = typeof obj.date === 'string' ? obj.date : null
+          const fieldsArr = Array.isArray(obj.fields) ? obj.fields : []
           
           if (!pathStr || !isSafeRelativePath(pathStr)) return null
           
@@ -67,6 +78,14 @@ export async function getAllPhotos(): Promise<Photo[]> {
             thumbUrl: thumbStr && isSafeRelativePath(thumbStr) ? photoUrlFromRelativePath(thumbStr) : undefined,
             fileName: fileNameFromPath(pathStr),
             isFeatured: isFeaturedFromPath(pathStr),
+            date: dateStr,
+            fields: fieldsArr
+              .filter((f): f is Record<string, unknown> => typeof f === 'object' && f !== null)
+              .map((f) => ({
+                label: typeof f.label === 'string' ? f.label : '',
+                value: typeof f.value === 'string' ? f.value : '',
+              }))
+              .filter((f) => f.label && f.value),
           }
         }
         
@@ -91,6 +110,8 @@ export function getPhotoById(photoId: string): Photo | undefined {
       thumbUrl: undefined, // Will be populated by getAllPhotos if available
       fileName: fileNameFromPath(decoded),
       isFeatured: isFeaturedFromPath(decoded),
+      date: null,
+      fields: [],
     }
   } catch {
     return undefined

@@ -2,14 +2,13 @@ import { getAllPhotos } from '../photos'
 import { clear, el } from '../utils/dom'
 import { pickReadableInkFromBottomLeft } from '../utils/color'
 import { getThumbnailObjectUrl } from '../utils/thumbs'
-import { formatDateOnly, readShootDateTime } from '../utils/exif'
+import { formatDateOnly } from '../utils/exif'
 
 const TRANSPARENT_PIXEL =
   'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='
 
 let cachedRoot: HTMLElement | null = null
 let cachedKey = ''
-const dateCache = new Map<string, string>()
 let cachedScrollY = 0
 
 export async function renderGalleryView(container: HTMLElement) {
@@ -106,7 +105,7 @@ export async function renderGalleryView(container: HTMLElement) {
                 { once: true },
               )
 
-              // Gallery should display thumbnails only.
+              // Gallery should display thumbnails only, never original images
               img.src = thumbUrl
             } catch (err) {
               console.warn('[gallery] thumbnail failed', err)
@@ -116,30 +115,10 @@ export async function renderGalleryView(container: HTMLElement) {
           })()
         }
 
-        if (dateEl && photoUrl && !dateEl.dataset.loaded) {
+        if (dateEl && !dateEl.dataset.loaded) {
           dateEl.dataset.loaded = '1'
-          void (async () => {
-            try {
-              const hit = dateCache.get(photoUrl)
-              if (hit) {
-                dateEl.textContent = hit
-                markDone('date')
-                return
-              }
-
-              const dt = await readShootDateTime(photoUrl)
-              if (dt) {
-                const text = formatDateOnly(dt)
-                dateCache.set(photoUrl, text)
-                dateEl.textContent = text
-              } else {
-                dateEl.textContent = ''
-              }
-            } finally {
-              // Consider date “done” even if EXIF is missing.
-              markDone('date')
-            }
-          })()
+          // Date is already set from metadata during tile creation
+          markDone('date')
         }
 
       }
@@ -168,7 +147,20 @@ export async function renderGalleryView(container: HTMLElement) {
     })
     // Prevent some browsers from rendering a broken image icon before src is set.
     img.src = TRANSPARENT_PIXEL
-    const date = el('div', { className: 'tileDate', title: '拍摄日期' }, [''])
+    
+    // Use pre-extracted metadata from manifest
+    let dateText = ''
+    if (photo.date) {
+      try {
+        const dt = new Date(photo.date)
+        if (!isNaN(dt.getTime())) {
+          dateText = formatDateOnly(dt)
+        }
+      } catch {
+        // ignore invalid dates
+      }
+    }
+    const date = el('div', { className: 'tileDate', title: '拍摄日期' }, [dateText])
     date.setAttribute('data-role', 'date')
     media.append(img, date)
     link.append(media)
