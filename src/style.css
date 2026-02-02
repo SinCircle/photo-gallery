@@ -415,6 +415,8 @@ button:focus-visible {
   height: 6px;
   border-radius: 50%;
   background: rgba(17, 17, 17, 0.55);
+  transform: scale(0.45);
+  opacity: 0.35;
   animation: dockMetaDot 1.2s ease-in-out infinite;
 }
 

@@ -140,7 +140,9 @@ export async function renderPhotoView(
   function updateMetaDisplay() {
     if (!imageReady || !metaReady) {
       metaList.hidden = false
-      metaList.replaceChildren(metaLoading)
+      if (metaList.firstChild !== metaLoading || metaList.childNodes.length !== 1) {
+        metaList.replaceChildren(metaLoading)
+      }
       updateDockStacking()
       return
     }
