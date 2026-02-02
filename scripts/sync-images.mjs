@@ -242,6 +242,7 @@ async function main() {
   // Build manifest with thumbnail info and metadata
   console.log('Extracting metadata from images...')
   const manifest = {
+    _builtAt: new Date().toISOString(),
     images: await Promise.all(images.map(async (img) => {
       // Calculate thumbnail path (same relative path but in thumbnails/ and .jpg extension)
       const thumbPath = `thumbnails/${img.replace(/\.[^.]+$/, '.jpg')}`
@@ -260,6 +261,23 @@ async function main() {
         fields: metadata.fields
       }
     }))
+  }
+
+  // Debug: Validate public dir content
+  const debugInfo = {
+    sourceThumbnails: [],
+    publicThumbnails: [],
+    manifestImageCount: manifest.images.length
+  }
+  try {
+    if (await exists(thumbSourceDir)) debugInfo.sourceThumbnails = await readdir(thumbSourceDir)
+    if (await exists(thumbDestDir)) debugInfo.publicThumbnails = await readdir(thumbDestDir)
+    
+    await writeFile(path.join(root, 'public', 'debug-info.json'), JSON.stringify(debugInfo, null, 2))
+    console.log('Debug info written to public/debug-info.json')
+    console.log('Public thumbnails count:', debugInfo.publicThumbnails.length)
+  } catch (e) {
+    console.warn('Failed to write debug info', e)
   }
   
   await writeFile(manifestPath, JSON.stringify(manifest, null, 2), 'utf8')
