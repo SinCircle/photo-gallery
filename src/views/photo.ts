@@ -342,14 +342,21 @@ export async function renderPhotoView(
         enableAnimSoon()
       }
 
-      // Show the hi-res immediately (progressive render), then hide low-res once done.
+      // Crossfade as soon as the hi-res is ready.
       if (hiReady) return
       hiReady = true
       stage.classList.add('hiReady')
       // If user is in 1:1, update scale based on real pixels.
       if (mode === 'oneToOne') relayout(false)
 
-      stage.classList.add('hiDone')
+      // Hide the low layer only after the hi-res fade-in completes.
+      const onHiFadeDone = () => {
+        stage.classList.add('hiDone')
+      }
+
+      imgHigh.addEventListener('transitionend', onHiFadeDone, { once: true })
+      // Fallback in case transitionend doesn't fire.
+      window.setTimeout(onHiFadeDone, 320)
     },
     { once: true },
   )

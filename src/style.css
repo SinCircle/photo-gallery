@@ -317,8 +317,8 @@ button:focus-visible {
 }
 
 .photoImgHigh {
-  opacity: 1;
-  transition: none;
+  opacity: 0;
+  transition: opacity 260ms ease;
 }
 
 .photoStage.hiReady .photoImgLow {
