@@ -350,10 +350,8 @@ export async function renderPhotoView(
         // If user is in 1:1, update scale based on real pixels.
         if (mode === 'oneToOne') relayout(false)
 
-        // Only after the high layer has started fading in do we fade out the low layer.
-        window.setTimeout(() => {
-          stage.classList.add('hiDone')
-        }, 280)
+        // Fade out the low layer immediately once the high layer is ready.
+        stage.classList.add('hiDone')
       }, 180)
     },
     { once: true },
