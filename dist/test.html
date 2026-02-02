@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Thumbnail Debug</title>
+    <style>
+        body { font-family: system-ui; padding: 20px; }
+        .test { margin: 20px 0; padding: 20px; background: #f5f5f5; }
+        img { max-width: 300px; display: block; margin: 10px 0; }
+        pre { background: #333; color: #0f0; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Thumbnail Loading Debug</h1>
+    <div id="log"></div>
+    
+    <script type="module">
+        function log(msg, isError = false) {
+            const pre = document.createElement('pre');
+            pre.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            pre.style.color = isError ? '#f00' : '#0f0';
+            document.getElementById('log').appendChild(pre);
+            console.log(msg);
+        }
+        
+        log('Starting debug...');
+        
+        // Test 1: Load manifest
+        try {
+            const res = await fetch('images-manifest.json');
+            const data = await res.json();
+            log(`✓ Manifest loaded: ${data.images.length} images`);
+            
+            const first = data.images[0];
+            log(`First image: path=${first.path}, thumb=${first.thumb}`);
+            
+            // Test 2: Build thumbnail URL
+            const thumbUrl = `images/${first.thumb}`;
+            log(`Thumbnail URL: ${thumbUrl}`);
+            
+            // Test 3: Fetch thumbnail
+            const thumbRes = await fetch(thumbUrl);
+            log(`✓ Thumbnail fetch: ${thumbRes.status} ${thumbRes.statusText}`);
+            
+            if (thumbRes.ok) {
+                const blob = await thumbRes.blob();
+                log(`✓ Thumbnail blob: ${blob.size} bytes, type: ${blob.type}`);
+                
+                // Test 4: Create object URL and display
+                const objectUrl = URL.createObjectURL(blob);
+                log(`✓ Object URL created: ${objectUrl.substring(0, 50)}...`);
+                
+                const img = document.createElement('img');
+                img.src = objectUrl;
+                img.onload = () => log(`✓ Image loaded: ${img.naturalWidth}x${img.naturalHeight}`);
+                img.onerror = () => log(`✗ Image failed to load`, true);
+                document.getElementById('log').appendChild(img);
+            } else {
+                log(`✗ Thumbnail fetch failed: ${thumbRes.status}`, true);
+            }
+            
+        } catch (err) {
+            log(`✗ Error: ${err.message}`, true);
+        }
+    </script>
+</body>
+</html>
