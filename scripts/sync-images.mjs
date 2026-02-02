@@ -2,10 +2,7 @@ import { readdir, mkdir, rm, copyFile, stat, writeFile } from 'node:fs/promises'
 import { spawn } from 'node:child_process'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { execFile } from 'node:child_process'
-import { promisify } from 'node:util'
-
-const execFileAsync = promisify(execFile)
+import exifr from 'exifr'
 
 const root = process.cwd()
 const sourceDir = path.join(root, 'images')
@@ -102,129 +99,53 @@ async function generateThumbnails() {
   })
 }
 
-async function extractMetadataFromThumbnail(thumbPath) {
-  const scriptCode = `
-import sys
-import json
-from PIL import Image
-import piexif
-from datetime import datetime
+function formatExposureTime(seconds) {
+  if (!Number.isFinite(seconds) || seconds <= 0) return null
+  if (seconds >= 1) return seconds < 2 ? `${seconds.toFixed(1)}s` : `${Math.round(seconds)}s`
+  const denom = Math.round(1 / seconds)
+  if (denom > 0) return `1/${denom}s`
+  return `${seconds}s`
+}
 
-def parse_exif_datetime(dt_str):
-    """Parse EXIF datetime string to ISO format."""
-    try:
-        if isinstance(dt_str, bytes):
-            dt_str = dt_str.decode('utf-8')
-        # EXIF datetime format: "YYYY:MM:DD HH:MM:SS"
-        dt = datetime.strptime(dt_str, "%Y:%m:%d %H:%M:%S")
-        return dt.isoformat()
-    except:
-        return None
-
-def format_exposure_time(seconds):
-    """Format exposure time for display."""
-    if not isinstance(seconds, (int, float)) or seconds <= 0:
-        return None
-    if seconds >= 1:
-        return f"{seconds:.1f}s" if seconds < 2 else f"{int(seconds)}s"
-    denom = round(1 / seconds)
-    if denom > 0:
-        return f"1/{denom}s"
-    return f"{seconds}s"
-
-try:
-    img_path = sys.argv[1]
-    img = Image.open(img_path)
-    
-    result = {
-        "date": None,
-        "fields": []
-    }
-    
-    # Try to load EXIF data
-    try:
-        exif_dict = piexif.load(img.info.get('exif', b''))
-        exif_data = {}
-        
-        # Extract relevant EXIF fields
-        if '0th' in exif_dict:
-            ifd = exif_dict['0th']
-            if piexif.ImageIFD.Make in ifd:
-                exif_data['Make'] = ifd[piexif.ImageIFD.Make]
-            if piexif.ImageIFD.Model in ifd:
-                exif_data['Model'] = ifd[piexif.ImageIFD.Model]
-        
-        if 'Exif' in exif_dict:
-            ifd = exif_dict['Exif']
-            if piexif.ExifIFD.DateTimeOriginal in ifd:
-                exif_data['DateTimeOriginal'] = ifd[piexif.ExifIFD.DateTimeOriginal]
-            if piexif.ExifIFD.LensModel in ifd:
-                exif_data['LensModel'] = ifd[piexif.ExifIFD.LensModel]
-            if piexif.ExifIFD.FNumber in ifd:
-                exif_data['FNumber'] = ifd[piexif.ExifIFD.FNumber]
-            if piexif.ExifIFD.ExposureTime in ifd:
-                exif_data['ExposureTime'] = ifd[piexif.ExifIFD.ExposureTime]
-            if piexif.ExifIFD.FocalLength in ifd:
-                exif_data['FocalLength'] = ifd[piexif.ExifIFD.FocalLength]
-            if piexif.ExifIFD.ISOSpeedRatings in ifd:
-                exif_data['ISO'] = ifd[piexif.ExifIFD.ISOSpeedRatings]
-        
-        # Parse datetime
-        if 'DateTimeOriginal' in exif_data:
-            result['date'] = parse_exif_datetime(exif_data['DateTimeOriginal'])
-        
-        # Build fields
-        if 'Make' in exif_data or 'Model' in exif_data:
-            make = exif_data.get('Make', b'').decode('utf-8') if isinstance(exif_data.get('Make'), bytes) else exif_data.get('Make', '')
-            model = exif_data.get('Model', b'').decode('utf-8') if isinstance(exif_data.get('Model'), bytes) else exif_data.get('Model', '')
-            camera = ' '.join(filter(None, [make, model]))
-            if camera:
-                result['fields'].append({"label": "相机", "value": camera})
-        
-        if 'LensModel' in exif_data:
-            lens = exif_data['LensModel']
-            if isinstance(lens, bytes):
-                lens = lens.decode('utf-8')
-            result['fields'].append({"label": "镜头", "value": str(lens)})
-        
-        if 'FNumber' in exif_data:
-            fnumber = exif_data['FNumber']
-            if isinstance(fnumber, tuple):
-                fnumber = fnumber[0] / fnumber[1]
-            result['fields'].append({"label": "光圈", "value": f"f/{fnumber}"})
-        
-        if 'ExposureTime' in exif_data:
-            exp_time = exif_data['ExposureTime']
-            if isinstance(exp_time, tuple):
-                exp_time = exp_time[0] / exp_time[1]
-            formatted = format_exposure_time(exp_time)
-            if formatted:
-                result['fields'].append({"label": "快门", "value": formatted})
-        
-        if 'FocalLength' in exif_data:
-            focal = exif_data['FocalLength']
-            if isinstance(focal, tuple):
-                focal = focal[0] / focal[1]
-            result['fields'].append({"label": "焦距", "value": f"{round(focal)}mm"})
-        
-        if 'ISO' in exif_data:
-            result['fields'].append({"label": "ISO", "value": str(exif_data['ISO'])})
-    
-    except:
-        pass  # No EXIF data or error reading it
-    
-    print(json.dumps(result))
-    
-except Exception as e:
-    print(json.dumps({"date": None, "fields": []}))
-`
-
+async function extractMetadataFromImage(imgPath) {
   try {
-    const { stdout } = await execFileAsync('python', ['-c', scriptCode, thumbPath])
-    return JSON.parse(stdout.trim())
-  } catch (err) {
-    // If extraction fails, return empty metadata
-    return { date: null, fields: [] }
+  const data = await exifr.parse(imgPath, [
+    'DateTimeOriginal',
+    'CreateDate',
+    'ModifyDate',
+    'Make',
+    'Model',
+    'LensModel',
+    'FNumber',
+    'ExposureTime',
+    'FocalLength',
+    'ISO',
+  ])
+
+  const candidate = data?.DateTimeOriginal ?? data?.CreateDate ?? data?.ModifyDate
+  const date = candidate instanceof Date && !Number.isNaN(candidate.getTime())
+    ? candidate.toISOString()
+    : null
+
+  const fields = []
+  if (data?.Make || data?.Model) {
+    const camera = [data?.Make, data?.Model].filter(Boolean).join(' ')
+    if (camera) fields.push({ label: '相机', value: String(camera) })
+  }
+  if (data?.LensModel) fields.push({ label: '镜头', value: String(data.LensModel) })
+  if (typeof data?.FNumber === 'number') fields.push({ label: '光圈', value: `f/${data.FNumber}` })
+  if (typeof data?.ExposureTime === 'number') {
+    const formatted = formatExposureTime(data.ExposureTime)
+    if (formatted) fields.push({ label: '快门', value: formatted })
+  }
+  if (typeof data?.FocalLength === 'number') {
+    fields.push({ label: '焦距', value: `${Math.round(data.FocalLength)}mm` })
+  }
+  if (typeof data?.ISO === 'number') fields.push({ label: 'ISO', value: String(data.ISO) })
+
+  return { date, fields }
+  } catch {
+  return { date: null, fields: [] }
   }
 }
 
@@ -257,17 +178,17 @@ async function main() {
   images.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
   
   // Build manifest with thumbnail info and metadata
-  console.log('Extracting metadata from thumbnails...')
+  console.log('Extracting metadata from images...')
   const manifest = {
     images: await Promise.all(images.map(async (img) => {
       // Calculate thumbnail path (same relative path but in thumbnails/ and .jpg extension)
       const thumbPath = `thumbnails/${img.replace(/\.[^.]+$/, '.jpg')}`
-      const thumbFullPath = path.join(sourceDir, thumbPath)
+      const imgFullPath = path.join(sourceDir, img)
       
-      // Extract metadata from thumbnail
+      // Extract metadata from original image
       let metadata = { date: null, fields: [] }
-      if (await exists(thumbFullPath)) {
-        metadata = await extractMetadataFromThumbnail(thumbFullPath)
+      if (await exists(imgFullPath)) {
+        metadata = await extractMetadataFromImage(imgFullPath)
       }
       
       return {
