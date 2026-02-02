@@ -248,6 +248,87 @@
           "value": "50"
         }
       ]
+    },
+    {
+      "path": "IMG_20260201_173805.jpg",
+      "thumb": "thumbnails/IMG_20260201_173805.jpg",
+      "date": "2026-02-01T09:38:05.000Z",
+      "fields": [
+        {
+          "label": "相机",
+          "value": "HUAWEI HUAWEI Pura 70 Ultra"
+        },
+        {
+          "label": "光圈",
+          "value": "f/2.1"
+        },
+        {
+          "label": "快门",
+          "value": "1/50s"
+        },
+        {
+          "label": "焦距",
+          "value": "15mm"
+        },
+        {
+          "label": "ISO",
+          "value": "101"
+        }
+      ]
+    },
+    {
+      "path": "IMG_20260201_181608.jpg",
+      "thumb": "thumbnails/IMG_20260201_181608.jpg",
+      "date": "2026-02-01T10:16:08.000Z",
+      "fields": [
+        {
+          "label": "相机",
+          "value": "HUAWEI HUAWEI Pura 70 Ultra"
+        },
+        {
+          "label": "光圈",
+          "value": "f/2.1"
+        },
+        {
+          "label": "快门",
+          "value": "1/100s"
+        },
+        {
+          "label": "焦距",
+          "value": "15mm"
+        },
+        {
+          "label": "ISO",
+          "value": "183"
+        }
+      ]
+    },
+    {
+      "path": "IMG_20260201_182831.jpg",
+      "thumb": "thumbnails/IMG_20260201_182831.jpg",
+      "date": "2026-02-01T10:28:31.000Z",
+      "fields": [
+        {
+          "label": "相机",
+          "value": "HUAWEI HUAWEI Pura 70 Ultra"
+        },
+        {
+          "label": "光圈",
+          "value": "f/2"
+        },
+        {
+          "label": "快门",
+          "value": "1/100s"
+        },
+        {
+          "label": "焦距",
+          "value": "9mm"
+        },
+        {
+          "label": "ISO",
+          "value": "133"
+        }
+      ]
     }
   ]
 }
