@@ -401,6 +401,52 @@ button:focus-visible {
   white-space: nowrap;
 }
 
+.dockMetaLoading {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 18px;
+  width: 100%;
+  justify-content: center;
+}
+
+.dockMetaLoadingDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(17, 17, 17, 0.55);
+  animation: dockMetaDot 1.2s ease-in-out infinite;
+}
+
+.dockMetaLoadingDot:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.dockMetaLoadingDot:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+.dockMetaLoadingDot:nth-child(4) {
+  animation-delay: 0.36s;
+}
+
+.dockMetaLoadingDot:nth-child(5) {
+  animation-delay: 0.48s;
+}
+
+@keyframes dockMetaDot {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.45);
+    opacity: 0.35;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 0.95;
+  }
+}
+
 /* Stacked layout: first row is horizontally scrollable metadata, second row is buttons */
 .dockInner.isStacked {
   grid-template-columns: 1fr auto;

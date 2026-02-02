@@ -104,6 +104,15 @@ export async function renderPhotoView(
   })
 
   const metaList = el('div', { className: 'dockMeta', hidden: true })
+  const metaLoading = el('div', { className: 'dockMetaLoading' }, [
+    el('span', { className: 'dockMetaLoadingDot' }),
+    el('span', { className: 'dockMetaLoadingDot' }),
+    el('span', { className: 'dockMetaLoadingDot' }),
+    el('span', { className: 'dockMetaLoadingDot' }),
+    el('span', { className: 'dockMetaLoadingDot' }),
+  ])
+  metaLoading.setAttribute('role', 'status')
+  metaLoading.setAttribute('aria-live', 'polite')
   const metaPromise = readPhotoMetadata(photo.url)
 
   const updateDockStacking = () => {
@@ -124,6 +133,34 @@ export async function renderPhotoView(
   let scale = 1
   let translateX = 0
   let translateY = 0
+  let imageReady = false
+  let metaReady = false
+  let metaItems: Array<{ label: string; value: string }> = []
+
+  function updateMetaDisplay() {
+    if (!imageReady || !metaReady) {
+      metaList.hidden = false
+      metaList.replaceChildren(metaLoading)
+      updateDockStacking()
+      return
+    }
+
+    const items = metaItems
+    if (items.length === 0) {
+      metaList.hidden = true
+      updateDockStacking()
+      return
+    }
+
+    metaList.hidden = false
+    metaList.replaceChildren(
+      ...items.map((it) =>
+        el('span', { className: 'dockMetaItem' }, [`${it.label}：${it.value}`]),
+      ),
+    )
+
+    requestAnimationFrame(() => updateDockStacking())
+  }
 
   // Virtual box used for layout (resolution-independent).
   let boxW = 1200
@@ -326,6 +363,8 @@ export async function renderPhotoView(
   imgHigh.addEventListener(
     'load',
     async () => {
+      imageReady = true
+      updateMetaDisplay()
       try {
         await imgHigh.decode?.()
       } catch {
@@ -483,25 +522,16 @@ export async function renderPhotoView(
   window.addEventListener('resize', updateDockStacking)
 
   // Populate metadata (show only what exists).
+  updateMetaDisplay()
+
   void (async () => {
     const meta = await metaPromise
     const items: Array<{ label: string; value: string }> = []
     if (meta.date) items.push({ label: '日期', value: formatDateTime(meta.date) })
     items.push(...meta.fields)
 
-    if (items.length === 0) {
-      metaList.hidden = true
-      updateDockStacking()
-      return
-    }
-
-    metaList.hidden = false
-    metaList.replaceChildren(
-      ...items.map((it) =>
-        el('span', { className: 'dockMetaItem' }, [`${it.label}：${it.value}`]),
-      ),
-    )
-
-    requestAnimationFrame(() => updateDockStacking())
+    metaItems = items
+    metaReady = true
+    updateMetaDisplay()
   })()
 }
