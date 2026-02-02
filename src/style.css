@@ -317,8 +317,8 @@ button:focus-visible {
 }
 
 .photoImgHigh {
-  opacity: 0;
-  transition: opacity 260ms ease;
+  opacity: 1;
+  transition: none;
 }
 
 .photoStage.hiReady .photoImgLow {
@@ -331,6 +331,7 @@ button:focus-visible {
 
 .photoStage.hiDone .photoImgLow {
   opacity: 0;
+  visibility: hidden;
 }
 
 .photoStage.noAnim .photoPan,

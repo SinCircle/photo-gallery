@@ -342,17 +342,14 @@ export async function renderPhotoView(
         enableAnimSoon()
       }
 
-      // Delay then crossfade (no hard cut).
-      window.setTimeout(() => {
-        if (hiReady) return
-        hiReady = true
-        stage.classList.add('hiReady')
-        // If user is in 1:1, update scale based on real pixels.
-        if (mode === 'oneToOne') relayout(false)
+      // Show the hi-res immediately (progressive render), then hide low-res once done.
+      if (hiReady) return
+      hiReady = true
+      stage.classList.add('hiReady')
+      // If user is in 1:1, update scale based on real pixels.
+      if (mode === 'oneToOne') relayout(false)
 
-        // Fade out the low layer immediately once the high layer is ready.
-        stage.classList.add('hiDone')
-      }, 180)
+      stage.classList.add('hiDone')
     },
     { once: true },
   )
