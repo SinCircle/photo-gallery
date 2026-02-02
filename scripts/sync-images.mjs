@@ -102,18 +102,19 @@ async function generateThumbnails() {
 }
 
 async function generateThumbnailsWithSharp() {
-  console.warn('Falling back to JS thumbnail generation (sharp)...')
+  console.log('Falling back to JS thumbnail generation (sharp)...')
   let sharp
   try {
     ;({ default: sharp } = await import('sharp'))
   } catch (err) {
-    console.warn('sharp not available, cannot generate thumbnails:', err?.message || err)
+    console.error('sharp not available, cannot generate thumbnails:', err?.message || err)
     return false
   }
 
   const images = await listRelativeImagePaths(sourceDir, sourceDir, new Set(['thumbnails']))
   let ok = true
 
+  console.log(`Generating ${images.length} thumbnails with sharp...`)
   for (const img of images) {
     const srcPath = path.join(sourceDir, img)
     const destPath = path.join(thumbSourceDir, img.replace(/\.[^.]+$/, '.jpg'))
@@ -127,7 +128,8 @@ async function generateThumbnailsWithSharp() {
       } catch {
         // If destination doesn't exist, proceed to generate.
       }
-
+      
+      console.log(`  processing ${img}...`)
       await sharp(srcPath)
         .rotate()
         .resize({ width: THUMB_SIZE, height: THUMB_SIZE, fit: 'inside', withoutEnlargement: true })
@@ -136,7 +138,7 @@ async function generateThumbnailsWithSharp() {
         .toFile(destPath)
     } catch (err) {
       ok = false
-      console.warn('Failed to generate thumbnail with sharp:', img, err?.message || err)
+      console.error('Failed to generate thumbnail with sharp:', img, err?.message || err)
     }
   }
 
