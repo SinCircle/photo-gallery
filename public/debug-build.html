@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>构建产物调试</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans", "PingFang SC",
+          "Microsoft YaHei", sans-serif;
+      }
+      body {
+        margin: 0;
+        padding: 24px;
+        background: #0b0d10;
+        color: #e8eaf0;
+      }
+      h1 {
+        margin: 0 0 16px;
+        font-size: 22px;
+      }
+      .row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+      button {
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1px solid #2a2f3a;
+        background: #1a1f2b;
+        color: #e8eaf0;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #232a3b;
+      }
+      .stats {
+        font-size: 14px;
+        color: #b8c0d0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 8px 10px;
+        border-bottom: 1px solid #2a2f3a;
+        vertical-align: top;
+        font-size: 13px;
+      }
+      th {
+        color: #9fb0d0;
+        font-weight: 600;
+      }
+      a {
+        color: #7ab7ff;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .ok {
+        color: #7ee787;
+      }
+      .bad {
+        color: #ff7b72;
+      }
+      .muted {
+        color: #94a0b8;
+      }
+      .imgbox {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .thumb {
+        width: 56px;
+        height: 56px;
+        object-fit: cover;
+        border-radius: 6px;
+        background: #11161f;
+        border: 1px solid #2a2f3a;
+      }
+      .pill {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        border: 1px solid #2a2f3a;
+      }
+      .pill.ok {
+        background: rgba(46, 160, 67, 0.2);
+      }
+      .pill.bad {
+        background: rgba(248, 81, 73, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>构建产物调试</h1>
+    <div class="row">
+      <button id="run">开始检查</button>
+      <span class="stats" id="stats">未开始</span>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>图片</th>
+          <th>原图</th>
+          <th>缩略图</th>
+          <th>结果</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+
+    <script>
+      const statsEl = document.getElementById('stats')
+      const tbody = document.getElementById('tbody')
+      const runBtn = document.getElementById('run')
+
+      async function headOrGet(url) {
+        try {
+          const res = await fetch(url, { method: 'HEAD', cache: 'no-store' })
+          if (res.ok) return { ok: true, status: res.status }
+          return { ok: false, status: res.status }
+        } catch {
+          try {
+            const res = await fetch(url, { cache: 'no-store' })
+            return { ok: res.ok, status: res.status }
+          } catch (err) {
+            return { ok: false, status: 0, error: String(err) }
+          }
+        }
+      }
+
+      function linkFor(url, label) {
+        const a = document.createElement('a')
+        a.href = url
+        a.textContent = label
+        a.target = '_blank'
+        a.rel = 'noreferrer'
+        return a
+      }
+
+      async function run() {
+        runBtn.disabled = true
+        statsEl.textContent = '正在读取 images-manifest.json…'
+        tbody.innerHTML = ''
+
+        let manifest
+        try {
+          const res = await fetch('./images-manifest.json', { cache: 'no-store' })
+          if (!res.ok) throw new Error(`manifest ${res.status}`)
+          manifest = await res.json()
+        } catch (err) {
+          statsEl.textContent = `读取 manifest 失败：${err}`
+          runBtn.disabled = false
+          return
+        }
+
+        const items = Array.isArray(manifest.images) ? manifest.images : []
+        let okCount = 0
+        let failCount = 0
+
+        for (const item of items) {
+          const path = item && typeof item.path === 'string' ? item.path : ''
+          const thumb = item && typeof item.thumb === 'string' ? item.thumb : ''
+          if (!path) continue
+
+          const originalUrl = `./images/${path}`
+          const thumbUrl = thumb ? `./images/${thumb}` : ''
+
+          const tr = document.createElement('tr')
+          const nameTd = document.createElement('td')
+          const originalTd = document.createElement('td')
+          const thumbTd = document.createElement('td')
+          const resultTd = document.createElement('td')
+
+          nameTd.textContent = path
+
+          const imgBox = document.createElement('div')
+          imgBox.className = 'imgbox'
+          if (thumbUrl) {
+            const img = document.createElement('img')
+            img.className = 'thumb'
+            img.loading = 'lazy'
+            img.alt = path
+            img.src = thumbUrl
+            imgBox.appendChild(img)
+          }
+          nameTd.appendChild(document.createElement('br'))
+          nameTd.appendChild(imgBox)
+
+          originalTd.appendChild(linkFor(originalUrl, '打开'))
+          if (thumbUrl) thumbTd.appendChild(linkFor(thumbUrl, '打开'))
+          else thumbTd.textContent = '无'
+
+          tr.append(nameTd, originalTd, thumbTd, resultTd)
+          tbody.appendChild(tr)
+
+          const [origRes, thumbRes] = await Promise.all([
+            headOrGet(originalUrl),
+            thumbUrl ? headOrGet(thumbUrl) : Promise.resolve({ ok: false, status: 0 })
+          ])
+
+          const ok = origRes.ok && (!!thumbUrl ? thumbRes.ok : false)
+          if (ok) okCount++
+          else failCount++
+
+          const pill = document.createElement('span')
+          pill.className = `pill ${ok ? 'ok' : 'bad'}`
+          pill.textContent = ok ? 'OK' : '缺失'
+          resultTd.appendChild(pill)
+
+          if (!origRes.ok) {
+            const msg = document.createElement('div')
+            msg.className = 'bad'
+            msg.textContent = `原图 ${origRes.status || 'ERR'}`
+            resultTd.appendChild(msg)
+          }
+          if (thumbUrl && !thumbRes.ok) {
+            const msg = document.createElement('div')
+            msg.className = 'bad'
+            msg.textContent = `缩略图 ${thumbRes.status || 'ERR'}`
+            resultTd.appendChild(msg)
+          }
+        }
+
+        statsEl.textContent = `完成：OK ${okCount}，失败 ${failCount}，总计 ${okCount + failCount}`
+        runBtn.disabled = false
+      }
+
+      runBtn.addEventListener('click', () => void run())
+    </script>
+  </body>
+</html>
