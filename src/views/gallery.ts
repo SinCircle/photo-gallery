@@ -112,6 +112,16 @@ export async function renderGalleryView(container: HTMLElement) {
                 },
                 { once: true },
               )
+              
+              img.addEventListener(
+                'error',
+                () => {
+                  console.error('[gallery] Image load error for:', thumbUrl)
+                  io.unobserve(tile)
+                  tile.remove()
+                },
+                { once: true },
+              )
 
               // Set thumbnail as image source (never original image)
               img.src = objectUrl

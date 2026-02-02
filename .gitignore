@@ -19,6 +19,7 @@ public/images/*
 !public/images/.gitkeep
 public/images-manifest.json
 public/test.html
+public/minimal-test.html
 
 # Editor directories and files
 .vscode/*
