@@ -270,12 +270,23 @@ async function main() {
     manifestImageCount: manifest.images.length
   }
   try {
-    if (await exists(thumbSourceDir)) debugInfo.sourceThumbnails = await readdir(thumbSourceDir)
-    if (await exists(thumbDestDir)) debugInfo.publicThumbnails = await readdir(thumbDestDir)
+    if (await exists(thumbSourceDir)) {
+      const files = await readdir(thumbSourceDir)
+      debugInfo.sourceThumbnails = await Promise.all(files.map(async f => {
+        const s = await stat(path.join(thumbSourceDir, f))
+        return { name: f, size: s.size }
+      }))
+    }
+    if (await exists(thumbDestDir)) {
+      const files = await readdir(thumbDestDir)
+      debugInfo.publicThumbnails = await Promise.all(files.map(async f => {
+        const s = await stat(path.join(thumbDestDir, f))
+        return { name: f, size: s.size }
+      }))
+    }
     
     await writeFile(path.join(root, 'public', 'debug-info.json'), JSON.stringify(debugInfo, null, 2))
     console.log('Debug info written to public/debug-info.json')
-    console.log('Public thumbnails count:', debugInfo.publicThumbnails.length)
   } catch (e) {
     console.warn('Failed to write debug info', e)
   }
