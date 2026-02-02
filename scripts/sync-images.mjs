@@ -12,6 +12,8 @@ const thumbDestDir = path.join(destDir, 'thumbnails')
 const manifestPath = path.join(root, 'public', 'images-manifest.json')
 
 const ALLOWED_EXT = new Set(['.avif', '.gif', '.jpeg', '.jpg', '.png', '.webp'])
+const THUMB_SIZE = 720
+const THUMB_QUALITY = 85
 
 async function exists(p) {
   try {
@@ -99,6 +101,48 @@ async function generateThumbnails() {
   })
 }
 
+async function generateThumbnailsWithSharp() {
+  console.warn('Falling back to JS thumbnail generation (sharp)...')
+  let sharp
+  try {
+    ;({ default: sharp } = await import('sharp'))
+  } catch (err) {
+    console.warn('sharp not available, cannot generate thumbnails:', err?.message || err)
+    return false
+  }
+
+  const images = await listRelativeImagePaths(sourceDir, sourceDir, new Set(['thumbnails']))
+  let ok = true
+
+  for (const img of images) {
+    const srcPath = path.join(sourceDir, img)
+    const destPath = path.join(thumbSourceDir, img.replace(/\.[^.]+$/, '.jpg'))
+
+    try {
+      await mkdir(path.dirname(destPath), { recursive: true })
+
+      try {
+        const [srcStat, dstStat] = await Promise.all([stat(srcPath), stat(destPath)])
+        if (dstStat.mtimeMs >= srcStat.mtimeMs) continue
+      } catch {
+        // If destination doesn't exist, proceed to generate.
+      }
+
+      await sharp(srcPath)
+        .rotate()
+        .resize({ width: THUMB_SIZE, height: THUMB_SIZE, fit: 'inside', withoutEnlargement: true })
+        .jpeg({ quality: THUMB_QUALITY, mozjpeg: true })
+        .withMetadata()
+        .toFile(destPath)
+    } catch (err) {
+      ok = false
+      console.warn('Failed to generate thumbnail with sharp:', img, err?.message || err)
+    }
+  }
+
+  return ok
+}
+
 function formatExposureTime(seconds) {
   if (!Number.isFinite(seconds) || seconds <= 0) return null
   if (seconds >= 1) return seconds < 2 ? `${seconds.toFixed(1)}s` : `${Math.round(seconds)}s`
@@ -163,7 +207,10 @@ async function main() {
   await mkdir(destDir, { recursive: true })
 
   // Generate thumbnails first
-  await generateThumbnails()
+  const thumbOk = await generateThumbnails()
+  if (!thumbOk) {
+    await generateThumbnailsWithSharp()
+  }
 
   await cleanDest(destDir)
   // Copy images but skip the thumbnails directory (will copy separately)
