@@ -346,12 +346,7 @@ export async function renderPhotoView(
   const startHi = () => {
     if (hiStarted) return
     hiStarted = true
-    const pre = new Image()
-    pre.decoding = 'async'
-    pre.onload = () => {
-      imgHigh.src = photo.url
-    }
-    pre.src = photo.url
+    imgHigh.src = photo.url
   }
 
   const scheduleHiStart = (delayMs: number) => {

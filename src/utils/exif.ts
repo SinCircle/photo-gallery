@@ -22,7 +22,7 @@ function formatExposureTime(seconds: number): string {
 
 export async function readShootDateTime(url: string): Promise<Date | null> {
   try {
-    const response = await fetch(url)
+    const response = await fetch(url, { headers: { Range: 'bytes=0-131071' } })
     if (!response.ok) return null
     const blob = await response.blob()
 
@@ -48,7 +48,7 @@ export async function readShootDateTime(url: string): Promise<Date | null> {
 
 export async function readPhotoMetadata(url: string): Promise<PhotoMetadata> {
   try {
-    const response = await fetch(url)
+    const response = await fetch(url, { headers: { Range: 'bytes=0-131071' } })
     if (!response.ok) return { date: null, fields: [] }
     const blob = await response.blob()
 
