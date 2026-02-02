@@ -77,7 +77,7 @@ export async function getAllPhotos(): Promise<Photo[]> {
           return {
             id: encodeURIComponent(pathStr),
             url: photoUrlFromRelativePath(pathStr),
-            thumbUrl: thumbStr && isSafeRelativePath(thumbStr) ? photoUrlFromRelativePath(thumbStr) : undefined,
+            thumbUrl: thumbStr && isSafeRelativePath(thumbStr) ? `./images/${thumbStr}` : undefined,
             fileName: fileNameFromPath(pathStr),
             isFeatured: isFeaturedFromPath(pathStr),
             date: dateStr,
