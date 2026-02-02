@@ -176,6 +176,19 @@ async function main() {
 
   const images = await listRelativeImagePaths(sourceDir, sourceDir, new Set(['thumbnails']))
   images.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+
+  const missingThumbs = []
+  for (const img of images) {
+    const thumbPath = path.join(thumbSourceDir, img.replace(/\.[^.]+$/, '.jpg'))
+    if (!(await exists(thumbPath))) {
+      missingThumbs.push(`thumbnails/${img.replace(/\.[^.]+$/, '.jpg')}`)
+    }
+  }
+
+  if (missingThumbs.length > 0) {
+    console.error('Missing thumbnails for:', missingThumbs.join(', '))
+    throw new Error(`Missing ${missingThumbs.length} thumbnails. See log above.`)
+  }
   
   // Build manifest with thumbnail info and metadata
   console.log('Extracting metadata from images...')

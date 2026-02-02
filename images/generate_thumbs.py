@@ -8,12 +8,16 @@ EXIF metadata is copied from original images to thumbnails.
 import os
 import sys
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageFile
 import piexif
 
 MAX_SIZE = (720, 720)
 THUMB_DIR = "thumbnails"
 QUALITY = 85
+
+# Allow very large images and partially downloaded files to be processed.
+Image.MAX_IMAGE_PIXELS = None
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 def should_process(path: Path) -> bool:
     """Check if file should be processed as an image."""
