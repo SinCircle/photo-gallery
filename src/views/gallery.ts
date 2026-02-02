@@ -85,18 +85,22 @@ export async function renderGalleryView(container: HTMLElement) {
         if (img && !img.dataset.loaded) {
           img.dataset.loaded = '1'
           const thumbUrl = tile.getAttribute('data-thumb-url')
+          const photoId = tile.getAttribute('data-photo-id')
           
           if (!thumbUrl) {
-            console.error('[gallery] No thumbnail URL for tile')
+            console.error('[gallery] No thumbnail URL for tile:', photoId)
             io.unobserve(tile)
             tile.remove()
             return
           }
 
+          console.log('[gallery] Loading thumbnail:', thumbUrl, 'for photo:', photoId)
+
           void (async () => {
             try {
               // Load ONLY the pre-generated thumbnail
               const objectUrl = await getThumbnailUrl(thumbUrl)
+              console.log('[gallery] Thumbnail loaded successfully:', photoId)
               
               img.addEventListener(
                 'load',
@@ -115,8 +119,8 @@ export async function renderGalleryView(container: HTMLElement) {
               
               img.addEventListener(
                 'error',
-                () => {
-                  console.error('[gallery] Image load error for:', thumbUrl)
+                (e) => {
+                  console.error('[gallery] Image element load error:', thumbUrl, photoId, e)
                   io.unobserve(tile)
                   tile.remove()
                 },
@@ -126,7 +130,7 @@ export async function renderGalleryView(container: HTMLElement) {
               // Set thumbnail as image source (never original image)
               img.src = objectUrl
             } catch (err) {
-              console.error('[gallery] Failed to load thumbnail:', thumbUrl, err)
+              console.error('[gallery] Failed to fetch/load thumbnail:', thumbUrl, photoId, err)
               // Remove the tile if thumbnail loading fails
               io.unobserve(tile)
               tile.remove()

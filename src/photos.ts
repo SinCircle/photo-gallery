@@ -37,23 +37,15 @@ function isSafeRelativePath(p: string): boolean {
 }
 
 function photoUrlFromRelativePath(rel: string): string {
-  // Construct path relative to the base of the application
-  // Using ./ ensures paths work correctly regardless of deployment location
-  const base = import.meta.env.BASE_URL || './'
-  // Normalize base to ensure it ends with /
-  const normalizedBase = base.endsWith('/') ? base : `${base}/`
-  // Remove leading ./ from base for cleaner URLs
-  const cleanBase = normalizedBase === './' ? '' : normalizedBase
-  return `${cleanBase}images/${rel}`
+  // Use simple relative path - browser resolves from document location
+  // This works in all deployment scenarios
+  return `./images/${rel}`
 }
 
 export async function getAllPhotos(): Promise<Photo[]> {
   try {
-    const base = import.meta.env.BASE_URL || './'
-    const normalizedBase = base.endsWith('/') ? base : `${base}/`
-    const cleanBase = normalizedBase === './' ? '' : normalizedBase
-    const manifestUrl = `${cleanBase}images-manifest.json`
-    const res = await fetch(manifestUrl, { cache: 'no-store' })
+    // Use relative path for manifest
+    const res = await fetch('./images-manifest.json', { cache: 'no-store' })
     if (!res.ok) return []
     const json = (await res.json()) as { images?: unknown }
     const images = Array.isArray(json.images) ? (json.images as unknown[]) : []

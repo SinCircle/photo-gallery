@@ -15,17 +15,27 @@ const mem = new Map<string, string>()
 export async function getThumbnailUrl(thumbUrl: string): Promise<string> {
   // Check memory cache first
   const cached = mem.get(thumbUrl)
-  if (cached) return cached
+  if (cached) {
+    console.log('[thumbs] Cache hit:', thumbUrl)
+    return cached
+  }
+
+  console.log('[thumbs] Fetching:', thumbUrl)
 
   try {
     // Fetch the pre-generated thumbnail
     const res = await fetch(thumbUrl, { cache: 'force-cache' })
+    console.log('[thumbs] Fetch response:', res.status, res.statusText, 'for', thumbUrl)
+    
     if (!res.ok) {
       throw new Error(`Failed to load thumbnail: ${res.status} ${res.statusText}`)
     }
     
     const blob = await res.blob()
+    console.log('[thumbs] Blob created:', blob.size, 'bytes,', blob.type, 'for', thumbUrl)
+    
     const objectUrl = URL.createObjectURL(blob)
+    console.log('[thumbs] Object URL created:', objectUrl.substring(0, 50), '... for', thumbUrl)
     
     // Cache the object URL
     mem.set(thumbUrl, objectUrl)
