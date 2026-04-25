@@ -21,6 +21,7 @@ public/test.html
 public/minimal-test.html
 
 # Editor directories and files
+.claude/
 .vscode/*
 !.vscode/extensions.json
 .idea
