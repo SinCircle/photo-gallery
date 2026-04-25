@@ -133,9 +133,12 @@ export async function renderPhotoView(
   let scale = 1
   let translateX = 0
   let translateY = 0
+  let isFreeZoom = false
   let imageReady = false
   let metaReady = false
   let metaItems: Array<{ label: string; value: string }> = []
+
+  const labelForCurrentScale = () => (isFreeZoom ? '自由' : labelForMode(mode))
 
   function updateMetaDisplay() {
     if (!imageReady || !metaReady) {
@@ -263,6 +266,56 @@ export async function renderPhotoView(
     redundantMode = redundantModeUnderContain(stageW, stageH)
   }
 
+  function canPan(stageW: number, stageH: number) {
+    const safe = safeMetrics(stageW, stageH, mode)
+    return boxW * scale > safe.w + 0.5 || boxH * scale > safe.h + 0.5
+  }
+
+  function scaleBounds(stageW: number, stageH: number) {
+    const containScale = computeScaleFor('contain', stageW, stageH)
+    const oneToOneScale = computeScaleFor('oneToOne', stageW, stageH)
+    const minScale = Math.max(0.04, containScale * 0.5)
+    const maxScale = Math.max(minScale * 12, containScale * 20, oneToOneScale * 6)
+    return { minScale, maxScale }
+  }
+
+  function applyScaleAtPoint(
+    stageW: number,
+    stageH: number,
+    anchorX: number,
+    anchorY: number,
+    targetScale: number,
+  ) {
+    if (!boxReady) return false
+
+    const oldScale = scale
+    if (!Number.isFinite(targetScale) || !Number.isFinite(oldScale) || oldScale <= 0) {
+      return false
+    }
+
+    const { minScale, maxScale } = scaleBounds(stageW, stageH)
+    const nextScale = Math.min(maxScale, Math.max(minScale, targetScale))
+    if (Math.abs(nextScale - oldScale) < 1e-4) return false
+
+    const oldSafe = safeMetrics(stageW, stageH, mode)
+    const relX = anchorX - stageW / 2
+    const relY = anchorY - stageH / 2
+    const imageX = (relX - translateX) / oldScale
+    const imageY = (relY - (translateY + oldSafe.centerOffsetY)) / oldScale
+
+    scale = nextScale
+    const newSafe = safeMetrics(stageW, stageH, mode)
+    translateX = relX - imageX * scale
+    translateY = relY - newSafe.centerOffsetY - imageY * scale
+
+    clampPan(stageW, stageH)
+    apply(stageW, stageH)
+
+    const fitScale = computeScaleFor(mode, stageW, stageH)
+    isFreeZoom = Math.abs(scale - fitScale) > 1e-3
+    return true
+  }
+
   function clampPan(stageW: number, stageH: number) {
     const safe = safeMetrics(stageW, stageH, mode)
     const dispW = boxW * scale
@@ -294,11 +347,16 @@ export async function renderPhotoView(
 
     updateRedundantMode(stageW, stageH)
 
-    scale = computeScaleFor(mode, stageW, stageH)
     if (resetToCenter) {
       translateX = 0
       translateY = 0
+      isFreeZoom = false
     }
+
+    if (!isFreeZoom) {
+      scale = computeScaleFor(mode, stageW, stageH)
+    }
+
     clampPan(stageW, stageH)
     apply(stageW, stageH)
   }
@@ -400,7 +458,7 @@ export async function renderPhotoView(
   // Kick off hi-res after thumb is up (or a short delay if thumb isn't ready).
   scheduleHiStart(260)
 
-  const fitBtn = el('button', { className: 'btn', type: 'button' }, [`比例：${labelForMode(mode)}`])
+  const fitBtn = el('button', { className: 'btn', type: 'button' }, [`比例：${labelForCurrentScale()}`])
   fitBtn.addEventListener('click', () => {
     if (!boxReady) return
 
@@ -413,13 +471,13 @@ export async function renderPhotoView(
     // This must be determined inside contain's own safe area (above the dock),
     // otherwise panoramas can behave incorrectly.
     updateRedundantMode(stageW, stageH)
-    const currentScale = computeScaleFor(mode, stageW, stageH)
-    
-    // Calculate current viewport center in image coordinates
+    const currentScale = scale
+
+    // Keep the same visual center while switching between preset fit modes.
     const oldSafe = safeMetrics(stageW, stageH, mode)
-    const centerX = translateX / scale
-    const centerY = (translateY - oldSafe.centerOffsetY) / scale
-    
+    const centerX = -translateX / Math.max(scale, 1e-6)
+    const centerY = -(translateY + oldSafe.centerOffsetY) / Math.max(scale, 1e-6)
+
     let candidate = mode
     for (let i = 0; i < FIT_ORDER.length; i++) {
       candidate = nextFitMode(candidate)
@@ -432,58 +490,154 @@ export async function renderPhotoView(
     }
 
     mode = candidate
-    const newScale = computeScaleFor(mode, stageW, stageH)
+    isFreeZoom = false
+    scale = computeScaleFor(mode, stageW, stageH)
     const newSafe = safeMetrics(stageW, stageH, mode)
-    
+
     // Restore the same center point in the new scale
-    translateX = centerX * newScale
-    translateY = centerY * newScale + newSafe.centerOffsetY
-    
-    fitBtn.textContent = `比例：${labelForMode(mode)}`
-    scale = newScale
+    translateX = -centerX * scale
+    translateY = -newSafe.centerOffsetY - centerY * scale
+
+    fitBtn.textContent = `比例：${labelForCurrentScale()}`
     clampPan(stageW, stageH)
     apply(stageW, stageH)
   })
 
-  // Drag/pan when image can exceed safe area.
+  // Drag/pan and pinch-zoom interactions.
   let dragging = false
   let startX = 0
   let startY = 0
   let startTX = 0
   let startTY = 0
+  const activePointers = new Map<number, { x: number; y: number }>()
+  let pinching = false
+  let pinchStartDistance = 0
+  let pinchStartScale = 1
 
-  const onPointerDown = (e: PointerEvent) => {
-    if (mode === 'contain') return
-    scheduleHiStart(650)
-    dragging = true
-    stage.classList.add('isDragging')
-    stage.setPointerCapture(e.pointerId)
-    startX = e.clientX
-    startY = e.clientY
+  const setDragging = (nextDragging: boolean) => {
+    dragging = nextDragging
+    stage.classList.toggle('isDragging', nextDragging)
+  }
+
+  const tryStartDragging = (clientX: number, clientY: number) => {
+    const { stageW, stageH } = measureLayout()
+    if (!canPan(stageW, stageH)) {
+      setDragging(false)
+      return
+    }
+
+    setDragging(true)
+    startX = clientX
+    startY = clientY
     startTX = translateX
     startTY = translateY
   }
 
+  const beginPinch = () => {
+    const points = [...activePointers.values()]
+    if (points.length < 2) return
+
+    const dx = points[1].x - points[0].x
+    const dy = points[1].y - points[0].y
+
+    pinchStartDistance = Math.max(1, Math.hypot(dx, dy))
+    pinchStartScale = scale
+
+    pinching = true
+    setDragging(false)
+    scheduleHiStart(650)
+  }
+
+  const onPointerDown = (e: PointerEvent) => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return
+
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+    stage.setPointerCapture(e.pointerId)
+
+    if (activePointers.size >= 2) {
+      beginPinch()
+      return
+    }
+
+    scheduleHiStart(650)
+    tryStartDragging(e.clientX, e.clientY)
+  }
+
   const onPointerMove = (e: PointerEvent) => {
+    if (!activePointers.has(e.pointerId)) return
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+    const { stageW, stageH } = measureLayout()
+
+    if (pinching && activePointers.size >= 2) {
+      const points = [...activePointers.values()]
+      const centerClientX = (points[0].x + points[1].x) / 2
+      const centerClientY = (points[0].y + points[1].y) / 2
+      const stageRect = stage.getBoundingClientRect()
+      const centerX = centerClientX - stageRect.left
+      const centerY = centerClientY - stageRect.top
+      const dx = points[1].x - points[0].x
+      const dy = points[1].y - points[0].y
+      const distance = Math.max(1, Math.hypot(dx, dy))
+      const nextScale = pinchStartScale * (distance / pinchStartDistance)
+
+      const changed = applyScaleAtPoint(stageW, stageH, centerX, centerY, nextScale)
+      if (changed) fitBtn.textContent = `比例：${labelForCurrentScale()}`
+      return
+    }
+
     if (!dragging) return
     const dx = e.clientX - startX
     const dy = e.clientY - startY
     translateX = startTX + dx
     translateY = startTY + dy
-    const r = stage.getBoundingClientRect()
-    clampPan(r.width, r.height)
-    apply(r.width, r.height)
+    clampPan(stageW, stageH)
+    apply(stageW, stageH)
   }
 
-  const onPointerUp = () => {
-    dragging = false
-    stage.classList.remove('isDragging')
+  const onPointerUp = (e: PointerEvent) => {
+    activePointers.delete(e.pointerId)
+    if (stage.hasPointerCapture(e.pointerId)) stage.releasePointerCapture(e.pointerId)
+
+    if (pinching && activePointers.size < 2) {
+      pinching = false
+      if (activePointers.size === 1) {
+        const remaining = [...activePointers.values()][0]
+        tryStartDragging(remaining.x, remaining.y)
+      } else {
+        setDragging(false)
+      }
+      return
+    }
+
+    if (activePointers.size === 0) setDragging(false)
+  }
+
+  const onWheel = (e: WheelEvent) => {
+    if (!boxReady) return
+
+    let delta = e.deltaY
+    const stageRect = stage.getBoundingClientRect()
+    if (e.deltaMode === WheelEvent.DOM_DELTA_LINE) delta *= 16
+    if (e.deltaMode === WheelEvent.DOM_DELTA_PAGE) delta *= stageRect.height
+    if (delta === 0) return
+
+    e.preventDefault()
+    scheduleHiStart(650)
+
+    const zoomFactor = Math.exp(-delta * 0.0018)
+    const { stageW, stageH } = measureLayout()
+    const anchorX = e.clientX - stageRect.left
+    const anchorY = e.clientY - stageRect.top
+    const changed = applyScaleAtPoint(stageW, stageH, anchorX, anchorY, scale * zoomFactor)
+    if (changed) fitBtn.textContent = `比例：${labelForCurrentScale()}`
   }
 
   stage.addEventListener('pointerdown', onPointerDown)
   stage.addEventListener('pointermove', onPointerMove)
   stage.addEventListener('pointerup', onPointerUp)
   stage.addEventListener('pointercancel', onPointerUp)
+  stage.addEventListener('wheel', onWheel, { passive: false })
 
   window.addEventListener('resize', () => relayout(false))
 

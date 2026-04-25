@@ -226,17 +226,23 @@ async function main() {
   const images = await listRelativeImagePaths(sourceDir, sourceDir, new Set(['thumbnails']))
   images.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
 
+  const thumbPathByImage = new Map()
   const missingThumbs = []
   for (const img of images) {
     const thumbPath = path.join(thumbSourceDir, img.replace(/\.[^.]+$/, '.jpg'))
-    if (!(await exists(thumbPath))) {
+    const thumbRelPath = `thumbnails/${img.replace(/\.[^.]+$/, '.jpg')}`
+    if (await exists(thumbPath)) {
+      thumbPathByImage.set(img, thumbRelPath)
+    } else {
       missingThumbs.push(`thumbnails/${img.replace(/\.[^.]+$/, '.jpg')}`)
     }
   }
 
   if (missingThumbs.length > 0) {
-    console.error('Missing thumbnails for:', missingThumbs.join(', '))
-    throw new Error(`Missing ${missingThumbs.length} thumbnails. See log above.`)
+    console.warn(
+      `Missing ${missingThumbs.length} thumbnails. Falling back to original images in gallery for those entries.`,
+    )
+    console.warn('Missing thumbnails for:', missingThumbs.join(', '))
   }
   
   // Build manifest with thumbnail info and metadata
@@ -244,8 +250,8 @@ async function main() {
   const manifest = {
     _builtAt: new Date().toISOString(),
     images: await Promise.all(images.map(async (img) => {
-      // Calculate thumbnail path (same relative path but in thumbnails/ and .jpg extension)
-      const thumbPath = `thumbnails/${img.replace(/\.[^.]+$/, '.jpg')}`
+      // Use pre-generated thumbnail when available, otherwise fall back to original image.
+      const thumbPath = thumbPathByImage.get(img) || img
       const imgFullPath = path.join(sourceDir, img)
       
       // Extract metadata from original image

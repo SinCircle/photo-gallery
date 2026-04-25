@@ -150,9 +150,9 @@ export async function renderGalleryView(container: HTMLElement) {
 
   // Create tiles for each photo
   for (const photo of photos) {
-    // Skip photos without thumbnail URLs (shouldn't happen with proper build)
-    if (!photo.thumbUrl) {
-      console.warn('[gallery] Photo missing thumbnail URL:', photo.fileName)
+    const thumbUrl = photo.thumbUrl || photo.url
+    if (!thumbUrl) {
+      console.warn('[gallery] Photo missing image URL:', photo.fileName)
       continue
     }
 
@@ -164,7 +164,7 @@ export async function renderGalleryView(container: HTMLElement) {
     
     if (photo.isFeatured) link.classList.add('isFeatured')
     link.setAttribute('data-photo-id', photo.id)
-    link.setAttribute('data-thumb-url', photo.thumbUrl)
+    link.setAttribute('data-thumb-url', thumbUrl)
 
     const media = el('div', { className: 'tileMedia' })
     const img = el('img', {
