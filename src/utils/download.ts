@@ -30,15 +30,19 @@ export function isMobileDevice(): boolean {
  */
 export function supportsAlbumSave(): boolean {
   if (!isMobileDevice()) return false
-  if (typeof navigator.share !== 'function' || typeof navigator.canShare !== 'function') {
-    return false
+  if (typeof navigator.share !== 'function') return false
+  // canShare isn't present on every browser that has share() (e.g. some iOS
+  // Safari / Android builds). When it's missing we assume file sharing works
+  // and let a runtime NotSupportedError fall back to a plain download.
+  if (typeof navigator.canShare === 'function') {
+    const probe = new File([new Uint8Array(1)], 'probe.jpg', { type: 'image/jpeg' })
+    try {
+      return navigator.canShare({ files: [probe] })
+    } catch {
+      return false
+    }
   }
-  const probe = new File([new Uint8Array(1)], 'probe.jpg', { type: 'image/jpeg' })
-  try {
-    return navigator.canShare({ files: [probe] })
-  } catch {
-    return false
-  }
+  return true
 }
 
 /**
