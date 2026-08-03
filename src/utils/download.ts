@@ -11,29 +11,14 @@ function downloadBlob(blob: Blob, fileName: string) {
   URL.revokeObjectURL(objectUrl)
 }
 
-/** Phone/tablet detection used to switch the download button to "save to album". */
-export function isMobileDevice(): boolean {
-  // A coarse primary pointer (touch) is the most reliable phone/tablet signal.
-  try {
-    if (window.matchMedia('(pointer: coarse)').matches) return true
-  } catch {
-    // ignore
-  }
-  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
-}
-
 /**
- * True when the download button can actually save straight into the photo
- * album (mobile + Web Share with file support). The label and the save path
- * must both use this, so an unsupported browser never promises an album save
- * it cannot deliver.
+ * True when the button can save straight into the photo album via the native
+ * share sheet. We deliberately don't gate on device type or canShare() —
+ * both are unreliable across real browsers — if navigator.share exists, use
+ * it everywhere; saveBorderedImage() surfaces any error instead of silently
+ * falling back to a download.
  */
 export function supportsAlbumSave(): boolean {
-  if (!isMobileDevice()) return false
-  // Web Share is the only path to "save to album". canShare() is unreliable
-  // on some real devices (reports false while share({files}) still works), so
-  // we don't gate on it — saveBorderedImage() makes the real call and
-  // surfaces any error instead of silently falling back to a download.
   return typeof navigator.share === 'function'
 }
 
@@ -131,10 +116,12 @@ export async function generateBorderedBlob(params: {
 }
 
 /**
- * Persist an already-generated bordered image. On mobile this always hands it
- * to the native share sheet ("保存图像 / Save Image" → photo album) with NO
- * browser-download fallback; desktop keeps a normal download. Failures are
- * surfaced (thrown) so the caller can show them.
+ * Persist an already-generated bordered image. Everywhere navigator.share is
+ * available (mobile and desktop alike) this hands the image to the native
+ * share sheet ("保存图像 / Save Image" → photo album) with NO browser-download
+ * fallback. Failures are surfaced (thrown) so the caller can show them. Only
+ * when the Web Share API is entirely absent (e.g. non-secure context) do we
+ * fall back to a plain browser download.
  */
 export async function saveBorderedImage(blob: Blob): Promise<void> {
   const fileName = generateTimestampFileName()
