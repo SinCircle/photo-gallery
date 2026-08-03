@@ -662,7 +662,7 @@ export async function renderPhotoView(
       await saveBorderedImage(blob)
       downloadBtn.textContent = downloadLabel
     } catch (err) {
-      // No download fallback on mobile — surface the failure so it's visible.
+      // Mobile has no download fallback — surface the failure so it's visible.
       console.error('保存到相册失败', err)
       downloadBtn.textContent = '失败'
       window.setTimeout(() => {

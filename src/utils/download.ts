@@ -11,15 +11,24 @@ function downloadBlob(blob: Blob, fileName: string) {
   URL.revokeObjectURL(objectUrl)
 }
 
+/** Phone/tablet detection used to switch the button to "save to album". */
+export function isMobileDevice(): boolean {
+  // A coarse primary pointer (touch) is the most reliable phone/tablet signal.
+  try {
+    if (window.matchMedia('(pointer: coarse)').matches) return true
+  } catch {
+    // ignore
+  }
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+}
+
 /**
- * True when the button can save straight into the photo album via the native
- * share sheet. We deliberately don't gate on device type or canShare() —
- * both are unreliable across real browsers — if navigator.share exists, use
- * it everywhere; saveBorderedImage() surfaces any error instead of silently
- * falling back to a download.
+ * On mobile the button is always "保存" and always goes down the save-to-album
+ * path, regardless of whether the Web Share API happens to be present. Desktop
+ * always keeps a plain browser download.
  */
 export function supportsAlbumSave(): boolean {
-  return typeof navigator.share === 'function'
+  return isMobileDevice()
 }
 
 async function loadImage(url: string): Promise<HTMLImageElement> {
@@ -116,25 +125,29 @@ export async function generateBorderedBlob(params: {
 }
 
 /**
- * Persist an already-generated bordered image. Everywhere navigator.share is
- * available (mobile and desktop alike) this hands the image to the native
- * share sheet ("保存图像 / Save Image" → photo album) with NO browser-download
- * fallback. Failures are surfaced (thrown) so the caller can show them. Only
- * when the Web Share API is entirely absent (e.g. non-secure context) do we
- * fall back to a plain browser download.
+ * Persist an already-generated bordered image. On mobile this ALWAYS goes
+ * down the save-to-album path — no browser-download fallback, since the
+ * point of the button on a phone is to land in the photo album, not Downloads.
+ * Web Share is the only way to reach the album; if it's absent we throw so the
+ * caller can surface the failure instead of silently downloading. Desktop
+ * always does a plain browser download.
  */
 export async function saveBorderedImage(blob: Blob): Promise<void> {
   const fileName = generateTimestampFileName()
-  if (!supportsAlbumSave()) {
+  if (!isMobileDevice()) {
     downloadBlob(blob, fileName)
     return
+  }
+
+  if (typeof navigator.share !== 'function') {
+    throw new Error('当前浏览器不支持保存到相册')
   }
 
   const file = new File([blob], fileName, { type: blob.type || 'image/jpeg' })
   try {
     await navigator.share({ files: [file] })
   } catch (err) {
-    // User dismissed the sheet — not an error.
+    // User dismissed the share sheet — nothing to save.
     if (err instanceof DOMException && err.name === 'AbortError') return
     throw err
   }
