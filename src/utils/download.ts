@@ -140,7 +140,9 @@ export async function saveBorderedImage(blob: Blob): Promise<void> {
   }
 
   if (typeof navigator.share !== 'function') {
-    throw new Error('当前浏览器不支持保存到相册')
+    const err = new Error('当前浏览器不支持保存到相册')
+    err.name = 'NoShareAPI'
+    throw err
   }
 
   const file = new File([blob], fileName, { type: blob.type || 'image/jpeg' })

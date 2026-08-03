@@ -1,6 +1,7 @@
 import { clear, el } from '../utils/dom'
 import {
   generateBorderedBlob,
+  isMobileDevice,
   saveBorderedImage,
   supportsAlbumSave,
 } from '../utils/download'
@@ -35,6 +36,46 @@ function labelForMode(mode: FitMode): string {
     case 'oneToOne':
       return '完全'
   }
+}
+
+/**
+ * Mobile fallback when the share sheet can't save the image (e.g. Huawei's
+ * built-in browser has no working Web Share file support). Shows the already
+ * generated WATERMARKED image full-screen so the user can long-press and pick
+ * "保存图片" — the only reliable way to get it into the album on such browsers.
+ */
+function showLongPressSaveOverlay(blob: Blob) {
+  const objectUrl = URL.createObjectURL(blob)
+
+  const overlay = el('div', { className: 'saveOverlay' })
+  const img = el('img', {
+    src: objectUrl,
+    alt: '长按保存图片',
+    className: 'saveOverlayImg',
+    draggable: false,
+  })
+  const hint = el('div', { className: 'saveOverlayHint' }, [
+    '长按图片，选择「保存图片」存入相册',
+  ])
+  const closeBtn = el('button', { className: 'btn saveOverlayClose', type: 'button' }, ['关闭'])
+
+  const close = () => {
+    overlay.remove()
+    URL.revokeObjectURL(objectUrl)
+    window.removeEventListener('keydown', onKey)
+  }
+  const onKey = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') close()
+  }
+
+  closeBtn.addEventListener('click', close)
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) close()
+  })
+  window.addEventListener('keydown', onKey)
+
+  overlay.append(img, hint, closeBtn)
+  document.body.append(overlay)
 }
 
 export async function renderPhotoView(
@@ -645,9 +686,8 @@ export async function renderPhotoView(
 
   window.addEventListener('resize', () => relayout(false))
 
-  // On mobile with Web Share support this button saves to the photo album
-  // (share sheet), not a browser download, so label it accordingly — and only
-  // show 保存 when the device can actually deliver that.
+  // On mobile the button always saves to the photo album (share sheet, or a
+  // long-press fallback where Web Share isn't available); desktop downloads.
   const albumSave = supportsAlbumSave()
   const downloadLabel = albumSave ? '保存' : '下载'
 
@@ -655,19 +695,25 @@ export async function renderPhotoView(
   downloadBtn.addEventListener('click', async () => {
     downloadBtn.textContent = '等待'
     downloadBtn.disabled = true
+    let blob: Blob | null = null
     try {
       const meta = await metaPromise
       const stamp = meta.date ? `SinCircle  ${formatDateTime(meta.date)}` : 'SinCircle'
-      const blob = await generateBorderedBlob({ url: photo.url, stampText: stamp })
+      blob = await generateBorderedBlob({ url: photo.url, stampText: stamp })
       await saveBorderedImage(blob)
       downloadBtn.textContent = downloadLabel
     } catch (err) {
       // Mobile has no download fallback — surface the failure so it's visible.
+      const reason = err instanceof Error ? err.name : '未知错误'
       console.error('保存到相册失败', err)
-      downloadBtn.textContent = '失败'
+      downloadBtn.textContent = `失败(${reason})`
       window.setTimeout(() => {
         if (!downloadBtn.disabled) downloadBtn.textContent = downloadLabel
-      }, 1500)
+      }, 2000)
+      // If the watermarked image was generated but saving failed (e.g. no Web
+      // Share on Huawei's browser), fall back to a long-press hint. It shows
+      // the bordered blob itself, so the watermark is preserved.
+      if (blob && isMobileDevice()) showLongPressSaveOverlay(blob)
     } finally {
       downloadBtn.disabled = false
     }

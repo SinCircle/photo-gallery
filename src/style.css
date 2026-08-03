@@ -479,6 +479,45 @@ button:focus-visible {
   color: var(--ink-muted);
 }
 
+/* Long-press save fallback overlay (mobile browsers without Web Share files) */
+.saveOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.86);
+  backdrop-filter: blur(6px);
+}
+
+.saveOverlayImg {
+  max-width: 100%;
+  max-height: 68vh;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: default; /* keep long-press menu available */
+}
+
+.saveOverlayHint {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 15px;
+  text-align: center;
+  max-width: 320px;
+}
+
+.saveOverlayClose {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .btn {
     transition: none;
