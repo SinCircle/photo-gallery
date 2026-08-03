@@ -660,9 +660,16 @@ export async function renderPhotoView(
       const stamp = meta.date ? `SinCircle  ${formatDateTime(meta.date)}` : 'SinCircle'
       const blob = await generateBorderedBlob({ url: photo.url, stampText: stamp })
       await saveBorderedImage(blob)
+      downloadBtn.textContent = downloadLabel
+    } catch (err) {
+      // No download fallback on mobile — surface the failure so it's visible.
+      console.error('保存到相册失败', err)
+      downloadBtn.textContent = '失败'
+      window.setTimeout(() => {
+        if (!downloadBtn.disabled) downloadBtn.textContent = downloadLabel
+      }, 1500)
     } finally {
       downloadBtn.disabled = false
-      downloadBtn.textContent = downloadLabel
     }
   })
 

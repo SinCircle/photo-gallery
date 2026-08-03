@@ -30,42 +30,11 @@ export function isMobileDevice(): boolean {
  */
 export function supportsAlbumSave(): boolean {
   if (!isMobileDevice()) return false
-  if (typeof navigator.share !== 'function') return false
-  // canShare isn't present on every browser that has share() (e.g. some iOS
-  // Safari / Android builds). When it's missing we assume file sharing works
-  // and let a runtime NotSupportedError fall back to a plain download.
-  if (typeof navigator.canShare === 'function') {
-    const probe = new File([new Uint8Array(1)], 'probe.jpg', { type: 'image/jpeg' })
-    try {
-      return navigator.canShare({ files: [probe] })
-    } catch {
-      return false
-    }
-  }
-  return true
-}
-
-/**
- * Hand the image to the native share sheet, where "保存图像 / Save Image"
- * saves straight into the photo album — a plain browser `download` would land
- * in the Downloads folder instead.
- *
- * Returns true when the blob was given to the share sheet (including the user
- * dismissing it), false when the caller should fall back to a browser download.
- */
-async function shareToAlbum(blob: Blob, fileName: string): Promise<boolean> {
-  if (!supportsAlbumSave()) return false
-
-  const file = new File([blob], fileName, { type: blob.type || 'image/jpeg' })
-  try {
-    await navigator.share({ files: [file] })
-    return true
-  } catch (err) {
-    // User dismissed the sheet — nothing to save. Not an error.
-    if (err instanceof DOMException && err.name === 'AbortError') return true
-    // Otherwise (e.g. transient user-activation expired) let the caller fall back.
-    return false
-  }
+  // Web Share is the only path to "save to album". canShare() is unreliable
+  // on some real devices (reports false while share({files}) still works), so
+  // we don't gate on it — saveBorderedImage() makes the real call and
+  // surfaces any error instead of silently falling back to a download.
+  return typeof navigator.share === 'function'
 }
 
 async function loadImage(url: string): Promise<HTMLImageElement> {
@@ -162,12 +131,25 @@ export async function generateBorderedBlob(params: {
 }
 
 /**
- * Persist an already-generated bordered image: on mobile it goes to the photo
- * album via the share sheet, everywhere else it's a normal browser download.
+ * Persist an already-generated bordered image. On mobile this always hands it
+ * to the native share sheet ("保存图像 / Save Image" → photo album) with NO
+ * browser-download fallback; desktop keeps a normal download. Failures are
+ * surfaced (thrown) so the caller can show them.
  */
 export async function saveBorderedImage(blob: Blob): Promise<void> {
   const fileName = generateTimestampFileName()
-  if (await shareToAlbum(blob, fileName)) return
-  downloadBlob(blob, fileName)
+  if (!supportsAlbumSave()) {
+    downloadBlob(blob, fileName)
+    return
+  }
+
+  const file = new File([blob], fileName, { type: blob.type || 'image/jpeg' })
+  try {
+    await navigator.share({ files: [file] })
+  } catch (err) {
+    // User dismissed the sheet — not an error.
+    if (err instanceof DOMException && err.name === 'AbortError') return
+    throw err
+  }
 }
 
