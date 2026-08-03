@@ -1,5 +1,9 @@
 import { clear, el } from '../utils/dom'
-import { downloadWithBorder } from '../utils/download'
+import {
+  generateBorderedBlob,
+  saveBorderedImage,
+  supportsAlbumSave,
+} from '../utils/download'
 import { formatDateTime, readPhotoMetadata } from '../utils/exif'
 import { getThumbnailObjectUrl } from '../utils/thumbs'
 
@@ -641,17 +645,24 @@ export async function renderPhotoView(
 
   window.addEventListener('resize', () => relayout(false))
 
-  const downloadBtn = el('button', { className: 'btn', type: 'button' }, ['下载'])
+  // On mobile with Web Share support this button saves to the photo album
+  // (share sheet), not a browser download, so label it accordingly — and only
+  // show 保存 when the device can actually deliver that.
+  const albumSave = supportsAlbumSave()
+  const downloadLabel = albumSave ? '保存' : '下载'
+
+  const downloadBtn = el('button', { className: 'btn', type: 'button' }, [downloadLabel])
   downloadBtn.addEventListener('click', async () => {
     downloadBtn.textContent = '等待'
     downloadBtn.disabled = true
     try {
       const meta = await metaPromise
       const stamp = meta.date ? `SinCircle  ${formatDateTime(meta.date)}` : 'SinCircle'
-      await downloadWithBorder({ url: photo.url, fileName: photo.fileName, stampText: stamp })
+      const blob = await generateBorderedBlob({ url: photo.url, stampText: stamp })
+      await saveBorderedImage(blob)
     } finally {
       downloadBtn.disabled = false
-      downloadBtn.textContent = '下载'
+      downloadBtn.textContent = downloadLabel
     }
   })
 

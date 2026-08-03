@@ -11,6 +11,59 @@ function downloadBlob(blob: Blob, fileName: string) {
   URL.revokeObjectURL(objectUrl)
 }
 
+/** Phone/tablet detection used to switch the download button to "save to album". */
+export function isMobileDevice(): boolean {
+  // A coarse primary pointer (touch) is the most reliable phone/tablet signal.
+  try {
+    if (window.matchMedia('(pointer: coarse)').matches) return true
+  } catch {
+    // ignore
+  }
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+}
+
+/**
+ * True when the download button can actually save straight into the photo
+ * album (mobile + Web Share with file support). The label and the save path
+ * must both use this, so an unsupported browser never promises an album save
+ * it cannot deliver.
+ */
+export function supportsAlbumSave(): boolean {
+  if (!isMobileDevice()) return false
+  if (typeof navigator.share !== 'function' || typeof navigator.canShare !== 'function') {
+    return false
+  }
+  const probe = new File([new Uint8Array(1)], 'probe.jpg', { type: 'image/jpeg' })
+  try {
+    return navigator.canShare({ files: [probe] })
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Hand the image to the native share sheet, where "保存图像 / Save Image"
+ * saves straight into the photo album — a plain browser `download` would land
+ * in the Downloads folder instead.
+ *
+ * Returns true when the blob was given to the share sheet (including the user
+ * dismissing it), false when the caller should fall back to a browser download.
+ */
+async function shareToAlbum(blob: Blob, fileName: string): Promise<boolean> {
+  if (!supportsAlbumSave()) return false
+
+  const file = new File([blob], fileName, { type: blob.type || 'image/jpeg' })
+  try {
+    await navigator.share({ files: [file] })
+    return true
+  } catch (err) {
+    // User dismissed the sheet — nothing to save. Not an error.
+    if (err instanceof DOMException && err.name === 'AbortError') return true
+    // Otherwise (e.g. transient user-activation expired) let the caller fall back.
+    return false
+  }
+}
+
 async function loadImage(url: string): Promise<HTMLImageElement> {
   return await new Promise((resolve, reject) => {
     const img = new Image()
@@ -22,12 +75,21 @@ async function loadImage(url: string): Promise<HTMLImageElement> {
   })
 }
 
-export async function downloadWithBorder(params: {
+function generateTimestampFileName(): string {
+  const now = new Date()
+  const pad = (n: number, len = 2) => String(n).padStart(len, '0')
+  return `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}${pad(now.getMilliseconds(), 3)}.jpg`
+}
+
+/**
+ * Renders the bordered/stamped JPEG into a Blob. This is the expensive step,
+ * so the photo view prepares it in advance (and caches it) — see photo.ts.
+ */
+export async function generateBorderedBlob(params: {
   url: string
-  fileName: string
   borderPx?: number
   stampText?: string
-}) {
+}): Promise<Blob> {
   const borderPx = Math.max(
     0,
     Math.floor(params.borderPx ?? CONFIG.downloadBorderPx),
@@ -91,10 +153,17 @@ export async function downloadWithBorder(params: {
   const blob: Blob | null = await new Promise((resolve) =>
     canvas.toBlob((b) => resolve(b), 'image/jpeg', 0.95),
   )
-
   if (!blob) throw new Error('Failed to generate download')
-const now = new Date()
-const pad = (n: number, len = 2) => String(n).padStart(len, '0')
-const fileName = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}${pad(now.getMilliseconds(), 3)}.jpg`
-downloadBlob(blob, fileName)
+  return blob
 }
+
+/**
+ * Persist an already-generated bordered image: on mobile it goes to the photo
+ * album via the share sheet, everywhere else it's a normal browser download.
+ */
+export async function saveBorderedImage(blob: Blob): Promise<void> {
+  const fileName = generateTimestampFileName()
+  if (await shareToAlbum(blob, fileName)) return
+  downloadBlob(blob, fileName)
+}
+
