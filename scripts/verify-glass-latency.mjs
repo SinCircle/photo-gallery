@@ -33,14 +33,16 @@ try {
         s.deadline=setTimeout(()=>finish(null,[]),${baseline ? 1050 : 250});
         if(!bar.querySelector('canvas[data-glass-output]'))poll();
       };
-      const finish=(latency,pixels)=>{const s=window.sampleState;if(!s||s.start===undefined)return;clearTimeout(s.deadline);window.sampleState=null;sampleResolve({index:s.index,blue:s.blue,latencyMs:latency,timedOut:latency===null,pixels,toolbar:bar.dataset.toolbar,pan:document.querySelector('.photoPan').style.transform,zoom:document.querySelector('.photoZoom').style.transform})};
-      const check=async()=>{const s=window.sampleState;if(!s||s.start===undefined)return;const pixels=await readGlass();if(s.blue?pixels[2]-pixels[0]>60:pixels[0]-pixels[2]>60)finish(performance.now()-s.start,pixels)};
+      const finish=(latency,pixels)=>{const s=window.sampleState;if(!s||s.start===undefined)return;clearTimeout(s.deadline);window.sampleState=null;sampleResolve({index:s.index,blue:s.blue,latencyMs:latency,timedOut:latency===null,pixels,sourceChangedAt:s.start,inputPaintAt:s.inputPaintAt,copyStartedAt:s.copyStartedAt,outputReadAt:s.outputReadAt,toolbar:bar.dataset.toolbar,pan:document.querySelector('.photoPan').style.transform,zoom:document.querySelector('.photoZoom').style.transform})};
+      const check=async()=>{const s=window.sampleState;if(!s||s.start===undefined)return;const live=bar.querySelector('canvas[data-glass-output]');const pixels=live?[...live.getContext('2d').getImageData(Math.floor(live.width/2),Math.floor(live.height/2),1,1).data]:await readGlass();s.outputReadAt=performance.now();if(s.blue?pixels[2]-pixels[0]>60:pixels[0]-pixels[2]>60)finish(s.outputReadAt-s.start,pixels)};
       const poll=async()=>{await check();if(window.sampleState?.start!==undefined)setTimeout(poll,0)};
-      const output=bar.querySelector('canvas[data-glass-output]');if(output){const ctx=output.getContext('2d'),draw=ctx.drawImage.bind(ctx);ctx.drawImage=(...args)=>{draw(...args);void check()}};
+      const output=bar.querySelector('canvas[data-glass-output]');if(output){const ctx=output.getContext('2d'),draw=ctx.drawImage.bind(ctx);ctx.drawImage=(...args)=>{if(window.sampleState?.start!==undefined)sampleState.copyStartedAt=performance.now();draw(...args);void check()}};
+      const input=bar.querySelector('canvas[data-glass-scene]');if(input){const ctx=input.getContext('2d'),draw=ctx.drawImage.bind(ctx);ctx.drawImage=(...args)=>{draw(...args);if(args[0]===c&&window.sampleState?.start!==undefined)sampleState.inputPaintAt=performance.now()}};
       window.addEventListener('pointermove',beginSample);window.addEventListener('wheel',beginSample);
     })()`)
     await until(`(async()=>{const p=await readGlass();return p[0]-p[2]>60})()`)
     const before = await evaluate(`({pan:document.querySelector('.photoPan').style.transform,zoom:document.querySelector('.photoZoom').style.transform})`)
+    await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 720, y: 450 })
     if (name !== 'wheel') await send('Input.dispatchMouseEvent', { type: 'mousePressed', x: 720, y: 450, button: 'left', clickCount: 1 })
     if (name === 'released-idle') {
       await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: 720, y: 450, button: 'left', clickCount: 1 })
