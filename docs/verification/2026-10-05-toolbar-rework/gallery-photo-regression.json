@@ -1,0 +1,150 @@
+{
+  "base": "http://127.0.0.1",
+  "cliScreenshotBudget": 45000,
+  "checks": {
+    "gallery": {
+      "photos": 44,
+      "heldImages": true,
+      "rectanglesIdentical": true,
+      "cls": 0,
+      "scrollChecks": 6,
+      "visibleBlankTiles": 0
+    },
+    "failure": {
+      "count": 44,
+      "height": 258.609375,
+      "cls": 0
+    },
+    "fixtures": [
+      {
+        "width": 390,
+        "tiles": 24,
+        "cls": 0,
+        "blankTiles": 0
+      },
+      {
+        "width": 700,
+        "tiles": 24,
+        "cls": 0,
+        "blankTiles": 0
+      },
+      {
+        "width": 1400,
+        "tiles": 24,
+        "cls": 0,
+        "blankTiles": 0
+      }
+    ],
+    "fade": {
+      "lowVisible": "1",
+      "highOpacity": "0",
+      "background": "url(\"/media/thumbs/!IMG_20260103_160706.jpg\")",
+      "stages": [
+        {
+          "class": "photoStage hiReady",
+          "opacity": "0"
+        },
+        {
+          "class": "photoStage hiReady hiDone",
+          "opacity": "1"
+        },
+        {
+          "class": "photoStage hiReady hiDone",
+          "opacity": "1"
+        }
+      ],
+      "highFinal": "1"
+    },
+    "glass": {
+      "path": "webgl",
+      "config": {
+        "floating": true,
+        "cornerRadius": 40,
+        "blurAmount": 0
+      },
+      "requested": 1179,
+      "executed": 1179,
+      "active": 1,
+      "webglDraws": 3,
+      "idleShaderDraws": 0,
+      "outputWidth": 800
+    },
+    "fit": {
+      "landscape": [
+        "比例：适应",
+        "比例：宽度",
+        "比例：完全",
+        "比例：适应"
+      ],
+      "note": "Legacy skips the mode redundant under contain",
+      "wide": [
+        "比例：适应",
+        "比例：高度",
+        "比例：完全",
+        "比例：适应"
+      ]
+    },
+    "gestures": {
+      "wheel": [
+        "translate3d(-50%, -50%, 0px) scale(0.938821)",
+        "translate3d(-50%, -50%, 0px) scale(3.30974)"
+      ],
+      "drag": [
+        "translate3d(50.5084px, -85.2542px, 0px)",
+        "translate3d(150.508px, -35.2542px, 0px)"
+      ],
+      "pinch": [
+        "translate3d(-50%, -50%, 0px) scale(3.30974)",
+        "translate3d(-50%, -50%, 0px) scale(5.51623)"
+      ]
+    },
+    "keyboard": {
+      "right": true,
+      "left": true,
+      "escape": true
+    },
+    "download": {
+      "file": "20261005211355103.jpg",
+      "width": 4272,
+      "height": 3248,
+      "originalWidth": 4080,
+      "originalHeight": 3056,
+      "border": 96,
+      "stampPixels": 1749
+    },
+    "mobileFallback": {
+      "width": 4272,
+      "height": 3248,
+      "hint": "长按图片，选择「保存图片」存入相册",
+      "escapeClosesWithoutNavigating": true
+    },
+    "webShare": {
+      "count": 1,
+      "type": "image/jpeg",
+      "size": 3972687,
+      "name": "20261005211356938.jpg",
+      "mode": "emulated navigator.share; OS album not tested"
+    },
+    "reducedMotion": {
+      "path": "webgl",
+      "transition": "0s"
+    },
+    "noWebGL": {
+      "path": "css",
+      "backdrop": "blur(18px)",
+      "buttons": 3
+    }
+  },
+  "screenshots": [
+    "gallery-first.png",
+    "gallery-middle.png",
+    "photo.png",
+    "mobile-save-fallback.png",
+    "photo-reduced-motion.png",
+    "reference-gallery-first.png",
+    "reference-gallery-middle.png",
+    "reference-photo.png"
+  ],
+  "errors": [],
+  "status": "passed"
+}
