@@ -1,0 +1,22 @@
+{
+  "base": "http://127.0.0.1",
+  "baseline": true,
+  "startedAt": "2026-10-05T12:20:15.040Z",
+  "method": "Change actual canvas pixels and position behind the toolbar while a trusted pointer is held; read rendered glass pixels, not dataset, URL generation or rAF count. Each sample changes on a frame and polls real pixels until their color changes.",
+  "errors": [],
+  "samples": [
+    {
+      "index": 0,
+      "blue": true,
+      "latencyMs": null,
+      "timedOut": true,
+      "pixels": [
+        254,
+        21,
+        21,
+        255
+      ]
+    }
+  ],
+  "status": "baseline-stall-reproduced"
+}
