@@ -1,5 +1,6 @@
 import { captureGlassScene } from './glassScene'
 import { createGlassRenderer } from './glassRenderer'
+import { regularGlassConfig } from './glassConfig'
 
 const REGULAR_GLASS = JSON.stringify({ floating: true, cornerRadius: 40, blurAmount: 0 })
 let available: boolean | undefined
@@ -15,7 +16,8 @@ function supportsWebGL() {
 // pixels are updated in the current event turn, including while a pointer is
 // held and while collapsed. Its public markChanged API wakes the shader work.
 export async function attachGlass(root: HTMLElement, glass: HTMLElement, signal: AbortSignal) {
-  glass.dataset.config = REGULAR_GLASS
+  const capsules = glass.hasAttribute('data-capsule-root')
+  glass.dataset.config = capsules ? regularGlassConfig() : REGULAR_GLASS
   glass.dataset.glass = 'css'
   if (!supportsWebGL()) return
   const lifetime = new AbortController()
@@ -49,7 +51,7 @@ export async function attachGlass(root: HTMLElement, glass: HTMLElement, signal:
   const followMotion = () => {
     motionFrame = 0
     schedule()
-    for (const element of animated) if (!element.getAnimations().length) animated.delete(element)
+    for (const element of animated) if (!element.getAnimations({ subtree: true }).length) animated.delete(element)
     if (animated.size) motionFrame = requestAnimationFrame(followMotion)
   }
   const startMotion = (element: Element) => {
@@ -63,7 +65,7 @@ export async function attachGlass(root: HTMLElement, glass: HTMLElement, signal:
     observer.observe(element, { attributes: true, attributeFilter: ['style', 'class', 'src'] })
   }
   root.addEventListener('transitionrun', event => {
-    if (event.target instanceof Element && !glass.contains(event.target)) startMotion(event.target)
+    if (event.target instanceof Element && (capsules || !glass.contains(event.target))) startMotion(event.target)
   }, { signal })
   root.addEventListener('transitionend', () => schedule(), { signal })
   root.addEventListener('load', () => schedule(true), { capture: true, signal })

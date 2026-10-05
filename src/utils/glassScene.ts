@@ -3,7 +3,15 @@
 const backgrounds = new WeakMap<HTMLElement, { key: string; canvas: HTMLCanvasElement }>()
 
 export function captureGlassScene(root: HTMLElement, glass: HTMLElement) {
-  const box = glass.getBoundingClientRect()
+  const nativeCapsules = glass.hasAttribute('data-capsule-root')
+  const rootBox = glass.getBoundingClientRect()
+  const visible = nativeCapsules ? [...glass.querySelectorAll<HTMLElement>(':scope > [data-glass-capsule]:not([hidden])')]
+    .map(element => element.getBoundingClientRect()).filter(rect => rect.width && rect.height) : []
+  const box = visible.length ? {
+    left: Math.min(...visible.map(r => r.left)), top: Math.min(...visible.map(r => r.top)),
+    width: Math.max(...visible.map(r => r.right)) - Math.min(...visible.map(r => r.left)),
+    height: Math.max(...visible.map(r => r.bottom)) - Math.min(...visible.map(r => r.top)),
+  } : rootBox
   if (!box.width || !box.height) return null
   const x = box.left - 20, y = box.top - 20
   const width = box.width + 40, height = box.height + 40
@@ -91,6 +99,10 @@ export function captureGlassScene(root: HTMLElement, glass: HTMLElement) {
     if (canvas.height !== Math.ceil(height * dpr)) canvas.height = Math.ceil(height * dpr)
     canvas.style.width = `${width}px`
     canvas.style.height = `${height}px`
+    if (nativeCapsules) {
+      canvas.style.left = `${x - rootBox.left}px`
+      canvas.style.top = `${y - rootBox.top}px`
+    }
     const ctx = canvas.getContext('2d')!
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx.globalAlpha = 1
