@@ -3,7 +3,8 @@ const MOTION_MS = 810
 const EASING = 'cubic-bezier(.22,.8,.25,1)'
 
 // All four controls stay in their own reserved grid cells. They fade/slide out
-// before the single idle capsule appears, so visible glass faces never pile up.
+// into the single idle capsule. Its reserved centre is clear of all controls,
+// so the handoff has neither overlapping glass faces nor a completely blank frame.
 export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
   const slot = document.createElement('div')
   slot.className = 'toolbarSlot'
@@ -69,9 +70,9 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
       control.style.translate = next ? '0px 0px' : '0px 14px'
       animations.push(control.animate([
         { translate: current[i].translate === 'none' ? '0px 0px' : current[i].translate, offset: 0 },
-        { translate: next ? '0px -3px' : '0px 17px', offset: .64 },
-        { translate: next ? '0px 1px' : '0px 13px', offset: .82 },
-        { translate: next ? '0px 0px' : '0px 14px', offset: 1 },
+        { translate: next ? '0px -3px' : '0px 10px', offset: .64 },
+        { translate: next ? '0px 1px' : '0px 7px', offset: .82 },
+        { translate: next ? '0px 0px' : '0px 8px', offset: 1 },
       ], { duration: MOTION_MS, easing: EASING, fill: 'backwards' }))
       animations.push(control.animate([{ opacity: current[i].opacity }, { opacity: next ? 1 : 0 }],
         { duration: next ? 570 : 480, delay: next ? 240 : 0, easing: EASING, fill: 'backwards' }))
@@ -83,7 +84,7 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
       }
     })
     animations.push(toggle.animate([{ opacity: toggleOpacity }, { opacity: next ? 0 : 1 }],
-      { duration: next ? 240 : 330, delay: next ? 0 : 480, easing: EASING, fill: 'backwards' }))
+      { duration: next ? 240 : 450, delay: next ? 0 : 360, easing: EASING, fill: 'backwards' }))
     void Promise.all(animations.map(animation => animation.finished)).then(() => {
       if (generation === version && !signal.aborted) settle()
     }).catch(() => {})
