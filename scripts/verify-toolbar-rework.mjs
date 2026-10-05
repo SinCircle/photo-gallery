@@ -7,6 +7,7 @@ const selected = process.argv.find(a => a.startsWith('--phase='))?.slice(8)
 const browser = await browserSession('toolbar-rework', 9262)
 const { evaluate, until, navigate, send, shot } = browser
 const report = { base, startedAt: new Date().toISOString(), graphics: browser.graphics, browser: browser.version.product, phases: {}, errors: browser.errors }
+report.servedModule = (await (await fetch(base)).text()).match(/<script[^>]+src="([^"]+)"/)?.[1]
 const photoURL = id => `${base}/#/photo/${encodeURIComponent(id)}`
 const defaultPhoto = '!IMG_20260103_160706.jpg'
 const rect = selector => evaluate(`document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect().toJSON()`)
@@ -62,6 +63,21 @@ const checks = {
     assert.equal(layout.buttonCount, 3)
     const heights = new Set([...closeFrames, ...openFrames].map(f => f.slot.height))
     assert.equal(heights.size, 1, 'Photo safe area must remain reserved')
+    // Photograph native keyframes at known times; uninterrupted samples above
+    // remain the actual timing/CLS proof rather than this paused pose sequence.
+    await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 720, y: 450 })
+    await until(`document.querySelector('.dockInner').dataset.toolbar==='collapsed' && !document.querySelector('.dockInner').getAnimations().length`)
+    await evaluate(`window.motionPoses=[];document.querySelector('.dockInner').addEventListener('glassgeometry',()=>{window.poseAnimations=document.querySelector('.dockInner').getAnimations({subtree:true});for(const a of poseAnimations)a.pause()},{once:true})`)
+    const capsule = await rect('.dockInner')
+    await click(capsule.x + 28, capsule.y + 16)
+    for (const time of [0, 80, 150, 240, 340, 440, 540]) {
+      await evaluate(`for(const a of poseAnimations)a.currentTime=${time};document.querySelector('.dockInner').dispatchEvent(new Event('glassrefresh'))`)
+      await sleep(60)
+      await shot(`opening-${String(time).padStart(3, '0')}ms`)
+      await evaluate(`motionPoses.push({time:${time},bar:document.querySelector('.dockInner').getBoundingClientRect().toJSON(),opacity:getComputedStyle(document.querySelector('.toolbarClip')).opacity,blur:getComputedStyle(document.querySelector('.dockMeta')).filter,easing:poseAnimations[0].effect.getTiming().easing})`)
+    }
+    await evaluate('for(const a of poseAnimations)a.finish()')
+    const motionPoses = await evaluate('motionPoses')
     await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] })
     await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 720, y: 450 })
     await until(`document.querySelector('.dockInner').dataset.toolbar==='collapsed'`)
@@ -73,7 +89,7 @@ const checks = {
     assert.equal(reducedExpanded.rect.width, expanded.width)
     await shot('reduced-motion-expanded')
     await send('Emulation.setEmulatedMedia', { features: [] })
-    return { expanded, collapsed, layout, closeFrames, openFrames, reducedCollapsed, reducedExpanded, rule: '2800ms since last interaction; held pointers, nearby pointer (40px) and keyboard editing keep it open. Click, proximity, wheel, scroll and keyboard wake it. A single 56x32 capsule; safe-area-aware bottom inset and maximum expanded width 760px.' }
+    return { expanded, collapsed, layout, closeFrames, openFrames, motionPoses, reducedCollapsed, reducedExpanded, rule: '2800ms since last interaction; held pointers, nearby pointer (40px) and keyboard editing keep it open. Click, proximity, wheel, scroll and keyboard wake it. A single 56x32 capsule; safe-area-aware bottom inset and maximum expanded width 760px.' }
   },
   async refraction() {
     await ready()

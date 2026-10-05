@@ -8,6 +8,7 @@ const browser = await browserSession(baseline ? 'glass-latency-baseline' : 'glas
 const { navigate, evaluate, until, send, shot } = browser
 const report = { base, baseline, startedAt: new Date().toISOString(), graphics: browser.graphics, browser: browser.version.product,
   method: 'Three separate real-input states. A canvas under the toolbar alternates red/blue at each background mutation. Timing starts immediately after its fillRect. Completion requires reading matching actual rendered output pixels. Live canvas drawImage is instrumented only in the test to read pixels immediately after a paint (no timer-poll quantization); legacy CSS PNG is decoded and sampled. Trusted CDP drag/wheel events also change the real photo transform. Idle samples continue without input, including after collapse. No dataset, URL or rAF counter constitutes completion.', cases: [], errors: browser.errors }
+report.servedModule = (await (await fetch(base)).text()).match(/<script[^>]+src="([^"]+)"/)?.[1]
 try {
   for (const name of ['held-pointer-drag', 'wheel', 'released-idle']) {
     await navigate(`${base}/?latency=${name}#/photo/!IMG_20260103_160706.jpg`)
