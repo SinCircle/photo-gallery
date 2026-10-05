@@ -547,7 +547,10 @@ button:focus-visible {
   border-radius: inherit;
 }
 .capsuleDock .capsuleLabel, .capsuleDock .dockMetaItem {
-  text-shadow: 0 0 3px rgba(255, 255, 255, .9), 0 0 7px rgba(255, 255, 255, .9);
+  background: var(--glass);
+  border-radius: 5px;
+  box-shadow: 0 0 4px 2px var(--glass);
+  text-shadow: none;
 }
 .capsuleDock > .dockToggle {
   position: absolute;

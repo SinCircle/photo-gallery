@@ -66,6 +66,7 @@ const checks = {
     assert.equal(edge.config.fresnel, 0)
     assert.equal(edge.config.shadowOpacity, 0)
     assert.ok(edge.edgePixels.filter(p => p.offset >= 0).every(p => Math.max(...p.rgba.slice(0, 3)) < 145), 'Uniform grey must not acquire a white edge line')
+    assert.ok(edge.edgePixels.filter(p => p.rgba[3] > 0).every(p => p.rgba.slice(0, 3).every(v => Math.abs(v - 128) <= 2)), 'Antialiasing must preserve straight grey RGB, without a dark hairline')
     await crop('border-removed')
     await evaluate('paintMaterial(true)')
     await sleep(200)

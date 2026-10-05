@@ -76,3 +76,18 @@ if (!source.includes(fastMarker)) {
   await writeFile(file, source)
   console.log('Applied exact zero-blur identity fast path')
 }
+
+// The panel is drawn once onto a cleared buffer. SRC_ALPHA blending here
+// premultiplies its colour and squares its alpha, although this context declares
+// premultipliedAlpha:false. Canvas copies then produce a dark hairline. Keep the
+// shader's straight RGBA so its existing SDF mask gives a clean, soft edge.
+source = await readFile(file, 'utf8')
+const alphaMarker = '// photo-gallery: preserve straight-alpha panel edges v1'
+if (!source.includes(alphaMarker)) {
+  const before = '    gl.enable(gl.BLEND);\n    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);'
+  assert.equal(source.split(before).length, 2, 'Panel blend target must match exactly once')
+  source = source.replace(before, '    gl.disable(gl.BLEND);')
+  source = source.replace(marker, marker + '\n' + alphaMarker)
+  await writeFile(file, source)
+  console.log('Fixed straight-alpha panel edges')
+}
