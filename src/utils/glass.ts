@@ -33,7 +33,13 @@ export async function attachGlass(root: HTMLElement, glass: HTMLElement, signal:
     if (!renderer || signal.aborted || !glass.isConnected) return
     try {
       const scene = captureGlassScene(root, glass)
-      if (!scene || (!force && previous === scene.key)) return
+      if (!scene) return
+      if (!force && previous === scene.key) {
+        // A capsule can move over an unchanged shared scene. Its own sampling
+        // position still needs the native shader, without repainting the source.
+        if (animated.size) renderer.changed()
+        return
+      }
       force = false
       scene.draw(renderer.scene)
       renderer.changed()

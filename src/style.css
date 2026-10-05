@@ -519,7 +519,7 @@ button:focus-visible {
   border: 0;
   border-radius: 999px;
   background: rgba(255, 255, 255, .35);
-  box-shadow: none;
+  box-shadow: var(--shadow);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
   min-width: 0;

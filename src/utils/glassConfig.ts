@@ -12,5 +12,6 @@ export function regularGlassConfig() {
     edgeHighlight: 0,
     fresnel: 0,
     specular: 0,
+    shadowOpacity: 0,
   })
 }

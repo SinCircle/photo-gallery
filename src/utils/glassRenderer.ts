@@ -22,9 +22,9 @@ export async function createGlassRenderer(glass: HTMLElement, signal: AbortSigna
       if (signal.aborted) { cleanup(); throw new DOMException('Aborted', 'AbortError') }
       for (const capsule of capsules) {
         const output = capsule.querySelector('canvas')!
-        // The shared source performs Gaussian blur once. Keep the small native
-        // outputs readable without a second cross-context copy during sampling.
-        output.getContext('2d', { willReadFrequently: true })
+        // Avoid downloading the wide EXIF surface on every paint; the compact
+        // button/idle surfaces keep stable, inexpensive read-friendly buffers.
+        output.getContext('2d', { willReadFrequently: capsule.dataset.glassCapsule !== 'exif' })
         output.dataset.glassOutput = capsule.dataset.glassCapsule
       }
       return { scene, changed: () => instance!.markChanged(scene) }
