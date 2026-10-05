@@ -1,0 +1,189 @@
+{
+  "base": "http://127.0.0.1",
+  "baseline": true,
+  "startedAt": "2026-10-05T12:52:07.881Z",
+  "graphics": {
+    "available": true,
+    "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x000013C0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "browser": "Chrome/154.0.8037.93",
+  "method": "Three separate real-input states. A canvas under the toolbar alternates red/blue at each background mutation. Timing starts immediately after its fillRect. Completion requires reading matching actual rendered output pixels. Live canvas drawImage is instrumented only in the test to read pixels immediately after a paint (no timer-poll quantization); legacy CSS PNG is decoded and sampled. Trusted CDP drag/wheel events also change the real photo transform. Idle samples continue without input, including after collapse. No dataset, URL or rAF counter constitutes completion.",
+  "cases": [
+    {
+      "name": "held-pointer-drag",
+      "before": {
+        "pan": "translate3d(0px, -35.619px, 0px)",
+        "zoom": "translate3d(-50%, -50%, 0px) scale(2.00644)"
+      },
+      "samples": [
+        {
+          "index": 0,
+          "blue": true,
+          "latencyMs": null,
+          "timedOut": true,
+          "pixels": [],
+          "sourceChangedAt": 1923,
+          "outputReadAt": 2976.699999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(-70px, -25.619px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(2.00644)"
+        },
+        {
+          "index": 1,
+          "blue": true,
+          "latencyMs": null,
+          "timedOut": true,
+          "pixels": [],
+          "sourceChangedAt": 2980.899999976158,
+          "outputReadAt": 4034.600000023842,
+          "toolbar": "expanded",
+          "pan": "translate3d(-68px, -24.619px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(2.00644)"
+        },
+        {
+          "index": 2,
+          "blue": true,
+          "latencyMs": null,
+          "timedOut": true,
+          "pixels": [],
+          "sourceChangedAt": 4037.899999976158,
+          "outputReadAt": 5090.699999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(-66px, -23.619px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(2.00644)"
+        }
+      ],
+      "summary": {
+        "count": 3,
+        "timeoutCount": 3,
+        "medianMs": null,
+        "p95Ms": null,
+        "maxMs": null
+      },
+      "passed": false
+    },
+    {
+      "name": "wheel",
+      "before": {
+        "pan": "translate3d(0px, -35.619px, 0px)",
+        "zoom": "translate3d(-50%, -50%, 0px) scale(2.00644)"
+      },
+      "samples": [
+        {
+          "index": 0,
+          "blue": true,
+          "latencyMs": null,
+          "timedOut": true,
+          "pixels": [],
+          "sourceChangedAt": 1947.199999988079,
+          "outputReadAt": 3000.600000023842,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -35.305px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(2.05025)"
+        },
+        {
+          "index": 1,
+          "blue": true,
+          "latencyMs": null,
+          "timedOut": true,
+          "pixels": [],
+          "sourceChangedAt": 3007.5,
+          "outputReadAt": 4065.100000023842,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -35.619px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(2.00644)"
+        },
+        {
+          "index": 2,
+          "blue": true,
+          "latencyMs": null,
+          "timedOut": true,
+          "pixels": [],
+          "sourceChangedAt": 4072,
+          "outputReadAt": 5124.400000035763,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -35.305px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(2.05025)"
+        }
+      ],
+      "summary": {
+        "count": 3,
+        "timeoutCount": 3,
+        "medianMs": null,
+        "p95Ms": null,
+        "maxMs": null
+      },
+      "passed": false
+    },
+    {
+      "name": "released-idle",
+      "before": {
+        "pan": "translate3d(0px, -35.619px, 0px)",
+        "zoom": "translate3d(-50%, -50%, 0px) scale(2.00644)"
+      },
+      "samples": [
+        {
+          "index": 0,
+          "blue": true,
+          "latencyMs": 324.5,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2503.099999964237,
+          "outputReadAt": 2827.599999964237,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -35.619px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(2.00644)"
+        },
+        {
+          "index": 1,
+          "blue": false,
+          "latencyMs": 301.39999997615814,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2916.399999976158,
+          "outputReadAt": 3217.7999999523163,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -35.619px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(2.00644)"
+        },
+        {
+          "index": 2,
+          "blue": true,
+          "latencyMs": 308.5999999642372,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3312.699999988079,
+          "outputReadAt": 3621.2999999523163,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -35.619px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(2.00644)"
+        }
+      ],
+      "summary": {
+        "count": 3,
+        "timeoutCount": 0,
+        "medianMs": 308.5999999642372,
+        "p95Ms": 324.5,
+        "maxMs": 324.5
+      },
+      "passed": false
+    }
+  ],
+  "errors": [],
+  "status": "baseline-failures-reproduced"
+}
