@@ -55,6 +55,9 @@ export default defineConfig(({ mode }) => {
   const photosDir = process.env.PHOTOS_DIR || env.PHOTOS_HOST_DIR || env.PHOTOS_DIR || ''
   return {
     plugins: [developmentMedia(photosDir)],
-    server: { proxy: { '/api': 'http://127.0.0.1:3000' } },
+    server: {
+      proxy: { '/api': 'http://127.0.0.1:3000' },
+      watch: { ignored: ['**/.superpowers/**', ...(photosDir ? [`${path.resolve(photosDir).replaceAll('\\', '/')}/**`] : [])] },
+    },
   }
 })

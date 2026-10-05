@@ -53,6 +53,33 @@ export async function attachGlass(root: HTMLElement, glass: HTMLElement, signal:
       }
       cancelAnimationFrame(scheduled._rafId)
       const paint = scheduled._renderLoop.bind(instance)
+      // The shader canvas otherwise paints over the legacy CSS background and
+      // adds its own outer shadow. Composite through the existing CSS material
+      // and boundary; keep Regular Glass's configuration untouched.
+      const preserveMaterial = () => {
+        const canvas = instance!.glassCanvases.get(glass)
+        const ctx = canvas?.getContext('2d')
+        if (!canvas || !ctx) return
+        const css = getComputedStyle(glass)
+        const pixelRatio = canvas.width / parseFloat(canvas.style.width)
+        const border = parseFloat(css.borderLeftWidth)
+        const x = -parseFloat(canvas.style.left) + border
+        const y = -parseFloat(canvas.style.top) + border
+        const width = glass.clientWidth
+        const height = glass.clientHeight
+        const radius = Math.max(0, parseFloat(css.borderTopLeftRadius) - border)
+        ctx.save()
+        ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
+        ctx.beginPath()
+        ctx.roundRect(x, y, width, height, radius)
+        ctx.globalCompositeOperation = 'destination-in'
+        ctx.fillStyle = '#000'
+        ctx.fill()
+        ctx.globalCompositeOperation = 'source-atop'
+        ctx.fillStyle = css.backgroundColor
+        ctx.fill()
+        ctx.restore()
+      }
       const events = new AbortController()
       let frame = 0
       let stopped = false
@@ -60,8 +87,10 @@ export async function attachGlass(root: HTMLElement, glass: HTMLElement, signal:
         if (stopped || frame) return
         frame = requestAnimationFrame(() => {
           frame = 0
+          instance!.markChanged()
           paint()
           cancelAnimationFrame(scheduled._rafId)
+          preserveMaterial()
         })
       }
       scheduled._renderLoop = wake
