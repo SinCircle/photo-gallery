@@ -6,7 +6,7 @@ import {
   supportsAlbumSave,
 } from '../utils/download'
 import { formatDateTime, photoMetadata } from '../utils/exif'
-import { getAllPhotos, thumbnailUrl, webUrl, originalUrl } from '../photos'
+import { getAllPhotos, thumbnailUrl, webUrl, originalUrl, photoFileName } from '../photos'
 import { attachGlass } from '../utils/glass'
 
 type FitMode = 'contain' | 'fitHeight' | 'fitWidth' | 'oneToOne'
@@ -118,7 +118,7 @@ export async function renderPhotoView(
   const zoom = el('div', { className: 'photoZoom' })
 
   const imgLow = el('img', {
-    alt: photo.id,
+    alt: photoFileName(photo),
     className: 'photoImg photoImgLow',
     loading: 'eager',
     decoding: 'async',
@@ -126,7 +126,7 @@ export async function renderPhotoView(
   })
 
   const imgHigh = el('img', {
-    alt: photo.id,
+    alt: photoFileName(photo),
     className: 'photoImg photoImgHigh',
     loading: 'eager',
     decoding: 'async',
@@ -714,6 +714,7 @@ export async function renderPhotoView(
 
   // Preserve keyboard navigation without accumulating handlers on route changes.
   window.addEventListener('keydown', (event) => {
+    if (document.querySelector('.saveOverlay')) return
     if (event.key === 'Escape') window.location.hash = '#/'
     const step = event.key === 'ArrowLeft' ? -1 : event.key === 'ArrowRight' ? 1 : 0
     if (!step) return

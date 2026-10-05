@@ -1,4 +1,4 @@
-import { getAllPhotos, thumbnailUrl } from '../photos'
+import { getAllPhotos, thumbnailUrl, photoFileName } from '../photos'
 import { clear, el } from '../utils/dom'
 import { pickReadableInkFromBottomLeft } from '../utils/color'
 import { formatDateOnly } from '../utils/exif'
@@ -48,7 +48,7 @@ export async function renderGalleryView(container: HTMLElement, signal: AbortSig
     const link = el('a', {
       href: `#/photo/${encodeURIComponent(photo.id)}`,
       className: 'tile',
-      title: photo.id,
+      title: photoFileName(photo),
     })
     if (photo.id.startsWith('!')) link.classList.add('isFeatured')
     link.dataset.photoId = photo.id
@@ -56,7 +56,7 @@ export async function renderGalleryView(container: HTMLElement, signal: AbortSig
     const media = el('div', { className: 'tileMedia' })
     media.style.aspectRatio = `${photo.width} / ${photo.height}`
     const img = el('img', {
-      alt: photo.id,
+      alt: photoFileName(photo),
       loading: 'lazy',
       decoding: 'async',
       width: photo.width,
