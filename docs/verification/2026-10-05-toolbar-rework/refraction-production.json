@@ -1,5 +1,5 @@
 {
-  "servedModule": "/assets/index-DXCWJH1S.js",
+  "servedModule": "/assets/index-BR782HQ4.js",
   "status": "passed",
   "states": [
     {
@@ -166,5 +166,5 @@
     "longTasks": [],
     "nativeRAFIsRetained": true
   },
-  "note": "The measured canvas is the library-injected displayed output. Transparent controls were hidden only for marker comparison. White interior stays on in refracted screenshots; no material is repainted into the shader canvas."
+  "note": "The measured canvas is the library-injected displayed output. Text controls were hidden only for marker comparison. The capsule dot backing remains visible; no CSS material is repainted into the shader canvas."
 }
