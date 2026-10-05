@@ -1,0 +1,35 @@
+{
+  "verifiedAt": "2026-10-05T11:45:50.807Z",
+  "head": "2b96f18c15c4257c129c9b36bf8a949871c9f13f",
+  "command": "$env:VERIFY_URL='http://127.0.0.1'; node scripts/verify-toolbar.mjs",
+  "base": "http://127.0.0.1",
+  "checks": {
+    "collapsed": {
+      "width": 96,
+      "height": 8,
+      "hidden": true,
+      "imageUnchanged": true,
+      "cls": 0
+    },
+    "approach": {
+      "peakWidth": 1148.77099609375,
+      "finalWidth": 1100,
+      "cls": 0
+    },
+    "wheel": true,
+    "click": true,
+    "photoCLS": 0,
+    "reducedMotion": {
+      "expanded": "expanded",
+      "animations": 0
+    },
+    "admin": {
+      "cls": 0,
+      "formUnchanged": true,
+      "width": 96,
+      "height": 8
+    }
+  },
+  "errors": [],
+  "status": "passed"
+}
