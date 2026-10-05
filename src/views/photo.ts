@@ -7,6 +7,7 @@ import {
 } from '../utils/download'
 import { formatDateTime, photoMetadata } from '../utils/exif'
 import { getAllPhotos, thumbnailUrl, webUrl, originalUrl } from '../photos'
+import { attachGlass } from '../utils/glass'
 
 type FitMode = 'contain' | 'fitHeight' | 'fitWidth' | 'oneToOne'
 
@@ -138,7 +139,6 @@ export async function renderPhotoView(
   content.append(stage)
 
   // Bottom fixed dock: back + metadata + download.
-  const dock = el('div', { className: 'dock' })
   const dockInner = el('div', { className: 'glass dockInner' })
 
   const dockLeft = el('div', { className: 'dockLeft' })
@@ -696,10 +696,10 @@ export async function renderPhotoView(
   dockLeft.append(backBtn, fitBtn)
   dockRight.append(downloadBtn)
   dockInner.append(dockLeft, metaList, dockRight)
-  dock.append(dockInner)
-
-  shell.append(bg, content, dock)
+  // Direct child required by LiquidGlass; CSS keeps the legacy dock geometry.
+  shell.append(bg, content, dockInner)
   container.append(shell)
+  void attachGlass(shell, dockInner, signal)
 
   // Re-layout when dock wraps (e.g., narrow widths).
   const ro = new ResizeObserver(() => {

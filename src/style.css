@@ -362,6 +362,15 @@ button:focus-visible {
   gap: 12px;
 }
 
+/* Same 18px side / 14px bottom offsets as the legacy .dock wrapper. */
+.photoShell > .dockInner {
+  position: fixed;
+  left: 18px;
+  right: 18px;
+  bottom: 14px;
+  z-index: 20;
+}
+
 .dockLeft {
   grid-area: left;
   display: flex;
