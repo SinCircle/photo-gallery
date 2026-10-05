@@ -1,25 +1,30 @@
 {
+  "servedModule": "/assets/index-DXCWJH1S.js",
   "status": "passed",
-  "heldAt": 935,
+  "heldAt": 566.9000000357628,
   "held": {
     "src": null,
-    "time": 1911.0999999642372,
+    "time": 1549.4000000357628,
     "lowNatural": 720
   },
-  "releasedAt": 2577.599999964237,
+  "releasedAt": 2259,
   "loaded": {
     "src": "http://127.0.0.1/media/originals/!IMG_20260103_160706.jpg",
     "natural": [
       4080,
       3056
     ],
-    "time": 3871.099999964237,
+    "time": 3675,
     "lowHidden": "hidden"
   },
   "requests": [
     {
       "url": "http://127.0.0.1/media/originals/!IMG_20260103_160706.jpg",
-      "timestamp": 325153.818517
+      "timestamp": 326043.419429
+    },
+    {
+      "url": "http://127.0.0.1/media/originals/!IMG_20260103_160706.jpg",
+      "timestamp": 326045.568186
     }
   ]
 }
