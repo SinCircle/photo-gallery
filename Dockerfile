@@ -2,6 +2,7 @@
 FROM node:24-slim AS web-build
 WORKDIR /src
 COPY package*.json ./
+COPY patches/ ./patches/
 RUN npm ci
 COPY . .
 RUN npm run build

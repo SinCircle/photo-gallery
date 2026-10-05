@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte'
+  import PressButton from '../components/PressButton.svelte'
 
   const MAX_UPLOAD_BYTES = Math.floor(14.7 * 1024 * 1024)
 
@@ -202,7 +203,7 @@
   <main class="login-shell">
     <section class="login-card">
       <a class="back-link" href="#/">← 返回影集</a>
-      <p class="eyebrow">PRIVATE STUDIO</p>
+      <p class="eyebrow">个人影像工作室</p>
       <h1>照片管理</h1>
       <p class="login-intro">输入管理密码后，可以上传照片并编辑已有内容。</p>
       <form class="login-form" onsubmit={submitLogin}>
@@ -215,9 +216,9 @@
           required
           disabled={loggingIn}
         />
-        <button class="primary-button" type="submit" disabled={loggingIn}>
+        <PressButton className="primary-button" type="submit" disabled={loggingIn}>
           {loggingIn ? '正在登录…' : '进入管理'}
-        </button>
+        </PressButton>
       </form>
       {#if feedback}
         <p class="feedback" class:error={feedbackKind === 'error'} role="status">{feedback}</p>
@@ -228,19 +229,19 @@
   <main class="admin-shell">
     <header class="admin-header">
       <div>
-        <p class="eyebrow">PHOTO LIBRARY</p>
+        <p class="eyebrow">影像档案</p>
         <h1>照片管理</h1>
         <p class="admin-count">{photos.length} 张照片</p>
       </div>
       <div class="header-actions">
         <a class="quiet-link" href="#/">返回影集</a>
-        <button class="quiet-button" type="button" onclick={submitLogout}>退出登录</button>
+        <PressButton className="quiet-button" onclick={submitLogout}>退出登录</PressButton>
       </div>
     </header>
 
     <section class="upload-panel" aria-labelledby="upload-title">
       <div class="upload-copy">
-        <p class="eyebrow">ADD TO LIBRARY</p>
+        <p class="eyebrow">加入影像</p>
         <h2 id="upload-title">上传照片</h2>
         <p>支持 JPEG、PNG、WebP、AVIF 与 GIF，单张原图最大 14.7 MB。</p>
       </div>
@@ -257,9 +258,9 @@
         {#if selectedFile}
           <small>{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</small>
         {/if}
-        <button class="primary-button" type="submit" disabled={uploading || !selectedFile}>
+        <PressButton className="primary-button" type="submit" disabled={uploading || !selectedFile}>
           {uploading ? '正在上传…' : '上传照片'}
-        </button>
+        </PressButton>
       </form>
     </section>
 
@@ -270,7 +271,7 @@
     <section class="photo-section" aria-labelledby="photo-list-title">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">YOUR PHOTOGRAPHS</p>
+          <p class="eyebrow">你的照片</p>
           <h2 id="photo-list-title">全部照片</h2>
         </div>
         {#if loadingPhotos}<span class="loading-label">正在读取…</span>{/if}
@@ -295,12 +296,12 @@
                   <textarea bind:value={drafts[photo.id].description} rows="3" placeholder="写下拍摄时的故事或地点"></textarea>
                 </label>
                 <div class="photo-actions">
-                  <button class="primary-button small-button" type="button" onclick={() => savePhoto(photo)} disabled={!hasChanges(photo) || savingId === photo.id}>
+                  <PressButton className="primary-button small-button" onclick={() => savePhoto(photo)} disabled={!hasChanges(photo) || savingId === photo.id}>
                     {savingId === photo.id ? '保存中…' : '保存信息'}
-                  </button>
-                  <button class="danger-button" type="button" onclick={() => removePhoto(photo)} disabled={deletingId === photo.id}>
+                  </PressButton>
+                  <PressButton className="danger-button" onclick={() => removePhoto(photo)} disabled={deletingId === photo.id}>
                     {deletingId === photo.id ? '删除中…' : '删除'}
-                  </button>
+                  </PressButton>
                 </div>
                 {#if !photo.derived?.thumb || !photo.derived?.web}
                   <p class="derived-warning">这张照片有衍生图尚未生成。</p>
@@ -424,46 +425,6 @@
   textarea:focus {
     border-color: #89a99c;
     box-shadow: 0 0 0 3px #89a99c24;
-  }
-
-  .primary-button,
-  .quiet-button,
-  .danger-button {
-    min-height: 42px;
-    padding: 0 16px;
-    border: 1px solid transparent;
-    border-radius: 999px;
-    color: #f6f5f1;
-    font: inherit;
-    cursor: pointer;
-    transition: transform 160ms ease, background 160ms ease, opacity 160ms ease;
-  }
-
-  .primary-button {
-    background: #d8e1da;
-    color: #131714;
-    font-weight: 650;
-  }
-
-  .primary-button:hover:not(:disabled) {
-    background: #f0f4ef;
-    transform: translateY(-1px);
-  }
-
-  .quiet-button {
-    border-color: #ffffff25;
-    background: #ffffff0a;
-  }
-
-  .danger-button {
-    border-color: #d4847455;
-    background: #6d302733;
-    color: #f0b8ab;
-  }
-
-  button:disabled {
-    opacity: .48;
-    cursor: not-allowed;
   }
 
   .feedback {
@@ -636,13 +597,6 @@
 
   .photo-actions {
     justify-content: flex-start;
-  }
-
-  .small-button,
-  .danger-button {
-    min-height: 36px;
-    padding: 0 14px;
-    font-size: 13px;
   }
 
   .derived-warning {
