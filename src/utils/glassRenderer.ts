@@ -22,7 +22,9 @@ export async function createGlassRenderer(glass: HTMLElement, signal: AbortSigna
       if (signal.aborted) { cleanup(); throw new DOMException('Aborted', 'AbortError') }
       for (const capsule of capsules) {
         const output = capsule.querySelector('canvas')!
-        output.getContext('2d', { willReadFrequently: true })
+        // Several panels must stay on the GPU: a CPU-backed output forces a
+        // readback after every panel's Gaussian passes and serializes the group.
+        output.getContext('2d', { willReadFrequently: false })
         output.dataset.glassOutput = capsule.dataset.glassCapsule
       }
       return { scene, changed: () => instance!.markChanged(scene) }

@@ -9,7 +9,7 @@ const { navigate, evaluate, until, send, shot } = browser
 const report = { base, baseline, startedAt: new Date().toISOString(), graphics: browser.graphics, browser: browser.version.product,
   method: 'Three separate real-input states. A canvas under the toolbar alternates red/blue at each background mutation. Timing starts immediately after its fillRect. Completion requires reading matching actual rendered output pixels. Live canvas drawImage is instrumented only in the test to read pixels immediately after a paint (no timer-poll quantization); legacy CSS PNG is decoded and sampled. Trusted CDP drag/wheel events also change the real photo transform. Idle samples continue without input, including after collapse. No dataset, URL or rAF counter constitutes completion.', cases: [], errors: browser.errors }
 report.servedModule = (await (await fetch(base)).text()).match(/<script[^>]+src="([^"]+)"/)?.[1]
-report.pixelReadback = 'Copy each visible glass output pixel to a separate 1x1 CPU canvas and read RGBA there. A sample completes only after every visible capsule matches the changed background. Timing includes copy/readback; the test does not change the display canvas backing.'
+report.pixelReadback = 'Copy one actual pixel from every visible output to a tiny GPU probe, then read the group RGBA in one readback. Completion requires every pixel to match the changed background. Draw hooks only trigger the check; they never constitute completion. Timing includes copy/readback; output backing is not changed by the test.'
 try {
   for (const name of ['held-pointer-drag', 'wheel', 'released-idle']) {
     await navigate(`${base}/?latency=${name}#/photo/!IMG_20260103_160706.jpg`)
@@ -23,7 +23,7 @@ try {
       const bar=document.querySelector('.dockInner'),r=bar.getBoundingClientRect(),c=document.createElement('canvas');
       c.id='latency-fixture';c.width=1440;c.height=200;c.style.cssText='position:fixed;pointer-events:none;z-index:19;left:0;bottom:0;width:1440px;height:200px';document.querySelector('.photoShell').append(c);
       window.paintFixture=blue=>{const ctx=c.getContext('2d');ctx.fillStyle=blue?'rgb(20,20,240)':'rgb(240,20,20)';ctx.fillRect(0,0,c.width,c.height);const start=performance.now();c.style.left=(blue?1:0)+'px';bar.dispatchEvent(new Event('glassrefresh'));return start};
-      const probe=document.createElement('canvas');probe.width=probe.height=1;const probeCtx=probe.getContext('2d',{willReadFrequently:true});
+      const probe=document.createElement('canvas');probe.width=8;probe.height=1;const probeCtx=probe.getContext('2d',{willReadFrequently:false});
       window.liveOutputs=()=>[...bar.querySelectorAll('canvas[data-glass-output]')].filter(c=>{const p=c.parentElement,r=p.getBoundingClientRect(),s=getComputedStyle(p);return r.width>0&&r.height>0&&s.visibility!=='hidden'&&+s.opacity>.01});
       window.readLivePixels=live=>{probeCtx.clearRect(0,0,1,1);probeCtx.drawImage(live,Math.floor(live.width/2),Math.floor(live.height/2),1,1,0,0,1,1);return [...probeCtx.getImageData(0,0,1,1).data]};
       window.readGlass=async()=>{const live=liveOutputs()[0];if(live)return readLivePixels(live);
@@ -31,7 +31,7 @@ try {
         const url=getComputedStyle(bar).backgroundImage.slice(5,-2);if(!url)return [0,0,0,0];if(window.pixelURL!==url){const img=await createImageBitmap(await(await fetch(url)).blob());const target=document.createElement('canvas');target.width=img.width;target.height=img.height;target.getContext('2d').drawImage(img,0,0);img.close();window.pixelCanvas=target;window.pixelURL=url}const target=window.pixelCanvas;return [...target.getContext('2d').getImageData(Math.floor(target.width/2),Math.floor(target.height/2),1,1).data]};
       paintFixture(false);
       window.armSample=(index,blue)=>{
-        window.pendingSample=new Promise(resolve=>{window.sampleResolve=resolve});window.sampleState={index,blue,matched:new Map()};
+        window.pendingSample=new Promise(resolve=>{window.sampleResolve=resolve});window.sampleState={index,blue,matched:new Map(),painted:new Set()};
       };
       window.beginSample=()=>{
         const s=window.sampleState;if(!s||s.start!==undefined)return;
@@ -40,7 +40,8 @@ try {
         if(!bar.querySelector('canvas[data-glass-output]'))poll();
       };
       const finish=(latency,pixels)=>{const s=window.sampleState;if(!s||s.start===undefined)return;clearTimeout(s.deadline);window.sampleState=null;sampleResolve({index:s.index,blue:s.blue,latencyMs:latency,timedOut:latency===null,pixels,outputs:[...s.matched.values()],sourceChangedAt:s.start,inputPaintAt:s.inputPaintAt,copyStartedAt:s.copyStartedAt,outputReadAt:s.outputReadAt,toolbar:bar.dataset.toolbar,pan:document.querySelector('.photoPan').style.transform,zoom:document.querySelector('.photoZoom').style.transform})};
-      const check=async(live)=>{const s=window.sampleState;if(!s||s.start===undefined)return;const pixels=live?readLivePixels(live):await readGlass();s.outputReadAt=performance.now();if(!(s.blue?pixels[2]-pixels[0]>60:pixels[0]-pixels[2]>60))return;if(live){s.matched.set(live,{name:live.dataset.glassOutput||'legacy-panel',pixels,readAt:s.outputReadAt,latencyMs:s.outputReadAt-s.start});const visible=liveOutputs();if(!visible.length||!visible.every(c=>s.matched.has(c)))return}finish(s.outputReadAt-s.start,pixels)};
+      const matches=p=>sampleState.blue?p[2]-p[0]>60:p[0]-p[2]>60;
+      const check=async(live)=>{const s=window.sampleState;if(!s||s.start===undefined)return;if(live){s.painted.add(live);const visible=liveOutputs();if(!visible.length||!visible.every(c=>s.painted.has(c)))return;probeCtx.clearRect(0,0,8,1);visible.forEach((c,i)=>probeCtx.drawImage(c,Math.floor(c.width/2),Math.floor(c.height/2),1,1,i,0,1,1));const rgba=probeCtx.getImageData(0,0,visible.length,1).data;s.outputReadAt=performance.now();const values=visible.map((c,i)=>[...rgba.slice(i*4,i*4+4)]);if(!values.every(matches))return;visible.forEach((c,i)=>s.matched.set(c,{name:c.dataset.glassOutput||'legacy-panel',pixels:values[i],readAt:s.outputReadAt,latencyMs:s.outputReadAt-s.start}));finish(s.outputReadAt-s.start,values[0]);return}const pixels=await readGlass();s.outputReadAt=performance.now();if(matches(pixels))finish(s.outputReadAt-s.start,pixels)};
       const poll=async()=>{await check();if(window.sampleState?.start!==undefined)setTimeout(poll,0)};
       for(const output of bar.querySelectorAll('canvas[data-glass-output]')){const ctx=output.getContext('2d'),draw=ctx.drawImage.bind(ctx);ctx.drawImage=(...args)=>{if(window.sampleState?.start!==undefined)sampleState.copyStartedAt=performance.now();draw(...args);void check(output)}};
       const input=bar.querySelector('canvas[data-glass-scene]');if(input){const ctx=input.getContext('2d'),draw=ctx.drawImage.bind(ctx);ctx.drawImage=(...args)=>{draw(...args);if(args[0]===c&&window.sampleState?.start!==undefined)sampleState.inputPaintAt=performance.now()}};
