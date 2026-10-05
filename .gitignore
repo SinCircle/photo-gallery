@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local
 
-# 同步脚本已移除；照片库不在仓库内
+# 前端不再打包图片；展示图片由服务端照片库提供。
 public/images/
 public/images-manifest.json
 /photos-library/

@@ -1,5 +1,12 @@
 import { defineConfig } from 'vite'
+import { svelte } from '@sveltejs/vite-plugin-svelte'
 
 export default defineConfig({
-  // 自建服务器挂在根路径，不需要 GH Pages 时代的相对路径。
+  plugins: [svelte()],
+  server: {
+    proxy: {
+      '/api': 'http://127.0.0.1:3000',
+      '/media': 'http://127.0.0.1:3000',
+    },
+  },
 })
