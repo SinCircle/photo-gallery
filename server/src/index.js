@@ -3,6 +3,8 @@ import { pathToFileURL } from 'node:url'
 import { loadConfig } from './config.js'
 import { healthRouter } from './routes/health.js'
 import { photosRouter } from './routes/photos.js'
+import { authRouter } from './routes/auth.js'
+import { adminRouter } from './routes/admin.js'
 
 /**
  * 装配 Express 应用。导出以便测试直接注入配置并用临时端口启动。
@@ -15,6 +17,8 @@ export function createApp(cfg) {
   const api = express.Router()
   api.use(healthRouter())
   api.use(photosRouter(cfg))
+  api.use(authRouter(cfg))
+  api.use(adminRouter(cfg))
   app.use('/api', api)
 
   return app

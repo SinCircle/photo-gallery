@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
-import { readIndex, writeIndex, upsertPhoto, removePhoto } from '../src/photos/store.js'
+import { readIndex, writeIndex, upsertPhoto, updatePhoto, removePhoto } from '../src/photos/store.js'
 
 let dir
 let indexPath
@@ -81,6 +81,29 @@ describe('upsertPhoto', () => {
     await upsertPhoto(indexPath, { id: 'b.jpg' })
     const idx = await readIndex(indexPath)
     expect(idx.photos.map((p) => p.id).sort()).toEqual(['a.jpg', 'b.jpg'])
+  })
+})
+
+describe('updatePhoto', () => {
+  it('更新指定字段并保留记录其它字段', async () => {
+    await upsertPhoto(indexPath, { id: 'a.jpg', width: 640, title: '', description: '' })
+    const updated = await updatePhoto(indexPath, 'a.jpg', { title: '海边' })
+    expect(updated).toEqual({ id: 'a.jpg', width: 640, title: '海边', description: '' })
+    expect((await readIndex(indexPath)).photos[0]).toEqual(updated)
+  })
+
+  it('目标不存在时返回 null 且不创建索引', async () => {
+    await expect(updatePhoto(indexPath, 'missing.jpg', { title: '无' })).resolves.toBeNull()
+    await expect(fs.access(indexPath)).rejects.toThrow()
+  })
+
+  it('并发删除与编辑不会把已删除记录重新写回', async () => {
+    await upsertPhoto(indexPath, { id: 'a.jpg', title: '' })
+    await Promise.all([
+      updatePhoto(indexPath, 'a.jpg', { title: '新标题' }),
+      removePhoto(indexPath, 'a.jpg'),
+    ])
+    expect((await readIndex(indexPath)).photos).toEqual([])
   })
 })
 

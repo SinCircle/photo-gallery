@@ -75,6 +75,21 @@ export async function upsertPhoto(indexPath, photo) {
   })
 }
 
+/** 在同一条写锁内更新已有照片，防止并发删除与编辑互相覆盖。 */
+export async function updatePhoto(indexPath, id, fields) {
+  return withLock(indexPath, async () => {
+    const index = await readIndex(indexPath)
+    const position = index.photos.findIndex((photo) => photo.id === id)
+    if (position < 0) return null
+
+    const updated = { ...index.photos[position], ...fields }
+    const photos = [...index.photos]
+    photos[position] = updated
+    await writeIndex(indexPath, { ...index, photos })
+    return updated
+  })
+}
+
 /** 按 id 删除一条记录。id 不存在时静默成功。 */
 export async function removePhoto(indexPath, id) {
   return withLock(indexPath, async () => {
