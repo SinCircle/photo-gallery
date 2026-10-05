@@ -199,12 +199,12 @@ try {
   await send('Fetch.disable')
   console.log('PASS fixtures: 390/700/1400px; 24 known ratios; CLS=0; 0 blank tiles')
 
-  // Observe the original two-layer crossfade while the web image is withheld.
+  // Observe the original two-layer crossfade while the full original is withheld.
   const targetId = '!IMG_20260103_160706.jpg'
   const photoURL = `${base}/#/photo/${encodeURIComponent(targetId)}`
   let highRequest
   on('Fetch.requestPaused', p => { highRequest = p.requestId })
-  await send('Fetch.enable', { patterns: [{ urlPattern: '*media/web/*', resourceType: 'Image' }] })
+  await send('Fetch.enable', { patterns: [{ urlPattern: '*media/originals/*', resourceType: 'Image' }] })
   await navigate(photoURL)
   await until(`document.querySelector('.photoImgLow')?.naturalWidth>0`)
   await until(`!!document.querySelector('.photoImgHigh')?.getAttribute('src')`)
@@ -224,15 +224,14 @@ try {
   assert.equal(report.checks.fade.highFinal, '1')
   assert.ok(report.checks.fade.stages.some(p => p.class.includes('hiReady')))
   await shot('photo')
-  const idle = await evaluate('({requested:__probe.requested,executed:__probe.executed})')
+  const idle = await evaluate('({requested:__probe.requested,executed:__probe.executed,draws:__probe.gl.reduce((s,c)=>s+c.draws,0)})')
   await sleep(5000)
   report.checks.glass = await evaluate(`({path:document.querySelector('.dockInner').dataset.glass,config:JSON.parse(document.querySelector('.dockInner').dataset.config),requested:__probe.requested-${idle.requested},executed:__probe.executed-${idle.executed},active:__probe.active.size,webglDraws:__probe.gl.reduce((s,c)=>s+c.draws,0)})`)
-  assert.equal(report.checks.glass.requested, 0)
-  assert.equal(report.checks.glass.executed, 0)
-  assert.equal(report.checks.glass.active, 0)
-  report.checks.glass.snapshotWidth = await evaluate(`(async()=>{const image=new Image();image.src=getComputedStyle(document.querySelector('.dockInner')).backgroundImage.slice(5,-2);await image.decode();return image.naturalWidth})()`)
-  assert.ok(report.checks.glass.snapshotWidth > 0)
-  console.log('PASS glass snapshot lifecycle: idle 5s requested=0 executed=0 active=0; refraction separately checked by verify-glass.mjs')
+  report.checks.glass.idleShaderDraws = report.checks.glass.webglDraws - idle.draws
+  assert.equal(report.checks.glass.idleShaderDraws, 0)
+  report.checks.glass.outputWidth = await evaluate(`document.querySelector('[data-glass-output]').width`)
+  assert.ok(report.checks.glass.outputWidth > 0)
+  console.log('PASS persistent native glass: idle 5s shader draws=0; real pixel latency and refraction have separate acceptance scripts')
 
   const labels = [await evaluate(`document.querySelector('.dockLeft button:nth-child(2)').textContent`)]
   for (let i = 0; i < 3; i++) {
@@ -335,12 +334,12 @@ try {
   await send('Network.setUserAgentOverride',{userAgent:'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/154.0.0.0 Safari/537.36'})
   console.log('PASS download: original-resolution JPEG + 96px matte + stamp; mobile fallback; Web Share File (emulated)')
 
-  // CSS fallback, including preference changes during an existing route.
+  // Reduced motion changes during an existing route; unavailable WebGL fallback.
   await navigate(photoURL)
   await wakeDock()
   await until(`document.querySelector('.dockInner')?.dataset.glass==='webgl'`, 120000)
   await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] })
-  await until(`document.querySelector('.dockInner')?.dataset.glass==='css'&&document.querySelectorAll('.dockInner canvas').length===0`)
+  await until(`document.querySelector('.dockInner').getAnimations({subtree:true}).length===0 && getComputedStyle(document.querySelector('.photoImgHigh')).transitionDuration==='0s'`)
   report.checks.reducedMotion = await evaluate(`({path:document.querySelector('.dockInner').dataset.glass,transition:getComputedStyle(document.querySelector('.photoImgHigh')).transitionDuration})`)
   await shot('photo-reduced-motion')
   assert.equal(report.checks.reducedMotion.transition, '0s')
@@ -351,7 +350,7 @@ try {
   report.checks.noWebGL = await evaluate(`({path:document.querySelector('.dockInner').dataset.glass,backdrop:getComputedStyle(document.querySelector('.dockInner')).backdropFilter,buttons:document.querySelectorAll('.dockInner button').length})`)
   assert.equal(report.checks.noWebGL.path, 'css')
   assert.equal(report.checks.noWebGL.buttons, 3)
-  console.log('PASS fallback: reduced motion removes renderer; unavailable WebGL retains CSS controls')
+  console.log('PASS fallback: reduced motion switches instantly; unavailable WebGL retains CSS controls')
 
   // Exact legacy source was built before old dependencies were removed.
   referenceServer = createServer(async (req, res) => {
