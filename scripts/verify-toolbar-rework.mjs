@@ -168,6 +168,7 @@ const checks = {
     const heldAt = await evaluate('performance.now()')
     for (let i = 0; i < 9; i++) { await sleep(100); await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 720 + i * 2, y: 450, buttons: 1 }) }
     const held = await evaluate(`({src:document.querySelector('.photoImgHigh').getAttribute('src'),time:performance.now(),lowNatural:document.querySelector('.photoImgLow').naturalWidth})`)
+    held.originalRequestCount = requests.length
     assert.equal(held.src, null)
     assert.equal(requests.length, 0)
     await shot('original-deferred-while-held')
@@ -181,7 +182,9 @@ const checks = {
     assert.equal(requests.length, 1)
     await wake()
     await shot('original-loaded')
-    return { heldAt, held, releasedAt, loaded, requests }
+    // Snapshot this phase. Later fallback navigation also requests an original;
+    // retaining the live array would incorrectly append it to this evidence.
+    return { heldAt, held, releasedAt, loaded, requests: [...requests] }
   },
   async fallback() {
     const script = await send('Page.addScriptToEvaluateOnNewDocument', { source: `const get=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(type,...args){return type==='webgl'||type==='webgl2'?null:get.call(this,type,...args)}` })
