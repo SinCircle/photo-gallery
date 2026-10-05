@@ -26,6 +26,7 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
   let timer = 0, lastActivity = performance.now()
   let keyboardFocus = false
   let nearby = false
+  let animations: Animation[] = []
   const pointers = new Set<number>()
 
   const resize = () => {
@@ -39,6 +40,12 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
   }
   const setExpanded = (next: boolean) => {
     if (signal.aborted || expanded === next) return
+    const current = bar.getBoundingClientRect()
+    const currentOpacity = getComputedStyle(clip).opacity
+    const metadata = content.querySelector<HTMLElement>('.dockMeta')
+    const currentBlur = metadata ? getComputedStyle(metadata).filter : 'none'
+    for (const animation of animations) animation.cancel()
+    animations = []
     expanded = next
     bar.dataset.toolbar = next ? 'expanded' : 'collapsed'
     bar.tabIndex = next ? -1 : 0
@@ -50,7 +57,27 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
     dot.style.opacity = next ? '0' : '1'
     bar.style.width = `${next ? width : 56}px`
     bar.style.height = `${next ? height : 32}px`
-    bar.dispatchEvent(new Event('glassrefresh'))
+    if (metadata) metadata.style.filter = next ? 'blur(0px)' : 'blur(8px)'
+    if (!preference.matches) {
+      const targetW = next ? width : 56, targetH = next ? height : 32
+      const dw = targetW - current.width, dh = targetH - current.height
+      const easing = 'cubic-bezier(.22,.8,.25,1)'
+      const size = (w: number, h: number, offset: number) => ({ width: `${w}px`, height: `${h}px`, offset })
+      animations.push(bar.animate([
+        size(current.width, current.height, 0),
+        size(targetW + dw * .035, targetH + dh * .06, .64),
+        size(targetW - dw * .012, targetH - dh * .02, .82),
+        size(targetW, targetH, 1),
+      ], { duration: next ? 540 : 460, easing }))
+      animations.push(clip.animate([{ opacity: currentOpacity }, { opacity: next ? 1 : 0 }],
+        { duration: next ? 320 : 180, easing }))
+      if (metadata) animations.push(metadata.animate([{ filter: currentBlur }, { filter: next ? 'blur(0px)' : 'blur(8px)' }],
+        { duration: next ? 380 : 220, easing }))
+      animations.push(dot.animate([{ opacity: next ? 1 : 0 }, { opacity: next ? 0 : 1 }],
+        { duration: 200, delay: next ? 0 : 180, easing }))
+      animations[0].onfinish = () => bar.dispatchEvent(new Event('glassrefresh'))
+      bar.dispatchEvent(new Event('glassgeometry'))
+    } else bar.dispatchEvent(new Event('glassrefresh'))
   }
   const checkIdle = () => {
     timer = 0
@@ -84,11 +111,15 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
   bar.addEventListener('keydown', event => {
     if (event.target === bar && ['Enter', ' '].includes(event.key)) { event.preventDefault(); wake() }
   }, { signal })
-  preference.addEventListener('change', resize, { signal })
+  preference.addEventListener('change', () => {
+    for (const animation of animations) animation.cancel()
+    animations = []
+    resize()
+  }, { signal })
   const observer = new ResizeObserver(resize)
   observer.observe(slot)
   observer.observe(content)
-  signal.addEventListener('abort', () => { clearTimeout(timer); observer.disconnect() }, { once: true })
+  signal.addEventListener('abort', () => { clearTimeout(timer); observer.disconnect(); for (const animation of animations) animation.cancel() }, { once: true })
   resize()
   arm()
   return slot

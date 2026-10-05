@@ -96,11 +96,13 @@ button:focus-visible {
 .glassRoot { position: absolute; left: -1px; top: -1px; width: calc(100% + 2px); height: calc(100% + 2px); pointer-events: none; }
 .toolbarSlot { position: relative; max-width: 900px; margin: 0 auto; width: 100%; pointer-events: none; }
 .idleToolbar { position: absolute; left: 50%; transform: translateX(-50%); margin: 0; padding: 0; display: block; pointer-events: auto; }
-.idleToolbar[data-edge='bottom'] { bottom: 0; }
+.idleToolbar[data-edge='bottom'] { top: 100%; transform: translate(-50%, -100%); }
 .idleToolbar[data-edge='top'] { top: 0; }
 .idleToolbar > .toolbarClip { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
-.toolbarContent { position: relative; left: 50%; transform: translateX(-50%); padding: 12px; }
-.idleToolbar > .toolbarDot { position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; margin: -3px; border-radius: 50%; background: var(--ink-muted); opacity: 0; pointer-events: none; }
+.toolbarContent { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); padding: 12px; }
+.idleToolbar[data-edge='top'] .toolbarContent { bottom: auto; top: 0; }
+.idleToolbar > .toolbarDot { position: absolute; bottom: 12px; left: 50%; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: var(--ink-muted); opacity: 0; pointer-events: none; }
+.idleToolbar[data-edge='top'] > .toolbarDot { bottom: auto; top: 12px; }
 .idleToolbar[data-toolbar='collapsed'] .toolbarClip { pointer-events: none; }
 
 .topbarInner {
