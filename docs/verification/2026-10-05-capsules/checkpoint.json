@@ -1,0 +1,19 @@
+{
+  "baseline": "86aa2c9",
+  "scope": "Remove outlines, about 2px material blur, four native glass capsules plus one shared idle capsule, slower nonlinear motion",
+  "constraints": {
+    "pixelLatencyEachSampleMs": "<16 in held drag, wheel and released idle",
+    "cls": 0,
+    "idleShaderDrawsFiveSeconds": 0,
+    "galleryUnchanged": true,
+    "preserveKnownFpsFailure": true,
+    "repositoryOnly": true,
+    "push": false
+  },
+  "inspection": {
+    "cssOutline": "src/style.css .glass border: 1px solid rgba(255,255,255,.65); .btn also has a hairline border",
+    "shaderOutline": "edgeHighlight defaults .05 (rim, glow and innerStroke); fresnel defaults 1 (environment reflection and white blend)",
+    "blur": "Six separable 9-tap Gaussian iterations, spread=blurAmount*2.5; initial pixel-to-normalized mapping based on kernel variance, to be checked against rendered pixels",
+    "structure": "Actual metadata and button capsules will be direct children of one persistent LiquidGlass root; no nested glass proxy panels"
+  }
+}
