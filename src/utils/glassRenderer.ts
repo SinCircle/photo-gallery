@@ -22,6 +22,9 @@ export async function createGlassRenderer(glass: HTMLElement, signal: AbortSigna
     instance = await LiquidGlass.init({ root, glassElements: [panel] })
     if (signal.aborted) { instance.destroy(); root.remove(); throw new DOMException('Aborted', 'AbortError') }
     const output = panel.querySelector('canvas')!
+    // A stable, read-friendly backing avoids the GPU readback stalls measured
+    // on this small output. Keep the large photo and scene canvases accelerated.
+    output.getContext('2d', { willReadFrequently: true })
     output.dataset.glassOutput = ''
     return {
       scene,

@@ -64,7 +64,8 @@ try {
     if (name === 'held-pointer-drag') await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: 770, y: 460, button: 'left', clickCount: 1 })
     if (baseline && name === 'wheel') await evaluate(`clearInterval(continuousWheel)`)
     const times = samples.filter(s => !s.timedOut).map(s => s.latencyMs).sort((a,b) => a-b)
-    const result = { name, before, samples, summary: { count: samples.length, timeoutCount: samples.filter(s => s.timedOut).length,
+    const contextAttributes = await evaluate(`document.querySelector('[data-glass-output]')?.getContext('2d').getContextAttributes() ?? null`)
+    const result = { name, before, contextAttributes, samples, summary: { count: samples.length, timeoutCount: samples.filter(s => s.timedOut).length,
       medianMs: times[Math.floor(times.length / 2)] ?? null, p95Ms: times[Math.floor(times.length * .95)] ?? null, maxMs: times.at(-1) ?? null },
       passed: samples.every(s => !s.timedOut && s.latencyMs < 16) }
     report.cases.push(result)
