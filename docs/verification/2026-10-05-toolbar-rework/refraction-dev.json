@@ -1,0 +1,169 @@
+{
+  "status": "passed",
+  "states": [
+    {
+      "name": "expanded",
+      "bar": {
+        "x": 340,
+        "y": 880,
+        "width": 760,
+        "height": 106,
+        "top": 880,
+        "right": 1100,
+        "bottom": 986,
+        "left": 340
+      },
+      "canvas": {
+        "x": 320,
+        "y": 860,
+        "width": 800,
+        "height": 146,
+        "top": 860,
+        "right": 1120,
+        "bottom": 1006,
+        "left": 320
+      },
+      "bitmap": [
+        800,
+        146
+      ],
+      "dpr": 1,
+      "lines": [
+        {
+          "x": 266,
+          "expected": [
+            23,
+            34
+          ],
+          "actual": [
+            5,
+            28
+          ],
+          "displacement": 18,
+          "originalThickness": 12,
+          "refractedThickness": 24
+        },
+        {
+          "x": 380,
+          "expected": [
+            23,
+            34
+          ],
+          "actual": [
+            5,
+            28
+          ],
+          "displacement": 18,
+          "originalThickness": 12,
+          "refractedThickness": 24
+        },
+        {
+          "x": 494,
+          "expected": [
+            23,
+            34
+          ],
+          "actual": [
+            4,
+            29
+          ],
+          "displacement": 19,
+          "originalThickness": 12,
+          "refractedThickness": 26
+        }
+      ],
+      "config": {
+        "floating": true,
+        "cornerRadius": 40,
+        "blurAmount": 0
+      },
+      "sameRoot": true,
+      "instances": 1
+    },
+    {
+      "name": "collapsed",
+      "bar": {
+        "x": 692,
+        "y": 954,
+        "width": 56,
+        "height": 32,
+        "top": 954,
+        "right": 748,
+        "bottom": 986,
+        "left": 692
+      },
+      "canvas": {
+        "x": 672,
+        "y": 934,
+        "width": 96,
+        "height": 72,
+        "top": 934,
+        "right": 768,
+        "bottom": 1006,
+        "left": 672
+      },
+      "bitmap": [
+        96,
+        72
+      ],
+      "dpr": 1,
+      "lines": [
+        {
+          "x": 20,
+          "expected": [
+            7,
+            14
+          ],
+          "actual": [
+            16,
+            16
+          ],
+          "displacement": 9,
+          "originalThickness": 8,
+          "refractedThickness": 1
+        },
+        {
+          "x": 28,
+          "expected": [
+            7,
+            14
+          ],
+          "actual": [
+            16,
+            16
+          ],
+          "displacement": 9,
+          "originalThickness": 8,
+          "refractedThickness": 1
+        },
+        {
+          "x": 36,
+          "expected": [
+            7,
+            14
+          ],
+          "actual": [
+            16,
+            16
+          ],
+          "displacement": 9,
+          "originalThickness": 8,
+          "refractedThickness": 1
+        }
+      ],
+      "config": {
+        "floating": true,
+        "cornerRadius": 40,
+        "blurAmount": 0
+      },
+      "sameRoot": true,
+      "instances": 1
+    }
+  ],
+  "idle": {
+    "shaderDraws": 0,
+    "longTasks": [],
+    "nativeRAFIsRetained": true
+  },
+  "note": "The measured canvas is the library-injected displayed output. Transparent controls were hidden only for marker comparison. White interior stays on in refracted screenshots; no material is repainted into the shader canvas."
+}
