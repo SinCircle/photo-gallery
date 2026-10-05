@@ -6,7 +6,7 @@ import {
   supportsAlbumSave,
 } from '../utils/download'
 import { formatDateTime, photoMetadata } from '../utils/exif'
-import { getAllPhotos, thumbnailUrl, webUrl, originalUrl, photoFileName } from '../photos'
+import { getAllPhotos, thumbnailUrl, originalUrl, photoFileName } from '../photos'
 import { attachGlass } from '../utils/glass'
 import { attachIdleToolbar } from '../utils/idleToolbar'
 
@@ -417,8 +417,9 @@ export async function renderPhotoView(
 
   const startHi = () => {
     if (hiStarted) return
+    if (activePointers.size) { scheduleHiStart(650); return }
     hiStarted = true
-    imgHigh.src = webUrl(photo)
+    imgHigh.src = originalUrl(photo)
   }
 
   const scheduleHiStart = (delayMs: number) => {
@@ -579,6 +580,7 @@ export async function renderPhotoView(
 
   const onPointerMove = (e: PointerEvent) => {
     if (!activePointers.has(e.pointerId)) return
+    scheduleHiStart(650)
     activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
 
     const { stageW, stageH } = measureLayout()
@@ -611,6 +613,7 @@ export async function renderPhotoView(
 
   const onPointerUp = (e: PointerEvent) => {
     activePointers.delete(e.pointerId)
+    scheduleHiStart(650)
     if (stage.hasPointerCapture(e.pointerId)) stage.releasePointerCapture(e.pointerId)
 
     if (pinching && activePointers.size < 2) {
