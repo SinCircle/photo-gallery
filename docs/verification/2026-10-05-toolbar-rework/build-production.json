@@ -1,0 +1,52 @@
+{
+  "measuredAt": "2026-10-05T13:43:54.159Z",
+  "head": "c6d025ad486b7b35e37d390b961d976c18495390",
+  "base": "http://127.0.0.1",
+  "health": {
+    "status": "ok"
+  },
+  "assets": [
+    {
+      "name": "/assets/index-BR782HQ4.js",
+      "bytes": 82244,
+      "sha256": "4a0d99bc12689d478b335a1687e410f83f8f8af18b25bcfcd7ee3b122d90e8bb",
+      "productionMatchesLocal": true
+    },
+    {
+      "name": "/assets/index-DTksKKZp.css",
+      "bytes": 9189,
+      "sha256": "996e98b19f768d8dff38c65fceae38302f24c7cf3cb74ec6db2f5ff9c57e0399",
+      "productionMatchesLocal": true
+    }
+  ],
+  "sourceHashes": [
+    {
+      "name": "src/style.css",
+      "sha256": "74765c4f8e3689ae74613ef39444f64e6a86bb96261902ba7669294d804f975b"
+    },
+    {
+      "name": "src/utils/glass.ts",
+      "sha256": "bb01d75a045c5a8d6baa748861cbd829d0a0445f53804d7d9be02198f453661d"
+    },
+    {
+      "name": "src/utils/glassRenderer.ts",
+      "sha256": "10e3348d0b8bc2df277f7313f0c4d02047de0592e909367b18d55826ea9e7aee"
+    },
+    {
+      "name": "src/utils/glassScene.ts",
+      "sha256": "9a97ed20aac8b2e8ae0a6bde3164da7a40b91f0294a1db0b302efcd17f54b549"
+    },
+    {
+      "name": "src/utils/idleToolbar.ts",
+      "sha256": "34d8f45e810322e9491f76744c2588dbaf7b4b26c9a79613e50947f999ffe1b6"
+    },
+    {
+      "name": "src/views/admin.ts",
+      "sha256": "c6fde5372791cbd378fc9a3a298cd665d5f60f1b971c5ceaf143341e0bfa7e12"
+    },
+    {
+      "name": "src/views/photo.ts",
+      "sha256": "30f371504ccbcaaa22626c633149815dfbdc973c3eb99459db33c944e447b8b0"
+    }
+  ]
+}

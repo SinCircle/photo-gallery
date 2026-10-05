@@ -1,0 +1,48 @@
+4528075 docs: checkpoint toolbar rework and pixel latency acceptance
+d762fc2 test(glass): measure background-to-pixel latency during held interaction
+0d276c4 test(glass): preserve reproduced pixel refresh stall
+144d799 docs: record persistent glass and three-case pixel acceptance
+b249896 fix(glass): keep native renderer alive for live dirty scene pixels
+65b4a3a test(glass): sample real pixels during drag wheel and released idle
+a1e51fd feat(toolbar): reserve layout and resize into a clickable capsule
+4ca180a test(glass): require every latency sample to change current pixels
+9f1a31a feat(toolbar): animate elastic geometry and blur fading metadata
+4bab125 fix(photo): defer original resolution loading until interaction rests
+2aeade7 test(glass): record pixel pipeline timings without promise delay
+9307565 perf(glass): avoid GPU readback churn in live scene buffers
+d1ac30e Revert "perf(glass): avoid GPU readback churn in live scene buffers"
+23470a5 perf(glass): crop original pixels before sampling the toolbar region
+d7b8e4d test(glass): preserve subregion rendering latency outliers
+8317a10 fix(toolbar): keep controls stationary through clipping and font load
+c2a2f5e fix(toolbar): back readable controls with a blurred white interior
+51eda68 perf(glass): stabilize the small output canvas across readbacks
+5250107 test(toolbar): preserve passing live pixel latency and zero CLS
+7ddcdd4 test(glass): preserve legacy failures in all three input states
+c8e9031 fix(toolbar): bound capsule spring overshoot to its target size
+adc4e90 test(toolbar): verify refraction geometry motion contrast and originals
+254d098 test(toolbar): fix motion recorder expression
+f79f39f test(toolbar): await the requested original and require visible marker deformation
+7afc9af test(photo): preserve production original loading fallback and admin checks
+c65dcbc fix(glass): confine contrast backing to text and the capsule dot
+e8a6af5 test(glass): place distinct refraction markers inside both geometries
+02d0616 test(toolbar): preserve measured refraction and elastic motion traces
+e103e41 test(toolbar): preserve bright and dark photographic contrast measurements
+40f8168 test(photo): retain gesture regressions with originals and native glass
+d1df2dd test(glass): migrate legacy checks from snapshots to displayed pixels
+deeb098 fix(toolbar): fade the capsule dot without flashing during delay
+1523b86 test(toolbar): capture native spring poses and served build identity
+a233ff7 test(glass): preserve three-state production pixel latency evidence
+744f25a test(toolbar): archive final production screenshots and raw acceptance data
+4098420 test(photo): preserve complete gesture download and gallery regressions
+b063edc fix(toolbar): sequence control fading inside the glass spring
+b6d3b19 test(perf): preserve native renderer frame comparison before GPU output
+153a19c perf(glass): retain GPU output and read pixels through a tiny test probe
+f0b4f7d test(glass): preserve GPU output latency trial including idle outlier
+8cd734b test(glass): document nonintrusive output pixel readback
+10ed5d3 test(glass): archive production GPU readback latency failures
+50e7d5d perf(glass): restore measured low-latency output backing
+8a29092 test(glass): record 180 passing final production pixel latency samples
+a3f7e64 test(toolbar): verify final production geometry motion contrast and originals
+cf43562 test(perf): preserve final clean five-round frame comparison failure
+e853abe test(photo): isolate original request evidence from later navigation
+c6d025a test(toolbar): archive phase-isolated final acceptance evidence
