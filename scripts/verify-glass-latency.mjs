@@ -49,7 +49,7 @@ try {
     if (baseline && name === 'wheel') await evaluate(`window.continuousWheel=setInterval(()=>window.dispatchEvent(new WheelEvent('wheel',{deltaY:1})),25)`)
     const samples = []
     for (let i = 0; i < (baseline ? 3 : 60); i++) {
-      await evaluate(`armSample(${i},${i % 2 === 0})`)
+      await evaluate(`(async()=>{const p=await readGlass();armSample(${i},p[0]>p[2])})()`)
       if (name === 'held-pointer-drag') await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 650 + i * 2, y: 460 + i % 9, buttons: 1 })
       else if (name === 'wheel') await send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 720, y: 450, deltaX: 0, deltaY: i % 2 ? 12 : -12 })
       else { await sleep(80); await evaluate(`beginSample()`) }
