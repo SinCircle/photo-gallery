@@ -66,18 +66,48 @@ export async function writeIndex(indexPath, index) {
 
 /** 按 id 新增或覆盖一条记录，返回写入后的记录。 */
 export async function upsertPhoto(indexPath, photo) {
-  const index = await readIndex(indexPath)
-  const photos = index.photos.filter((p) => p.id !== photo.id)
-  photos.push(photo)
-  await writeIndex(indexPath, { ...index, photos })
-  return photo
+  return withLock(indexPath, async () => {
+    const index = await readIndex(indexPath)
+    const photos = index.photos.filter((p) => p.id !== photo.id)
+    photos.push(photo)
+    await writeIndex(indexPath, { ...index, photos })
+    return photo
+  })
 }
 
 /** 按 id 删除一条记录。id 不存在时静默成功。 */
 export async function removePhoto(indexPath, id) {
-  const index = await readIndex(indexPath)
-  const photos = index.photos.filter((p) => p.id !== id)
-  if (photos.length === index.photos.length) return false
-  await writeIndex(indexPath, { ...index, photos })
-  return true
+  return withLock(indexPath, async () => {
+    const index = await readIndex(indexPath)
+    const photos = index.photos.filter((p) => p.id !== id)
+    if (photos.length === index.photos.length) return false
+    await writeIndex(indexPath, { ...index, photos })
+    return true
+  })
+}
+
+/**
+ * 把针对同一个索引文件的写操作串行化。
+ *
+ * 为什么必需：index.json 是「整个文件读-改-写」。两个写操作并发时，
+ * 后一个会基于旧快照覆盖前一个的结果，造成丢更新；且它们共用同一个
+ * .tmp 文件名，互相 rename/删除会直接抛 ENOENT。
+ *
+ * 实现：按索引路径维护一条 Promise 链，新的写操作排在链尾。
+ * 用链而不是锁标志，是为了保证同一次操作抛错不会卡死后续操作。
+ */
+const writeChains = new Map()
+
+function withLock(indexPath, fn) {
+  const prev = writeChains.get(indexPath) ?? Promise.resolve()
+  const next = prev.then(fn, fn)
+  // 无论成功失败都让链条继续，错误由调用方通过 next 感知。
+  writeChains.set(
+    indexPath,
+    next.then(
+      () => undefined,
+      () => undefined,
+    ),
+  )
+  return next
 }

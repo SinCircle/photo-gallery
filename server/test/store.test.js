@@ -97,3 +97,42 @@ describe('removePhoto', () => {
     await expect(removePhoto(indexPath, 'nope.jpg')).resolves.not.toThrow()
   })
 })
+
+describe('并发写入', () => {
+  it('20 个并发 upsert 全部保留，一条不丢', async () => {
+    await Promise.all(
+      Array.from({ length: 20 }, (_, i) => upsertPhoto(indexPath, { id: `p${i}.jpg` })),
+    )
+    const idx = await readIndex(indexPath)
+    expect(idx.photos).toHaveLength(20)
+  })
+
+  it('并发 upsert 同一 id 只留一条', async () => {
+    await Promise.all(
+      Array.from({ length: 10 }, (_, i) => upsertPhoto(indexPath, { id: 'same.jpg', n: i })),
+    )
+    const idx = await readIndex(indexPath)
+    expect(idx.photos).toHaveLength(1)
+  })
+
+  it('并发的 upsert 与 remove 不互相破坏', async () => {
+    await upsertPhoto(indexPath, { id: 'keep.jpg' })
+    await Promise.all([
+      removePhoto(indexPath, 'keep.jpg'),
+      upsertPhoto(indexPath, { id: 'new.jpg' }),
+    ])
+    const idx = await readIndex(indexPath)
+    expect(idx.photos.map((p) => p.id)).toEqual(['new.jpg'])
+  })
+
+  it('链条中的失败不影响后续写入', async () => {
+    await upsertPhoto(indexPath, { id: 'a.jpg' })
+    const circular = {}
+    circular.self = circular
+    const failed = upsertPhoto(indexPath, { id: 'bad.jpg', circular })
+    await expect(failed).rejects.toThrow()
+    await upsertPhoto(indexPath, { id: 'b.jpg' })
+    const idx = await readIndex(indexPath)
+    expect(idx.photos.map((p) => p.id).sort()).toEqual(['a.jpg', 'b.jpg'])
+  })
+})
