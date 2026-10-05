@@ -46,6 +46,7 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
     const currentBlur = metadata ? getComputedStyle(metadata).filter : 'none'
     for (const animation of animations) animation.cancel()
     animations = []
+    delete bar.dataset.moving
     expanded = next
     bar.dataset.toolbar = next ? 'expanded' : 'collapsed'
     bar.tabIndex = next ? -1 : 0
@@ -59,6 +60,7 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
     bar.style.height = `${next ? height : 32}px`
     if (metadata) metadata.style.filter = next ? 'blur(0px)' : 'blur(8px)'
     if (!preference.matches) {
+      bar.dataset.moving = ''
       const targetW = next ? width : 56, targetH = next ? height : 32
       const dw = targetW - current.width, dh = targetH - current.height
       const easing = 'cubic-bezier(.22,.8,.25,1)'
@@ -75,7 +77,10 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
         { duration: next ? 380 : 220, easing }))
       animations.push(dot.animate([{ opacity: next ? 1 : 0 }, { opacity: next ? 0 : 1 }],
         { duration: 200, delay: next ? 0 : 180, easing }))
-      animations[0].onfinish = () => bar.dispatchEvent(new Event('glassrefresh'))
+      animations[0].onfinish = () => {
+        delete bar.dataset.moving
+        bar.dispatchEvent(new Event('glassrefresh'))
+      }
       bar.dispatchEvent(new Event('glassgeometry'))
     } else bar.dispatchEvent(new Event('glassrefresh'))
   }
@@ -114,6 +119,7 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
   preference.addEventListener('change', () => {
     for (const animation of animations) animation.cancel()
     animations = []
+    delete bar.dataset.moving
     resize()
   }, { signal })
   const observer = new ResizeObserver(resize)

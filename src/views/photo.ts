@@ -150,7 +150,7 @@ export async function renderPhotoView(
     window.location.hash = '#/'
   })
 
-  const metaList = el('div', { className: 'dockMeta', hidden: true })
+  const metaList = el('div', { className: 'dockMeta' })
   const metaLoading = el('div', { className: 'dockMetaLoading' }, [
     el('span', { className: 'dockMetaLoadingDot' }),
     el('span', { className: 'dockMetaLoadingDot' }),
@@ -193,11 +193,17 @@ export async function renderPhotoView(
     }
 
     metaList.hidden = false
+    // Keep the metadata row reserved while its existing webfont resolves.
+    // Revealing only after font layout prevents a late EXIF glyph-width shift.
+    metaList.style.visibility = 'hidden'
     metaList.replaceChildren(
       ...items.map((it) =>
         el('span', { className: 'dockMetaItem' }, [`${it.label}：${it.value}`]),
       ),
     )
+    void document.fonts.ready.then(() => {
+      if (!signal.aborted) metaList.style.visibility = ''
+    })
 
     requestAnimationFrame(() => updateDockStacking())
   }

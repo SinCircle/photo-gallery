@@ -99,6 +99,7 @@ button:focus-visible {
 .idleToolbar[data-edge='bottom'] { top: 100%; transform: translate(-50%, -100%); }
 .idleToolbar[data-edge='top'] { top: 0; }
 .idleToolbar > .toolbarClip { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
+.idleToolbar[data-moving] > .toolbarClip { overflow: visible; }
 .toolbarContent { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); padding: 12px; }
 .idleToolbar[data-edge='top'] .toolbarContent { bottom: auto; top: 0; }
 .idleToolbar > .toolbarDot { position: absolute; bottom: 12px; left: 50%; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: var(--ink-muted); opacity: 0; pointer-events: none; }
@@ -409,6 +410,7 @@ button:focus-visible {
 .dockMeta {
   grid-area: meta;
   min-width: 0;
+  min-height: 22px;
   display: flex;
   align-items: center;
   gap: 10px;
