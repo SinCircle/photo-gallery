@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "heldAt": 935,
+  "held": {
+    "src": null,
+    "time": 1911.0999999642372,
+    "lowNatural": 720
+  },
+  "releasedAt": 2577.599999964237,
+  "loaded": {
+    "src": "http://127.0.0.1/media/originals/!IMG_20260103_160706.jpg",
+    "natural": [
+      4080,
+      3056
+    ],
+    "time": 3871.099999964237,
+    "lowHidden": "hidden"
+  },
+  "requests": [
+    {
+      "url": "http://127.0.0.1/media/originals/!IMG_20260103_160706.jpg",
+      "timestamp": 325153.818517
+    }
+  ]
+}

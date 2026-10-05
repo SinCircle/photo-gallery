@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "cls": 0,
+  "bar": {
+    "x": 692,
+    "y": 18,
+    "width": 56,
+    "height": 32,
+    "top": 18,
+    "right": 748,
+    "bottom": 50,
+    "left": 692
+  },
+  "forms": 1,
+  "shifts": [],
+  "material": "rgba(255, 255, 255, 0.7)"
+}
