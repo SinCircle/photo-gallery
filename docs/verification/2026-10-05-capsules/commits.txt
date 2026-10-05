@@ -1,0 +1,32 @@
+b18e2a2 docs(glass): record capsule scope and centralize pixel blur tuning
+1d35f5b feat(glass): support native sibling capsules in one persistent root
+d181b18 feat(photo): separate controls into native capsules with a shared idle toggle
+ad2e993 test(glass): require every visible capsule to refresh its actual pixels
+d80abc0 test(capsules): preserve initial multi-panel blur latency failure
+3ebce79 perf(capsules): keep multi-panel rendering and grouped pixel probes on GPU
+9dd6cdf test(capsules): retain GPU blur latency and collapse resize stall
+0695c27 perf(capsules): preserve native panel buffers across idle transitions
+c64e840 perf(glass): Gaussian blur the shared live scene once for all capsules
+f21f3fb test(capsules): preserve shared-blur GPU latency measurements
+39d7f3f perf(capsules): stabilize scene allocation and read-friendly panel outputs
+db13637 test(capsules): retain grouped readback and transition handoff failure
+c17d2e4 perf(capsules): separate native sampling halos and smooth the shared toggle handoff
+40b27c0 test(capsules): preserve non-overlapping halo latency results
+cb75a6a fix(capsules): soften the shadow edge and refresh native geometry during motion
+36e22c2 test(capsules): preserve mixed output experiment before reverting it
+82067b3 fix(capsules): retain compact spacing and one blur control for both render paths
+393b2bf perf(liquidglass): reuse native scene buffers and remove redundant uploads
+40a849d test(liquidglass): prove exact output parity after native buffer optimization
+af5c76c test(capsules): retain buffer-pool latency improvements and remaining outliers
+85dbbfc perf(capsules): skip identity shader copies and stop rendering faded controls
+b45fafc test(capsules): verify outlines blur motion narrow layout and unchanged gallery
+f43f13c test(capsules): retain latency outliers and first visual audit failures
+9486cb3 test(capsules): preserve requested narrow viewport through navigation
+635c3bb fix(capsules): show spring overshoot after reveal and use 1.5x close timing
+5555fed test(capsules): retain narrow layout and visible spring verification
+1c2c074 fix(capsules): remove alpha-compositing hairline and improve dark-photo text
+1f581ae test(capsules): serve candidate build without replacing accepted stack
+f8a2f1b fix(capsules): remove chromatic edge fringes alongside highlights
+ef76c3a fix(capsules): feather residual refractive rim from the single blur setting
+7cd18e8 fix(capsules): extend viewport pixels into offscreen refraction halo
+453f7cf Revert "fix(capsules): extend viewport pixels into offscreen refraction halo"

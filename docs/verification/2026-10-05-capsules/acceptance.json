@@ -1,0 +1,53 @@
+{
+  "status": "not-accepted",
+  "sourceHead": "453f7cf0f2ef08ea92aaaa4c408a4594d239a78f",
+  "candidate": "http://127.0.0.1:5187",
+  "accepted": "http://127.0.0.1",
+  "acceptedModule": "/assets/index-BR782HQ4.js",
+  "candidateModule": "/assets/index-B59Moql_.js",
+  "candidateSHA256": "5812eb3faf32688275d4d8e0f73336fa50f928077c04f805432e1ee1243c147f",
+  "candidateMatchesDist": true,
+  "productionReplaced": false,
+  "knownFPSAssertionAndEvidenceUnchanged": true,
+  "visualReview": {
+    "outline": "failed: residual thin bright rim remains in screenshots despite removing CSS border and native highlight parameters",
+    "blur": "passed",
+    "capsules": "passed",
+    "animation": "passed"
+  },
+  "measured": {
+    "summaries": [
+      {
+        "name": "held-pointer-drag",
+        "count": 60,
+        "timeoutCount": 0,
+        "medianMs": 8.800000011920929,
+        "p95Ms": 13.299999952316284,
+        "maxMs": 15.699999988079071,
+        "overLimit": 0
+      },
+      {
+        "name": "wheel",
+        "count": 60,
+        "timeoutCount": 0,
+        "medianMs": 8.600000023841858,
+        "p95Ms": 17.900000035762787,
+        "maxMs": 19.30000001192093,
+        "overLimit": 5
+      },
+      {
+        "name": "released-idle",
+        "count": 60,
+        "timeoutCount": 0,
+        "medianMs": 7.700000047683716,
+        "p95Ms": 45.299999952316284,
+        "maxMs": 68.40000003576279,
+        "overLimit": 3
+      }
+    ],
+    "cls": 0,
+    "idleShaderDrawsInFiveSeconds": 0,
+    "galleryTiles": 44,
+    "galleryGeometryAndTextEqual": true
+  }
+}
