@@ -1,54 +1,56 @@
-const IDLE_MS = 3500
+const IDLE_MS = 2800
 
-// Transform-only motion keeps the full control's layout box reserved. Native
-// Web Animations run on the compositor; there is no JavaScript animation loop.
+// Reserve the expanded footprint, but resize the actual glass box. Scaling a
+// full-width canvas into a slit would change both hit targets and refraction.
 export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: 'top' | 'bottom') {
+  const slot = document.createElement('div')
+  slot.className = 'toolbarSlot'
+  const clip = document.createElement('div')
+  clip.className = 'toolbarClip'
+  const content = document.createElement('div')
+  content.className = 'toolbarContent'
+  content.append(...[...bar.children].filter(child => !child.classList.contains('glassRoot')))
+  clip.append(content)
+  const dot = document.createElement('span')
+  dot.className = 'toolbarDot'
+  dot.setAttribute('aria-hidden', 'true')
+  bar.before(slot)
+  slot.append(bar)
+  bar.append(clip, dot)
   bar.classList.add('idleToolbar')
-  bar.style.transformOrigin = `50% ${edge === 'bottom' ? '100%' : '0%'}`
+  bar.dataset.edge = edge
   bar.dataset.toolbar = 'expanded'
   const preference = matchMedia('(prefers-reduced-motion: reduce)')
-  let timer = 0
-  let lastActivity = 0
-  let animation: Animation | undefined
   let expanded = true
-  let held = false
+  let width = 0, height = 0
+  let timer = 0, lastActivity = performance.now()
   let keyboardFocus = false
+  let nearby = false
+  const pointers = new Set<number>()
 
-  const controls = () => [...bar.children].filter((child): child is HTMLElement =>
-    child instanceof HTMLElement && !child.classList.contains('glassRoot'))
+  const resize = () => {
+    width = slot.clientWidth
+    content.style.width = `${Math.max(0, width - 2)}px`
+    height = content.offsetHeight + 2
+    slot.style.height = `${height}px`
+    bar.style.width = `${expanded ? width : 56}px`
+    bar.style.height = `${expanded ? height : 32}px`
+    bar.dispatchEvent(new Event('glassrefresh'))
+  }
   const setExpanded = (next: boolean) => {
-    if (signal.aborted || next === expanded) return
-    const current = getComputedStyle(bar).transform
-    animation?.cancel()
+    if (signal.aborted || expanded === next) return
     expanded = next
-    if (next) window.removeEventListener('pointermove', onNearbyPointer)
-    else window.addEventListener('pointermove', onNearbyPointer, { passive: true, signal })
     bar.dataset.toolbar = next ? 'expanded' : 'collapsed'
     bar.tabIndex = next ? -1 : 0
     if (next) { bar.removeAttribute('role'); bar.removeAttribute('aria-label') }
-    else { bar.setAttribute('role', 'button'); bar.setAttribute('aria-label', controls().map(c => c.textContent?.trim()).join(' ')) }
-    for (const child of controls()) { child.inert = !next; if (next) child.removeAttribute('aria-hidden'); else child.setAttribute('aria-hidden', 'true') }
-    const sx = Math.min(1, 96 / bar.offsetWidth), sy = Math.min(1, 8 / bar.offsetHeight)
-    const target = next ? 'scale(1, 1)' : `scale(${sx}, ${sy})`
-    bar.style.transform = target
-    if (preference.matches) {
-      animation = undefined
-      if (next) bar.dispatchEvent(new Event('glassrefresh'))
-      return
-    }
-    const frames = next
-      ? [{ transform: current, offset: 0 }, { transform: 'scale(1.045, 1.09)', offset: .60 },
-        { transform: 'scale(.985, .97)', offset: .80 }, { transform: target, offset: 1 }]
-      : [{ transform: current, offset: 0 }, { transform: 'scale(1.015, 1.025)', offset: .15 },
-        { transform: `scale(${sx * .86}, ${sy * .80})`, offset: .68 },
-        { transform: `scale(${sx * 1.08}, ${sy * 1.10})`, offset: .84 }, { transform: target, offset: 1 }]
-    animation = bar.animate(frames, { duration: next ? 540 : 480, easing: 'cubic-bezier(.2,.75,.25,1)' })
-    const active = animation
-    active.onfinish = () => {
-      if (animation !== active) return
-      animation = undefined
-      if (next) bar.dispatchEvent(new Event('glassrefresh'))
-    }
+    else { bar.setAttribute('role', 'button'); bar.setAttribute('aria-label', content.textContent?.trim() || '') }
+    content.inert = !next
+    content.setAttribute('aria-hidden', String(!next))
+    clip.style.opacity = next ? '1' : '0'
+    dot.style.opacity = next ? '0' : '1'
+    bar.style.width = `${next ? width : 56}px`
+    bar.style.height = `${next ? height : 32}px`
+    bar.dispatchEvent(new Event('glassrefresh'))
   }
   const checkIdle = () => {
     timer = 0
@@ -57,7 +59,7 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
     if (remaining > 0) { timer = window.setTimeout(checkIdle, remaining); return }
     const focused = document.activeElement
     const editing = focused instanceof HTMLInputElement || focused instanceof HTMLTextAreaElement
-    if (held || (bar.contains(focused) && (keyboardFocus || editing))) { arm(); return }
+    if (pointers.size || nearby || (bar.contains(focused) && (keyboardFocus || editing))) { arm(); return }
     setExpanded(false)
   }
   const arm = () => {
@@ -65,14 +67,15 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
     if (!timer) timer = window.setTimeout(checkIdle, IDLE_MS)
   }
   const wake = () => { setExpanded(true); arm() }
-  function onNearbyPointer(event: PointerEvent) {
+  window.addEventListener('pointermove', event => {
     const rect = bar.getBoundingClientRect()
-    if (event.clientX >= rect.left - 56 && event.clientX <= rect.right + 56 &&
-      event.clientY >= rect.top - 56 && event.clientY <= rect.bottom + 56) wake()
-  }
-  bar.addEventListener('pointermove', () => { if (expanded) arm() }, { passive: true, signal })
-  window.addEventListener('pointerdown', () => { keyboardFocus = false; held = true; wake() }, { passive: true, signal })
-  const release = () => { held = false; arm() }
+    nearby = event.clientX >= rect.left - 40 && event.clientX <= rect.right + 40 &&
+      event.clientY >= rect.top - 40 && event.clientY <= rect.bottom + 40
+    if (nearby) wake()
+    else if (pointers.size) arm()
+  }, { passive: true, signal })
+  window.addEventListener('pointerdown', event => { keyboardFocus = false; pointers.add(event.pointerId); wake() }, { passive: true, signal })
+  const release = (event: PointerEvent) => { pointers.delete(event.pointerId); arm() }
   window.addEventListener('pointerup', release, { passive: true, signal })
   window.addEventListener('pointercancel', release, { passive: true, signal })
   for (const event of ['wheel', 'scroll']) window.addEventListener(event, wake, { passive: true, signal })
@@ -81,10 +84,12 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
   bar.addEventListener('keydown', event => {
     if (event.target === bar && ['Enter', ' '].includes(event.key)) { event.preventDefault(); wake() }
   }, { signal })
-  preference.addEventListener('change', () => {
-    animation?.cancel()
-    animation = undefined
-  }, { signal })
-  signal.addEventListener('abort', () => { clearTimeout(timer); animation?.cancel() }, { once: true })
+  preference.addEventListener('change', resize, { signal })
+  const observer = new ResizeObserver(resize)
+  observer.observe(slot)
+  observer.observe(content)
+  signal.addEventListener('abort', () => { clearTimeout(timer); observer.disconnect() }, { once: true })
+  resize()
   arm()
+  return slot
 }

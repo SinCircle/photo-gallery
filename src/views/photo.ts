@@ -162,19 +162,7 @@ export async function renderPhotoView(
   metaLoading.setAttribute('aria-live', 'polite')
   const metaPromise = Promise.resolve(photoMetadata(photo))
 
-  const updateDockStacking = () => {
-    const isNarrow = window.matchMedia('(max-width: 640px)').matches
-
-    if (isNarrow) {
-      dockInner.classList.add('isStacked')
-      return
-    }
-
-    dockInner.classList.remove('isStacked')
-    const metaOverflows =
-      !metaList.hidden && metaList.scrollWidth > metaList.clientWidth + 4
-    if (metaOverflows) dockInner.classList.add('isStacked')
-  }
+  const updateDockStacking = () => dockInner.dispatchEvent(new Event('glassrefresh'))
 
   let mode: FitMode = 'contain'
   let scale = 1
@@ -249,10 +237,10 @@ export async function renderPhotoView(
     // only on layout/size changes, instead of forcing reads on every drag event.
     if (layoutMetrics) return layoutMetrics
     const stageRect = stage.getBoundingClientRect()
-    const dockInnerRect = dockInner.getBoundingClientRect()
+    const dockInnerRect = dockSlot.getBoundingClientRect()
     // stage is fixed inset:0, so top is ~0; still keep it relative.
     // Shrinking the control is purely visual; its reserved safe area stays full.
-    dockInnerTop = Math.max(0, dockInnerRect.bottom - parseFloat(getComputedStyle(dockInner).height) - stageRect.top)
+    dockInnerTop = Math.max(0, dockInnerRect.top - stageRect.top)
     return layoutMetrics = { stageW: stageRect.width, stageH: stageRect.height }
   }
 
@@ -703,18 +691,17 @@ export async function renderPhotoView(
   dockLeft.append(backBtn, fitBtn)
   dockRight.append(downloadBtn)
   dockInner.append(dockLeft, metaList, dockRight)
-  // Direct child required by LiquidGlass; CSS keeps the legacy dock geometry.
   shell.append(bg, content, dockInner)
   container.append(shell)
+  const dockSlot = attachIdleToolbar(dockInner, signal, 'bottom')
   void attachGlass(shell, dockInner, signal)
-  attachIdleToolbar(dockInner, signal, 'bottom')
 
   // Re-layout when dock wraps (e.g., narrow widths).
   const ro = new ResizeObserver(() => {
     updateDockStacking()
     if (boxReady) relayout(false)
   })
-  ro.observe(dockInner)
+  ro.observe(dockSlot)
   signal.addEventListener('abort', () => {
     ro.disconnect()
     if (hiStartTimer) window.clearTimeout(hiStartTimer)

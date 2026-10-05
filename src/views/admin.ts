@@ -43,8 +43,8 @@ export async function renderAdminView(container: HTMLElement, signal: AbortSigna
   content.append(feedback, list)
   shell.append(topbar, content)
   container.append(shell)
-  void attachGlass(shell, bar, controls.signal)
   attachIdleToolbar(bar, controls.signal, 'top')
+  void attachGlass(shell, bar, controls.signal)
 
   const showError = (error: unknown) => {
     feedback.textContent = error instanceof Error ? error.message : '请求失败'
