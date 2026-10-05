@@ -532,6 +532,10 @@ button:focus-visible {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
+.capsuleDock > .glassCapsule > canvas[data-glass-output] {
+  /* A small fraction of the same blur control feathers the refractive rim. */
+  filter: blur(calc(var(--capsule-blur) * .25));
+}
 .capsuleDock > .glassCapsule[hidden] { display: none; }
 .capsuleDock > .dockMetaCapsule { grid-column: 1 / -1; grid-row: 1; height: 36px; padding: 0 16px; }
 .capsuleDock > .dockBack { grid-column: 1; grid-row: 2; }
