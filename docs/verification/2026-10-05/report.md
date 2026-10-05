@@ -3,6 +3,8 @@
 验证日期：2026-10-05。唯一源码基准：`68e64de^`，即 `fc069c5a1144d62831c2055ac15273243637b9f8`。
 被验证的应用提交：`7665725392ea30183a61456da708d2bd2d31b210`。后续自证提交只增加脚本和本目录材料。
 
+中断后指定三项收尾的再次实测见 [followup.md](followup.md)，应用实现保持不变。
+
 ## 事实：改动
 
 - 动手前完整读取规格，并用 `git show` 读取旧版 `src/style.css`、`src/views/gallery.ts`、`src/views/photo.ts` 和 `index.html`。展示端取回旧的手写 DOM 实现，删除 Svelte 重写。

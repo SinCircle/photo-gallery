@@ -1,0 +1,52 @@
+{
+  "verifiedAt": "2026-10-05T06:34:18.240Z",
+  "applicationCommit": "7665725392ea30183a61456da708d2bd2d31b210",
+  "headBeforeFollowup": "0e24b31f0301817be25cf1e4a705c7627c1ae02d",
+  "applicationUnchanged": true,
+  "fullStack": {
+    "command": "docker compose up -d --build",
+    "health": {
+      "status": "ok"
+    },
+    "container": "photogallery-gallery-1",
+    "state": "running",
+    "ports": "0.0.0.0:80->80/tcp, [::]:80->80/tcp"
+  },
+  "admin": {
+    "base": "http://127.0.0.1:8085",
+    "checks": {
+      "rejectedWrongPassword": true,
+      "management": {
+        "before": 44,
+        "after": 44,
+        "upload": true,
+        "derived": true,
+        "unicodeEdit": true,
+        "persistedAfterReload": true,
+        "deleteOriginalAndDerived": true
+      },
+      "logout": true,
+      "development": {
+        "url": "http://127.0.0.1:5176",
+        "photos": 44,
+        "visibleImagesLoaded": true
+      }
+    },
+    "status": "passed"
+  },
+  "development": {
+    "base": "http://127.0.0.1:5176",
+    "checks": {
+      "development": {
+        "url": "http://127.0.0.1:5176",
+        "photos": 44,
+        "visibleImagesLoaded": true,
+        "dockerStates": [
+          "exited",
+          "exited"
+        ]
+      }
+    },
+    "status": "passed"
+  }
+}
