@@ -63,7 +63,13 @@ async function shot(name) {
   await writeFile(path.join(out, `${name}.png`), Buffer.from(data, 'base64'))
   report.screenshots.push(`${name}.png`)
 }
+async function wakeDock() {
+  const r = await evaluate(`document.querySelector('.dockInner').getBoundingClientRect().toJSON()`)
+  await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: r.x + r.width / 2, y: r.y + r.height / 2 })
+  await until(`document.querySelector('.dockInner').dataset.toolbar==='expanded' && !document.querySelector('.dockInner').getAnimations().length`)
+}
 async function click(selector) {
+  if (await evaluate(`document.querySelector('.dockInner')?.dataset.toolbar==='collapsed'`)) await wakeDock()
   const p = await evaluate(`(()=>{const r=document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2}})()`)
   await send('Input.dispatchMouseEvent', { type: 'mousePressed', ...p, button: 'left', clickCount: 1 })
   await send('Input.dispatchMouseEvent', { type: 'mouseReleased', ...p, button: 'left', clickCount: 1 })
@@ -210,6 +216,7 @@ try {
   await send('Fetch.continueRequest', { requestId: highRequest })
   await send('Fetch.disable')
   await until(`document.querySelector('.photoStage')?.classList.contains('hiDone')`)
+  await wakeDock()
   await until(`document.querySelector('.dockInner')?.dataset.glass==='webgl'`, 120000)
   await sleep(1500)
   report.checks.fade.stages = await evaluate('__fade')
@@ -223,8 +230,9 @@ try {
   assert.equal(report.checks.glass.requested, 0)
   assert.equal(report.checks.glass.executed, 0)
   assert.equal(report.checks.glass.active, 0)
-  assert.ok(report.checks.glass.webglDraws > 0)
-  console.log('PASS glass: WebGL draws observed; idle 5s requested=0 executed=0 active=0')
+  report.checks.glass.snapshotWidth = await evaluate(`(async()=>{const image=new Image();image.src=getComputedStyle(document.querySelector('.dockInner')).backgroundImage.slice(5,-2);await image.decode();return image.naturalWidth})()`)
+  assert.ok(report.checks.glass.snapshotWidth > 0)
+  console.log('PASS glass snapshot lifecycle: idle 5s requested=0 executed=0 active=0; refraction separately checked by verify-glass.mjs')
 
   const labels = [await evaluate(`document.querySelector('.dockLeft button:nth-child(2)').textContent`)]
   for (let i = 0; i < 3; i++) {
@@ -329,6 +337,7 @@ try {
 
   // CSS fallback, including preference changes during an existing route.
   await navigate(photoURL)
+  await wakeDock()
   await until(`document.querySelector('.dockInner')?.dataset.glass==='webgl'`, 120000)
   await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] })
   await until(`document.querySelector('.dockInner')?.dataset.glass==='css'&&document.querySelectorAll('.dockInner canvas').length===0`)

@@ -1,0 +1,115 @@
+{
+  "base": "http://127.0.0.1:8085",
+  "browser": "Chrome/154.0.8037.93",
+  "graphics": {
+    "available": true,
+    "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x000013C0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "method": "1440x1000; copied library; three interleaved fresh documents per case; all 44 thumbnails decoded before measurement; 200 trusted wheel events at fixed 25ms targets; 5s scrolling + 2.8s settle; actual rAF timestamps and main-document long tasks >=50ms",
+  "runs": [
+    {
+      "case": "glass-off",
+      "round": 0,
+      "loaderId": "EADD5864396573E6E47E15FC1830BF75",
+      "inputTicks": 200,
+      "fps": 237.0816771380946,
+      "p95FrameMs": 4.300000000000182,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "longTasks": [],
+      "scrollY": 4159,
+      "glass": "css",
+      "snapshotUpdated": false
+    },
+    {
+      "case": "glass-on",
+      "round": 0,
+      "loaderId": "7A2D9620248E14EFD1F5F54215D94734",
+      "inputTicks": 200,
+      "fps": 236.1669955662626,
+      "p95FrameMs": 4.300000000000182,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "longTasks": [],
+      "scrollY": 4159,
+      "glass": "webgl",
+      "snapshotUpdated": true
+    },
+    {
+      "case": "glass-on",
+      "round": 1,
+      "loaderId": "291610A8C34E5914E2E15C06AE9B152F",
+      "inputTicks": 200,
+      "fps": 236.81377825618944,
+      "p95FrameMs": 4.300000000000182,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "longTasks": [],
+      "scrollY": 4159,
+      "glass": "webgl",
+      "snapshotUpdated": true
+    },
+    {
+      "case": "glass-off",
+      "round": 1,
+      "loaderId": "42117AEC386A0228A4E8002B870FC99E",
+      "inputTicks": 200,
+      "fps": 238.09523809523807,
+      "p95FrameMs": 4.300000000000182,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "longTasks": [],
+      "scrollY": 4159,
+      "glass": "css",
+      "snapshotUpdated": false
+    },
+    {
+      "case": "glass-off",
+      "round": 2,
+      "loaderId": "FD5461A572C3461F24217A9047B73F8A",
+      "inputTicks": 200,
+      "fps": 238.09828922919203,
+      "p95FrameMs": 4.300000000000182,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "longTasks": [],
+      "scrollY": 4159,
+      "glass": "css",
+      "snapshotUpdated": false
+    },
+    {
+      "case": "glass-on",
+      "round": 2,
+      "loaderId": "C52028464E42E8298110E05D93F4A593",
+      "inputTicks": 200,
+      "fps": 236.93585176452498,
+      "p95FrameMs": 4.300000000000182,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "longTasks": [],
+      "scrollY": 4159,
+      "glass": "webgl",
+      "snapshotUpdated": true
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "glass-off": {
+      "medianFPS": 238.09523809523807,
+      "minFPS": 237.0816771380946,
+      "maxFPS": 238.09828922919203,
+      "maxP95FrameMs": 4.300000000000182,
+      "totalLongTasks": 0,
+      "totalLongTaskMs": 0
+    },
+    "glass-on": {
+      "medianFPS": 236.81377825618944,
+      "minFPS": 236.1669955662626,
+      "maxFPS": 236.93585176452498,
+      "maxP95FrameMs": 4.300000000000182,
+      "totalLongTasks": 0,
+      "totalLongTaskMs": 0
+    }
+  },
+  "status": "measured"
+}

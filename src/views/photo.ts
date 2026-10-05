@@ -223,6 +223,7 @@ export async function renderPhotoView(
 
   // Measured layout metrics (avoid hard-coded dock geometry).
   let dockInnerTop = 0
+  let layoutMetrics: { stageW: number; stageH: number } | undefined
 
   // Decide one redundant mode (fitHeight or fitWidth) under contain's safe area.
   // This must be stable across all current modes, otherwise the skipped option can “come back”
@@ -244,12 +245,15 @@ export async function renderPhotoView(
   }
 
   function measureLayout() {
+    // Transforms do not change the stage or reserved dock layout. Refresh these
+    // only on layout/size changes, instead of forcing reads on every drag event.
+    if (layoutMetrics) return layoutMetrics
     const stageRect = stage.getBoundingClientRect()
     const dockInnerRect = dockInner.getBoundingClientRect()
     // stage is fixed inset:0, so top is ~0; still keep it relative.
     // Shrinking the control is purely visual; its reserved safe area stays full.
     dockInnerTop = Math.max(0, dockInnerRect.bottom - parseFloat(getComputedStyle(dockInner).height) - stageRect.top)
-    return { stageW: stageRect.width, stageH: stageRect.height }
+    return layoutMetrics = { stageW: stageRect.width, stageH: stageRect.height }
   }
 
   function safeMetrics(stageW: number, stageH: number, m: FitMode) {
@@ -391,6 +395,7 @@ export async function renderPhotoView(
   }
 
   function relayout(resetToCenter: boolean) {
+    layoutMetrics = undefined
     const { stageW, stageH } = measureLayout()
 
     updateRedundantMode(stageW, stageH)

@@ -1,0 +1,794 @@
+{
+  "reference": "fc069c5a1144d62831c2055ac15273243637b9f8",
+  "sourceHashes": {
+    "src/utils/glass.ts": "54d9f97dbd4f740300b62b51d90b871621aa9797f29d2f3bd8237506cbe5bb55",
+    "src/utils/glassRenderer.ts": "e9f6485e7859f3c1a81508ea4d3437846b396716e1c50483a59961bf4a61d1e2",
+    "src/utils/glassScene.ts": "46cbefac0ee0be25bc17c3f160649cd734c84324326c31dfa9c9b57d3b6a529c",
+    "src/utils/idleToolbar.ts": "7c3416ebee84b869eed203bd5ac3f295d8848bd2900686155bfbf7fee3212601",
+    "src/views/photo.ts": "a5ffecb561007b21407dae7729b5ea913b43259d348f9c9bcc145f1c8227ebe3",
+    "src/views/admin.ts": "8b0edce3e794f54db39905622c6f80e5859255c9b8e8f0cf5fa2da7d1d1cdad0",
+    "src/style.css": "c23e79b67407283dcab076cd3ded6f9b40433e2d67e77f26fe06eb70d91fffe4"
+  },
+  "docker": {
+    "command": "docker compose up -d --build",
+    "image": "sha256:2f7c847372f2ddf613d837aedbb90573a37b750ef6653f21ebc1769cd4982428",
+    "health": {
+      "status": "ok"
+    },
+    "assets": {
+      "/assets/index-DinQTJPb.js": "53736fb0e7212f05dd008aed788644516976248cc18a1fe3695a91715e3739cf",
+      "/assets/index-BtzvCJtM.css": "aead52cc597cd4467e2c2c067c90347f06f1c94ab878a1d5c920156e7aee07ba"
+    }
+  },
+  "refraction": {
+    "base": "http://127.0.0.1",
+    "checks": {
+      "refraction": {
+        "lines": [
+          {
+            "x": 550,
+            "expected": [
+              8,
+              13
+            ],
+            "actual": [
+              70,
+              70
+            ],
+            "maxDisplacement": 62,
+            "originalThickness": 6,
+            "refractedThickness": 1
+          },
+          {
+            "x": 70,
+            "expected": [
+              8,
+              13
+            ],
+            "actual": [
+              70,
+              70
+            ],
+            "maxDisplacement": 62,
+            "originalThickness": 6,
+            "refractedThickness": 1
+          },
+          {
+            "x": 1030,
+            "expected": [
+              8,
+              13
+            ],
+            "actual": [
+              70,
+              70
+            ],
+            "maxDisplacement": 62,
+            "originalThickness": 6,
+            "refractedThickness": 1
+          }
+        ],
+        "maxDisplacement": 62,
+        "draws": 0,
+        "background": "rgba(0, 0, 0, 0)",
+        "backdrop": "none",
+        "config": {
+          "floating": true,
+          "cornerRadius": 40,
+          "blurAmount": 0
+        },
+        "isolatedRenderer": false,
+        "separateDocument": true,
+        "rendererFramesRemaining": 1,
+        "rendererHidden": true
+      },
+      "iframeIdle": {
+        "frames": 2,
+        "requested": 0,
+        "executed": 0,
+        "requestedAll": 0,
+        "executedAll": 0
+      },
+      "idle": {
+        "requested": 0,
+        "executed": 0,
+        "active": 0
+      },
+      "refreshAfterIdle": true,
+      "actualPhotoBehindGlass": true,
+      "reducedMotion": true,
+      "noWebGL": {
+        "path": "css",
+        "backdrop": "blur(18px)",
+        "buttons": 3
+      }
+    },
+    "errors": [],
+    "status": "passed"
+  },
+  "toolbar": {
+    "base": "http://127.0.0.1",
+    "checks": {
+      "collapsed": {
+        "width": 96,
+        "height": 8,
+        "hidden": true,
+        "imageUnchanged": true,
+        "cls": 0
+      },
+      "approach": {
+        "peakWidth": 1132.782470703125,
+        "finalWidth": 1100,
+        "cls": 0
+      },
+      "wheel": true,
+      "click": true,
+      "photoCLS": 0,
+      "reducedMotion": {
+        "expanded": "expanded",
+        "animations": 0
+      },
+      "admin": {
+        "cls": 0,
+        "formUnchanged": true,
+        "width": 96,
+        "height": 8
+      }
+    },
+    "errors": [],
+    "status": "passed"
+  },
+  "performance": {
+    "base": "http://127.0.0.1",
+    "startedAt": "2026-10-05T09:43:22.328Z",
+    "repetitions": 5,
+    "graphics": {
+      "available": true,
+      "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x000013C0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "browser": "Chrome/154.0.8037.93",
+    "method": "1440x1000 Chrome headless; each case forces a fresh document, then applies the same -350px wheel zoom so actual panning is possible; 200 trusted CDP drag events at fixed 25ms targets + 9 wheel events; assert pan matrix changes; 5s input + 2.8s settle (includes asynchronous bitmap update); actual rAF timestamps and main-document PerformanceObserver longtask >=50ms; interleaved cases",
+    "runs": [
+      {
+        "case": "legacy",
+        "repeat": 0,
+        "loaderId": "F86E4D5D2089340E3FFDEE90CC629AC7",
+        "inputTicks": 200,
+        "fps": 238.22643685525728,
+        "activeFPS": 238.29038642224575,
+        "p95FrameMs": 4.300000000000182,
+        "maxFrameMs": 8.300000000001091,
+        "frames": 1859,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTaskMaxMs": 0,
+        "longTasks": [],
+        "glass": "legacy-css",
+        "panBefore": "translate3d(0px, -36.8567px, 0px)",
+        "panAfter": "translate3d(-65.3447px, -83.0295px, 0px)",
+        "panChanged": true,
+        "snapshotUpdated": false
+      },
+      {
+        "case": "glass-off",
+        "repeat": 0,
+        "loaderId": "188AB79EFB6AB69CC58A9C628F0A0808",
+        "inputTicks": 200,
+        "fps": 238.35458448132252,
+        "activeFPS": 238.8853350391812,
+        "p95FrameMs": 4.300000000000182,
+        "maxFrameMs": 8.300000000001091,
+        "frames": 1860,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTaskMaxMs": 0,
+        "longTasks": [],
+        "glass": "css",
+        "panBefore": "translate3d(0px, -36.8567px, 0px)",
+        "panAfter": "translate3d(-68.07px, -84.6743px, 0px)",
+        "panChanged": true,
+        "snapshotUpdated": false
+      },
+      {
+        "case": "glass-on",
+        "repeat": 0,
+        "loaderId": "97596CBE1BADAD43D36EE871365BC06B",
+        "inputTicks": 200,
+        "fps": 237.75040693128946,
+        "activeFPS": 237.94276565939563,
+        "p95FrameMs": 4.300000000000182,
+        "maxFrameMs": 20.800000000000182,
+        "frames": 1855,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTaskMaxMs": 0,
+        "longTasks": [],
+        "glass": "webgl",
+        "panBefore": "translate3d(0px, -36.8567px, 0px)",
+        "panAfter": "translate3d(-67.1px, -84.0934px, 0px)",
+        "panChanged": true,
+        "snapshotUpdated": true
+      },
+      {
+        "case": "glass-on",
+        "repeat": 1,
+        "loaderId": "148713B721199FE9454AEDEBB579B558",
+        "inputTicks": 200,
+        "fps": 237.0731082206702,
+        "activeFPS": 238.69070246693747,
+        "p95FrameMs": 4.300000000000182,
+        "maxFrameMs": 21,
+        "frames": 1850,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTaskMaxMs": 0,
+        "longTasks": [],
+        "glass": "webgl",
+        "panBefore": "translate3d(0px, -36.8567px, 0px)",
+        "panAfter": "translate3d(-66.914px, -83.9814px, 0px)",
+        "panChanged": true,
+        "snapshotUpdated": true
+      },
+      {
+        "case": "glass-off",
+        "repeat": 1,
+        "loaderId": "6DE05E5DBBD4D257D0AC428F0B6D0AD2",
+        "inputTicks": 200,
+        "fps": 238.10134044134608,
+        "activeFPS": 238.4902944645463,
+        "p95FrameMs": 4.300000000000182,
+        "maxFrameMs": 8.200000000000728,
+        "frames": 1858,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTaskMaxMs": 0,
+        "longTasks": [],
+        "glass": "css",
+        "panBefore": "translate3d(0px, -36.8567px, 0px)",
+        "panAfter": "translate3d(-65.9683px, -83.4093px, 0px)",
+        "panChanged": true,
+        "snapshotUpdated": false
+      },
+      {
+        "case": "legacy",
+        "repeat": 1,
+        "loaderId": "948878205B7B867F2468A840EAA23221",
+        "inputTicks": 200,
+        "fps": 236.17607483821362,
+        "activeFPS": 236.6804713602625,
+        "p95FrameMs": 4.300000000000182,
+        "maxFrameMs": 8.300000000001091,
+        "frames": 1843,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTaskMaxMs": 0,
+        "longTasks": [],
+        "glass": "legacy-css",
+        "panBefore": "translate3d(0px, -36.8567px, 0px)",
+        "panAfter": "translate3d(-65.8401px, -83.3314px, 0px)",
+        "panChanged": true,
+        "snapshotUpdated": false
+      },
+      {
+        "case": "legacy",
+        "repeat": 2,
+        "loaderId": "DB79C703AB9BB794193976E0F650A4DF",
+        "inputTicks": 200,
+        "fps": 237.97319117307842,
+        "activeFPS": 237.4907542530436,
+        "p95FrameMs": 4.300000000000182,
+        "maxFrameMs": 8.400000000000546,
+        "frames": 1857,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTaskMaxMs": 0,
+        "longTasks": [],
+        "glass": "legacy-css",
+        "panBefore": "translate3d(0px, -36.8567px, 0px)",
+        "panAfter": "translate3d(-66.7999px, -83.9126px, 0px)",
+        "panChanged": true,
+        "snapshotUpdated": false
+      },
+      {
+        "case": "glass-off",
+        "repeat": 2,
+        "loaderId": "1BC15F8B8BC1A96B4881711F61A6B7F5",
+        "inputTicks": 200,
+        "fps": 238.73596801476242,
+        "activeFPS": 239.48142368405257,
+        "p95FrameMs": 4.300000000000182,
+        "maxFrameMs": 8.300000000001091,
+        "frames": 1863,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTaskMaxMs": 0,
+        "longTasks": [],
+        "glass": "css",
+        "panBefore": "translate3d(0px, -36.8567px, 0px)",
+        "panAfter": "translate3d(-66.3892px, -83.6645px, 0px)",
+        "panChanged": true,
+        "snapshotUpdated": false
+      },
+      {
+        "case": "glass-on",
+        "repeat": 2,
+        "loaderId": "13E6D55373CBD40DDCE19A7B9BF050F5",
+        "inputTicks": 200,
+        "fps": 237.83894612742836,
+        "activeFPS": 238.28562290100754,
+        "p95FrameMs": 4.300000000000182,
+        "maxFrameMs": 20.899999999999636,
+        "frames": 1856,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTaskMaxMs": 0,
+        "longTasks": [],
+        "glass": "webgl",
+        "panBefore": "translate3d(0px, -36.8567px, 0px)",
+        "panAfter": "translate3d(-66.3202px, -83.6227px, 0px)",
+        "panChanged": true,
+        "snapshotUpdated": true
+      },
+      {
+        "case": "glass-on",
+        "repeat": 3,
+        "loaderId": "AE07C6EFA051519B7FB7102137726B26",
+        "inputTicks": 200,
+        "fps": 235.9197795860832,
+        "activeFPS": 237.28067542964607,
+        "p95FrameMs": 4.300000000000182,
+        "maxFrameMs": 25.099999999999454,
+        "frames": 1841,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTaskMaxMs": 0,
+        "longTasks": [],
+        "glass": "webgl",
+        "panBefore": "translate3d(0px, -36.8567px, 0px)",
+        "panAfter": "translate3d(-65.3855px, -83.0544px, 0px)",
+        "panChanged": true,
+        "snapshotUpdated": true
+      },
+      {
+        "case": "glass-off",
+        "repeat": 3,
+        "loaderId": "AD339CFB7A51189BE8BA2D385BA92998",
+        "inputTicks": 200,
+        "fps": 237.3294034728007,
+        "activeFPS": 237.2901702647006,
+        "p95FrameMs": 4.300000000000182,
+        "maxFrameMs": 8.300000000001091,
+        "frames": 1852,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTaskMaxMs": 0,
+        "longTasks": [],
+        "glass": "css",
+        "panBefore": "translate3d(0px, -36.8567px, 0px)",
+        "panAfter": "translate3d(-65.6114px, -83.1921px, 0px)",
+        "panChanged": true,
+        "snapshotUpdated": false
+      },
+      {
+        "case": "legacy",
+        "repeat": 3,
+        "loaderId": "C6242F865112757E79FDDCEBC87F2060",
+        "inputTicks": 200,
+        "fps": 235.79163196001792,
+        "activeFPS": 236.28506262254413,
+        "p95FrameMs": 4.300000000000182,
+        "maxFrameMs": 12.5,
+        "frames": 1840,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTaskMaxMs": 0,
+        "longTasks": [],
+        "glass": "legacy-css",
+        "panBefore": "translate3d(0px, -36.8567px, 0px)",
+        "panAfter": "translate3d(-68.5582px, -84.9648px, 0px)",
+        "panChanged": true,
+        "snapshotUpdated": false
+      },
+      {
+        "case": "legacy",
+        "repeat": 4,
+        "loaderId": "9746F2F458CDC0A6092D2595179F0636",
+        "inputTicks": 200,
+        "fps": 236.30119432056998,
+        "activeFPS": 237.48549477812014,
+        "p95FrameMs": 4.300000000000182,
+        "maxFrameMs": 8.300000000001091,
+        "frames": 1844,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTaskMaxMs": 0,
+        "longTasks": [],
+        "glass": "legacy-css",
+        "panBefore": "translate3d(0px, -36.8567px, 0px)",
+        "panAfter": "translate3d(-66.4249px, -83.6861px, 0px)",
+        "panChanged": true,
+        "snapshotUpdated": false
+      },
+      {
+        "case": "glass-off",
+        "repeat": 4,
+        "loaderId": "2339CD0C572F52099F9FBD3F0A416CC8",
+        "inputTicks": 200,
+        "fps": 237.32940347280066,
+        "activeFPS": 237.68556680404947,
+        "p95FrameMs": 4.300000000000182,
+        "maxFrameMs": 8.400000000001455,
+        "frames": 1852,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTaskMaxMs": 0,
+        "longTasks": [],
+        "glass": "css",
+        "panBefore": "translate3d(0px, -36.8567px, 0px)",
+        "panAfter": "translate3d(-66.4862px, -83.7232px, 0px)",
+        "panChanged": true,
+        "snapshotUpdated": false
+      },
+      {
+        "case": "glass-on",
+        "repeat": 4,
+        "loaderId": "F9158980BCBECFBF75EED6ED078E7734",
+        "inputTicks": 200,
+        "fps": 236.68866534247454,
+        "activeFPS": 237.68556680404947,
+        "p95FrameMs": 4.300000000000182,
+        "maxFrameMs": 20.899999999999636,
+        "frames": 1847,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTaskMaxMs": 0,
+        "longTasks": [],
+        "glass": "webgl",
+        "panBefore": "translate3d(0px, -36.8567px, 0px)",
+        "panAfter": "translate3d(-66.9478px, -84.0017px, 0px)",
+        "panChanged": true,
+        "snapshotUpdated": true
+      }
+    ],
+    "errors": [],
+    "summary": {
+      "legacy": {
+        "medianFPS": 236.30119432056998,
+        "medianActiveFPS": 237.48549477812014,
+        "minFPS": 235.79163196001792,
+        "maxFPS": 238.22643685525728,
+        "maxP95FrameMs": 4.300000000000182,
+        "totalLongTasks": 0,
+        "totalLongTaskMs": 0
+      },
+      "glass-off": {
+        "medianFPS": 238.10134044134608,
+        "medianActiveFPS": 238.4902944645463,
+        "minFPS": 237.32940347280066,
+        "maxFPS": 238.73596801476242,
+        "maxP95FrameMs": 4.300000000000182,
+        "totalLongTasks": 0,
+        "totalLongTaskMs": 0
+      },
+      "glass-on": {
+        "medianFPS": 237.0731082206702,
+        "medianActiveFPS": 237.94276565939563,
+        "minFPS": 235.9197795860832,
+        "maxFPS": 237.83894612742836,
+        "maxP95FrameMs": 4.300000000000182,
+        "totalLongTasks": 0,
+        "totalLongTaskMs": 0
+      }
+    },
+    "acceptance": {
+      "rule": "Five interleaved repetitions: glass-on median FPS >= unmodified legacy median FPS",
+      "legacyDeltaPercent": 0.3266652554675842,
+      "glassOffDeltaPercent": -0.4318464645221787,
+      "legacyParity": true
+    },
+    "status": "passed"
+  },
+  "regression": {
+    "base": "http://127.0.0.1",
+    "cliScreenshotBudget": 45000,
+    "checks": {
+      "gallery": {
+        "photos": 44,
+        "heldImages": true,
+        "rectanglesIdentical": true,
+        "cls": 0,
+        "scrollChecks": 6,
+        "visibleBlankTiles": 0
+      },
+      "failure": {
+        "count": 44,
+        "height": 258.609375,
+        "cls": 0
+      },
+      "fixtures": [
+        {
+          "width": 390,
+          "tiles": 24,
+          "cls": 0,
+          "blankTiles": 0
+        },
+        {
+          "width": 700,
+          "tiles": 24,
+          "cls": 0,
+          "blankTiles": 0
+        },
+        {
+          "width": 1400,
+          "tiles": 24,
+          "cls": 0,
+          "blankTiles": 0
+        }
+      ],
+      "fade": {
+        "lowVisible": "1",
+        "highOpacity": "0",
+        "background": "url(\"/media/thumbs/!IMG_20260103_160706.jpg\")",
+        "stages": [
+          {
+            "class": "photoStage hiReady",
+            "opacity": "0"
+          },
+          {
+            "class": "photoStage hiReady hiDone",
+            "opacity": "1"
+          },
+          {
+            "class": "photoStage hiReady hiDone",
+            "opacity": "1"
+          }
+        ],
+        "highFinal": "1"
+      },
+      "glass": {
+        "path": "webgl",
+        "config": {
+          "floating": true,
+          "cornerRadius": 40,
+          "blurAmount": 0
+        },
+        "requested": 0,
+        "executed": 0,
+        "active": 0,
+        "webglDraws": 0,
+        "snapshotWidth": 1140
+      },
+      "fit": {
+        "landscape": [
+          "比例：适应",
+          "比例：宽度",
+          "比例：完全",
+          "比例：适应"
+        ],
+        "note": "Legacy skips the mode redundant under contain",
+        "wide": [
+          "比例：适应",
+          "比例：高度",
+          "比例：完全",
+          "比例：适应"
+        ]
+      },
+      "gestures": {
+        "wheel": [
+          "translate3d(-50%, -50%, 0px) scale(0.976641)",
+          "translate3d(-50%, -50%, 0px) scale(3.44307)"
+        ],
+        "drag": [
+          "translate3d(50.5084px, -25.322px, 0px)",
+          "translate3d(150.508px, 24.678px, 0px)"
+        ],
+        "pinch": [
+          "translate3d(-50%, -50%, 0px) scale(3.44307)",
+          "translate3d(-50%, -50%, 0px) scale(5.73845)"
+        ]
+      },
+      "keyboard": {
+        "right": true,
+        "left": true,
+        "escape": true
+      },
+      "download": {
+        "file": "20261005174734509.jpg",
+        "width": 4272,
+        "height": 3248,
+        "originalWidth": 4080,
+        "originalHeight": 3056,
+        "border": 96,
+        "stampPixels": 1749
+      },
+      "mobileFallback": {
+        "width": 4272,
+        "height": 3248,
+        "hint": "长按图片，选择「保存图片」存入相册",
+        "escapeClosesWithoutNavigating": true
+      },
+      "webShare": {
+        "count": 1,
+        "type": "image/jpeg",
+        "size": 3972687,
+        "name": "20261005174736302.jpg",
+        "mode": "emulated navigator.share; OS album not tested"
+      },
+      "reducedMotion": {
+        "path": "css",
+        "transition": "0s"
+      },
+      "noWebGL": {
+        "path": "css",
+        "backdrop": "blur(18px)",
+        "buttons": 3
+      }
+    },
+    "screenshots": [
+      "gallery-first.png",
+      "gallery-middle.png",
+      "photo.png",
+      "mobile-save-fallback.png",
+      "photo-reduced-motion.png",
+      "reference-gallery-first.png",
+      "reference-gallery-middle.png",
+      "reference-photo.png"
+    ],
+    "errors": [],
+    "status": "passed"
+  },
+  "administration": {
+    "base": "http://127.0.0.1:8085",
+    "checks": {
+      "rejectedWrongPassword": true,
+      "management": {
+        "before": 44,
+        "after": 44,
+        "upload": true,
+        "derived": true,
+        "unicodeEdit": true,
+        "persistedAfterReload": true,
+        "deleteOriginalAndDerived": true
+      },
+      "logout": true
+    },
+    "status": "passed"
+  },
+  "development": {
+    "base": "http://127.0.0.1:5176",
+    "checks": {
+      "development": {
+        "url": "http://127.0.0.1:5176",
+        "photos": 44,
+        "visibleImagesLoaded": true,
+        "dockerStates": [
+          "exited",
+          "exited"
+        ]
+      }
+    },
+    "status": "passed"
+  },
+  "adminScroll": {
+    "base": "http://127.0.0.1:8085",
+    "startedAt": "2026-10-05T09:42:15.044Z",
+    "browser": "Chrome/154.0.8037.93",
+    "graphics": {
+      "available": true,
+      "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x000013C0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "method": "1440x1000; copied library; three interleaved fresh documents per case; all 44 thumbnails decoded before measurement; 200 trusted wheel events at fixed 25ms targets; 5s scrolling + 2.8s settle; actual rAF timestamps and main-document long tasks >=50ms",
+    "runs": [
+      {
+        "case": "glass-off",
+        "round": 0,
+        "loaderId": "0EABDD167014483237304EB139ADB0EC",
+        "inputTicks": 200,
+        "fps": 237.47276688453158,
+        "p95FrameMs": 4.300000000000182,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTasks": [],
+        "scrollY": 4159,
+        "glass": "css",
+        "snapshotUpdated": false,
+        "mainTimersCreated": 2
+      },
+      {
+        "case": "glass-on",
+        "round": 0,
+        "loaderId": "4223ADFF1EECB0B9BF6891955E5D8C75",
+        "inputTicks": 200,
+        "fps": 236.17304833666512,
+        "p95FrameMs": 4.300000000000182,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTasks": [],
+        "scrollY": 4159,
+        "glass": "webgl",
+        "snapshotUpdated": true,
+        "mainTimersCreated": 26
+      },
+      {
+        "case": "glass-on",
+        "round": 1,
+        "loaderId": "AAF7696112E1DE02AD06397B297C1D84",
+        "inputTicks": 200,
+        "fps": 236.8107436216154,
+        "p95FrameMs": 4.300000000000182,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTasks": [],
+        "scrollY": 4159,
+        "glass": "webgl",
+        "snapshotUpdated": true,
+        "mainTimersCreated": 26
+      },
+      {
+        "case": "glass-off",
+        "round": 1,
+        "loaderId": "F6A7CC5BB079A9BF05C935A956695540",
+        "inputTicks": 200,
+        "fps": 237.7077540141215,
+        "p95FrameMs": 4.300000000000182,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTasks": [],
+        "scrollY": 4159,
+        "glass": "css",
+        "snapshotUpdated": false,
+        "mainTimersCreated": 2
+      },
+      {
+        "case": "glass-off",
+        "round": 2,
+        "loaderId": "8E55A93DEA44967E2172006374FB6E57",
+        "inputTicks": 200,
+        "fps": 237.07669450279218,
+        "p95FrameMs": 4.300000000000182,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTasks": [],
+        "scrollY": 4159,
+        "glass": "css",
+        "snapshotUpdated": false,
+        "mainTimersCreated": 2
+      },
+      {
+        "case": "glass-on",
+        "round": 2,
+        "loaderId": "BA2E922C1A7050FB750E8AC5CDF5E249",
+        "inputTicks": 200,
+        "fps": 236.17002191268242,
+        "p95FrameMs": 4.300000000000182,
+        "longTaskCount": 0,
+        "longTaskTotalMs": 0,
+        "longTasks": [],
+        "scrollY": 4159,
+        "glass": "webgl",
+        "snapshotUpdated": true,
+        "mainTimersCreated": 26
+      }
+    ],
+    "errors": [],
+    "summary": {
+      "glass-off": {
+        "medianFPS": 237.47276688453158,
+        "minFPS": 237.07669450279218,
+        "maxFPS": 237.7077540141215,
+        "maxP95FrameMs": 4.300000000000182,
+        "totalLongTasks": 0,
+        "totalLongTaskMs": 0
+      },
+      "glass-on": {
+        "medianFPS": 236.17304833666512,
+        "minFPS": 236.17002191268242,
+        "maxFPS": 236.8107436216154,
+        "maxP95FrameMs": 4.300000000000182,
+        "totalLongTasks": 0,
+        "totalLongTaskMs": 0
+      }
+    },
+    "status": "measured"
+  }
+}

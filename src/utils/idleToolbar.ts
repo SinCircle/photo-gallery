@@ -8,6 +8,7 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
   bar.dataset.toolbar = 'expanded'
   const preference = matchMedia('(prefers-reduced-motion: reduce)')
   let timer = 0
+  let lastActivity = 0
   let animation: Animation | undefined
   let expanded = true
   let held = false
@@ -20,6 +21,8 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
     const current = getComputedStyle(bar).transform
     animation?.cancel()
     expanded = next
+    if (next) window.removeEventListener('pointermove', onNearbyPointer)
+    else window.addEventListener('pointermove', onNearbyPointer, { passive: true, signal })
     bar.dataset.toolbar = next ? 'expanded' : 'collapsed'
     bar.tabIndex = next ? -1 : 0
     if (next) { bar.removeAttribute('role'); bar.removeAttribute('aria-label') }
@@ -47,22 +50,27 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
       if (next) bar.dispatchEvent(new Event('glassrefresh'))
     }
   }
+  const checkIdle = () => {
+    timer = 0
+    if (signal.aborted) return
+    const remaining = IDLE_MS - (performance.now() - lastActivity)
+    if (remaining > 0) { timer = window.setTimeout(checkIdle, remaining); return }
+    const focused = document.activeElement
+    const editing = focused instanceof HTMLInputElement || focused instanceof HTMLTextAreaElement
+    if (held || (bar.contains(focused) && (keyboardFocus || editing))) { arm(); return }
+    setExpanded(false)
+  }
   const arm = () => {
-    clearTimeout(timer)
-    timer = window.setTimeout(() => {
-      const focused = document.activeElement
-      const editing = focused instanceof HTMLInputElement || focused instanceof HTMLTextAreaElement
-      if (held || (bar.contains(focused) && (keyboardFocus || editing))) { arm(); return }
-      setExpanded(false)
-    }, IDLE_MS)
+    lastActivity = performance.now()
+    if (!timer) timer = window.setTimeout(checkIdle, IDLE_MS)
   }
   const wake = () => { setExpanded(true); arm() }
-  window.addEventListener('pointermove', event => {
-    if (expanded) { if (bar.contains(event.target as Node)) arm(); return }
+  function onNearbyPointer(event: PointerEvent) {
     const rect = bar.getBoundingClientRect()
     if (event.clientX >= rect.left - 56 && event.clientX <= rect.right + 56 &&
       event.clientY >= rect.top - 56 && event.clientY <= rect.bottom + 56) wake()
-  }, { passive: true, signal })
+  }
+  bar.addEventListener('pointermove', () => { if (expanded) arm() }, { passive: true, signal })
   window.addEventListener('pointerdown', () => { keyboardFocus = false; held = true; wake() }, { passive: true, signal })
   const release = () => { held = false; arm() }
   window.addEventListener('pointerup', release, { passive: true, signal })

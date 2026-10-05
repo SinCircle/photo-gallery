@@ -1,0 +1,28 @@
+{
+  "base": "http://127.0.0.1:8085",
+  "browser": "Chrome/154.0.8037.93",
+  "graphics": {
+    "available": true,
+    "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x000013C0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "method": "1440x1000; copied library; three interleaved fresh documents per case; all 44 thumbnails decoded before measurement; 200 trusted wheel events at fixed 25ms targets; 5s scrolling + 2.8s settle; actual rAF timestamps and main-document long tasks >=50ms",
+  "runs": [
+    {
+      "case": "glass-off",
+      "round": 0,
+      "loaderId": "D1ED8B1539C35825732436C6828BD8D4",
+      "inputTicks": 200,
+      "fps": 238.49801358451876,
+      "p95FrameMs": 4.300000000000182,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "longTasks": [],
+      "scrollY": 4159,
+      "glass": "css",
+      "snapshotUpdated": false
+    }
+  ],
+  "errors": [],
+  "status": "failed",
+  "failure": "AssertionError [ERR_ASSERTION]: The scroll must update actual refracted pixels\n    at file:///D:/Portable%20Programs/photo%20gallery/scripts/benchmark-admin.mjs:39:39"
+}

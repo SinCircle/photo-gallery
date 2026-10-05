@@ -1,0 +1,182 @@
+{
+  "base": "http://127.0.0.1:5176",
+  "repetitions": 3,
+  "method": "1440x1000 Chrome headless SwiftShader; trusted CDP drag/wheel, 5s input + 1.5s settle; actual rAF timestamps and PerformanceObserver longtask >=50ms; interleaved cases",
+  "runs": [
+    {
+      "case": "legacy",
+      "repeat": 0,
+      "inputTicks": 178,
+      "fps": 229.35497755641637,
+      "activeFPS": 226.2814613260774,
+      "p95FrameMs": 4.300000000000182,
+      "maxFrameMs": 25.09999999999991,
+      "frames": 1492,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "longTaskMaxMs": 0,
+      "longTasks": [],
+      "glass": "legacy-css"
+    },
+    {
+      "case": "glass-off",
+      "repeat": 0,
+      "inputTicks": 181,
+      "fps": 230.12005595437566,
+      "activeFPS": 227.29090036782347,
+      "p95FrameMs": 4.300000000000182,
+      "maxFrameMs": 75.10000000000036,
+      "frames": 1497,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "longTaskMaxMs": 0,
+      "longTasks": [],
+      "glass": "css"
+    },
+    {
+      "case": "glass-on",
+      "repeat": 0,
+      "inputTicks": 185,
+      "fps": 234.11062573063433,
+      "activeFPS": 233.07924694396098,
+      "p95FrameMs": 4.300000000000182,
+      "maxFrameMs": 16.800000000000182,
+      "frames": 1522,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "longTaskMaxMs": 0,
+      "longTasks": [],
+      "glass": "webgl"
+    },
+    {
+      "case": "glass-on",
+      "repeat": 1,
+      "inputTicks": 187,
+      "fps": 230.27023703384882,
+      "activeFPS": 239.49100658250134,
+      "p95FrameMs": 4.300000000001091,
+      "maxFrameMs": 250.29999999999927,
+      "frames": 1498,
+      "longTaskCount": 2,
+      "longTaskTotalMs": 253,
+      "longTaskMaxMs": 176,
+      "longTasks": [
+        {
+          "start": 16823.5,
+          "duration": 176
+        },
+        {
+          "start": 17000.399999976158,
+          "duration": 77
+        }
+      ],
+      "glass": "webgl"
+    },
+    {
+      "case": "glass-off",
+      "repeat": 1,
+      "inputTicks": 186,
+      "fps": 237.34810029226273,
+      "activeFPS": 236.6852066744028,
+      "p95FrameMs": 4.300000000000182,
+      "maxFrameMs": 16.59999999999991,
+      "frames": 1543,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "longTaskMaxMs": 0,
+      "longTasks": [],
+      "glass": "css"
+    },
+    {
+      "case": "legacy",
+      "repeat": 1,
+      "inputTicks": 178,
+      "fps": 232.2721473260265,
+      "activeFPS": 230.08495752123937,
+      "p95FrameMs": 4.400000000000546,
+      "maxFrameMs": 54.19999999999982,
+      "frames": 1511,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "longTaskMaxMs": 0,
+      "longTasks": [],
+      "glass": "legacy-css"
+    },
+    {
+      "case": "legacy",
+      "repeat": 2,
+      "inputTicks": 187,
+      "fps": 239.5007071266064,
+      "activeFPS": 239.49100658250134,
+      "p95FrameMs": 4.299999999999272,
+      "maxFrameMs": 5.300000000001091,
+      "frames": 1558,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "longTaskMaxMs": 0,
+      "longTasks": [],
+      "glass": "legacy-css"
+    },
+    {
+      "case": "glass-off",
+      "repeat": 2,
+      "inputTicks": 182,
+      "fps": 234.88901186742913,
+      "activeFPS": 233.688801744663,
+      "p95FrameMs": 4.300000000000182,
+      "maxFrameMs": 16.800000000000182,
+      "frames": 1528,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "longTaskMaxMs": 0,
+      "longTasks": [],
+      "glass": "css"
+    },
+    {
+      "case": "glass-on",
+      "repeat": 2,
+      "inputTicks": 192,
+      "fps": 239.03953760068867,
+      "activeFPS": 239.489834676049,
+      "p95FrameMs": 4.300000000000182,
+      "maxFrameMs": 16.699999999999818,
+      "frames": 1555,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "longTaskMaxMs": 0,
+      "longTasks": [],
+      "glass": "webgl"
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "legacy": {
+      "medianFPS": 232.2721473260265,
+      "medianActiveFPS": 230.08495752123937,
+      "minFPS": 229.35497755641637,
+      "maxFPS": 239.5007071266064,
+      "maxP95FrameMs": 4.400000000000546,
+      "totalLongTasks": 0,
+      "totalLongTaskMs": 0
+    },
+    "glass-off": {
+      "medianFPS": 234.88901186742913,
+      "medianActiveFPS": 233.688801744663,
+      "minFPS": 230.12005595437566,
+      "maxFPS": 237.34810029226273,
+      "maxP95FrameMs": 4.300000000000182,
+      "totalLongTasks": 0,
+      "totalLongTaskMs": 0
+    },
+    "glass-on": {
+      "medianFPS": 234.11062573063433,
+      "medianActiveFPS": 239.489834676049,
+      "minFPS": 230.27023703384882,
+      "maxFPS": 239.03953760068867,
+      "maxP95FrameMs": 4.300000000001091,
+      "totalLongTasks": 2,
+      "totalLongTaskMs": 253
+    }
+  },
+  "status": "measured"
+}

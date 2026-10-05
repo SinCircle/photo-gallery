@@ -20,7 +20,14 @@ const report={base,checks:{}}
 const send=(method,params={})=>new Promise((resolve,reject)=>{const n=++id;pending.set(n,{resolve,reject});ws.send(JSON.stringify({id:n,method,params}))})
 async function evaluate(expression){const r=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value}
 async function until(expression){for(let i=0;i<300;i++){if(await evaluate(expression))return;await sleep(100)}throw Error(`Timeout: ${expression}`)}
-async function click(selector){const p=await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});e.scrollIntoView({block:'center'});const r=e.getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2}})()`);await send('Input.dispatchMouseEvent',{type:'mousePressed',...p,button:'left',clickCount:1});await send('Input.dispatchMouseEvent',{type:'mouseReleased',...p,button:'left',clickCount:1})}
+async function click(selector){
+  if(await evaluate(`document.querySelector('.topbarInner')?.dataset.toolbar==='collapsed'`)){
+    const r=await evaluate(`document.querySelector('.topbarInner').getBoundingClientRect().toJSON()`)
+    await send('Input.dispatchMouseEvent',{type:'mouseMoved',x:r.x+r.width/2,y:r.y+r.height/2})
+    await until(`document.querySelector('.topbarInner').dataset.toolbar==='expanded' && !document.querySelector('.topbarInner').getAnimations().length`)
+  }
+  const p=await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});e.scrollIntoView({block:'center'});const r=e.getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2}})()`);await send('Input.dispatchMouseEvent',{type:'mousePressed',...p,button:'left',clickCount:1});await send('Input.dispatchMouseEvent',{type:'mouseReleased',...p,button:'left',clickCount:1})
+}
 const photos=async()=>(await(await fetch(`${base}/api/photos`)).json()).photos
 let uploadedId
 try{
@@ -39,7 +46,9 @@ try{
     report.base=dev
     await send('Page.navigate',{url:dev})
     await until(`document.querySelectorAll('.tile').length===44`)
-    await until(`[...document.querySelectorAll('.tile img')].filter(i=>{const r=i.getBoundingClientRect();return r.top<innerHeight&&r.bottom>0}).every(i=>i.naturalWidth>0)`)
+    await until(`[...document.querySelectorAll('.tile img')].filter(i=>{const r=i.getBoundingClientRect();return r.top<innerHeight&&r.bottom>0}).every(i=>i.complete&&i.naturalWidth>0&&getComputedStyle(i).opacity==='1')`)
+    const image=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false})
+    await writeFile(path.join(out,'dev-without-docker.png'),Buffer.from(image.data,'base64'))
     report.checks.development={url:dev,photos:44,visibleImagesLoaded:true,dockerStates:states}
     report.status='passed'
     console.log('PASS development without Docker: both gallery containers exited; 44 tiles; visible images loaded')

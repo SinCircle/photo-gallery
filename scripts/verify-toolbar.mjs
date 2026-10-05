@@ -12,7 +12,11 @@ const expanded = selector => until(`document.querySelector(${JSON.stringify(sele
 const move = async (x, y) => send('Input.dispatchMouseEvent', { type: 'mouseMoved', x, y })
 try {
   await navigate(photo)
-  await until(`document.querySelector('.photoStage')?.classList.contains('hiDone') && document.querySelector('.glassSurface')`)
+  await until(`document.querySelector('.photoStage')?.classList.contains('hiDone')`)
+  const startRect = await evaluate(`document.querySelector('.dockInner').getBoundingClientRect().toJSON()`)
+  await move(startRect.x + startRect.width / 2, startRect.y + startRect.height / 2)
+  await expanded('.dockInner')
+  await until(`document.querySelector('.dockInner').dataset.glass==='webgl'`)
   await evaluate(`__metrics.cls=0; window.originalImageRect=JSON.stringify(document.querySelector('.photoImgHigh').getBoundingClientRect().toJSON())`)
   await shot('photo-expanded')
   await move(20, 20)
