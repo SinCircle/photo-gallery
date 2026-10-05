@@ -10,6 +10,7 @@ export function regularGlassConfig() {
     cornerRadius: 40,
     blurAmount: 0,
     edgeHighlight: 0,
+    chromAberration: 0,
     fresnel: 0,
     specular: 0,
     shadowOpacity: 0,
