@@ -1,6 +1,8 @@
 // Capture only pixels under the control from measured image rectangles.
 // No full-tree DOM rasterisation, observers or EXIF parsing.
+import { GLASS_BLUR_PX } from './glassConfig'
 const backgrounds = new WeakMap<HTMLElement, { key: string; canvas: HTMLCanvasElement }>()
+const rawScenes = new WeakMap<HTMLElement, HTMLCanvasElement>()
 
 export function captureGlassScene(root: HTMLElement, glass: HTMLElement) {
   const nativeCapsules = glass.hasAttribute('data-capsule-root')
@@ -104,12 +106,28 @@ export function captureGlassScene(root: HTMLElement, glass: HTMLElement) {
       canvas.style.left = `${x - rootBox.left}px`
       canvas.style.top = `${y - rootBox.top}px`
     }
-    const ctx = canvas.getContext('2d')!
+    let target = canvas
+    if (nativeCapsules && GLASS_BLUR_PX > 0) {
+      let raw = rawScenes.get(glass)
+      if (!raw) { raw = document.createElement('canvas'); rawScenes.set(glass, raw) }
+      if (raw.width !== canvas.width) raw.width = canvas.width
+      if (raw.height !== canvas.height) raw.height = canvas.height
+      target = raw
+    }
+    const ctx = target.getContext('2d')!
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx.globalAlpha = 1
     ctx.fillStyle = color
     ctx.fillRect(0, 0, width, height)
     for (const layer of paint) layer(ctx)
+    if (target !== canvas) {
+      const output = canvas.getContext('2d')!
+      output.setTransform(1, 0, 0, 1, 0, 0)
+      output.clearRect(0, 0, canvas.width, canvas.height)
+      output.filter = `blur(${GLASS_BLUR_PX * dpr}px)`
+      output.drawImage(target, 0, 0)
+      output.filter = 'none'
+    }
     return canvas
   } }
 }
