@@ -102,6 +102,11 @@ button:focus-visible {
   z-index: 0;
 }
 [data-glass] > :not(.glassSurface) { position: relative; z-index: 1; }
+.idleToolbar { will-change: transform; }
+.idleToolbar[data-toolbar='collapsed'] > :not(.glassSurface) {
+  visibility: hidden;
+  pointer-events: none;
+}
 
 .topbarInner {
   max-width: 1100px;

@@ -4,8 +4,10 @@ import type { Photo } from '../photos'
 import { clear, el } from '../utils/dom'
 import { invalidateGallery } from './gallery'
 import { attachGlass } from '../utils/glass'
+import { attachIdleToolbar } from '../utils/idleToolbar'
 
 const MAX_UPLOAD_BYTES = Math.floor(14.7 * 1024 * 1024)
+const controlLifetimes = new WeakMap<HTMLElement, AbortController>()
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, options)
@@ -21,6 +23,10 @@ function json(method: string, body: unknown): RequestInit {
 export async function renderAdminView(container: HTMLElement, signal: AbortSignal) {
   const session = await request<{ authenticated: boolean }>('/api/session')
   if (signal.aborted) return
+  controlLifetimes.get(container)?.abort()
+  const controls = new AbortController()
+  controlLifetimes.set(container, controls)
+  signal.addEventListener('abort', () => controls.abort(), { once: true, signal: controls.signal })
   clear(container)
   const shell = el('div', { className: 'shell adminShell' })
   const topbar = el('div', { className: 'topbar' })
@@ -37,7 +43,8 @@ export async function renderAdminView(container: HTMLElement, signal: AbortSigna
   content.append(feedback, list)
   shell.append(topbar, content)
   container.append(shell)
-  void attachGlass(shell, bar, signal)
+  void attachGlass(shell, bar, controls.signal)
+  attachIdleToolbar(bar, controls.signal, 'top')
 
   const showError = (error: unknown) => {
     feedback.textContent = error instanceof Error ? error.message : '请求失败'

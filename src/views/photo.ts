@@ -8,6 +8,7 @@ import {
 import { formatDateTime, photoMetadata } from '../utils/exif'
 import { getAllPhotos, thumbnailUrl, webUrl, originalUrl, photoFileName } from '../photos'
 import { attachGlass } from '../utils/glass'
+import { attachIdleToolbar } from '../utils/idleToolbar'
 
 type FitMode = 'contain' | 'fitHeight' | 'fitWidth' | 'oneToOne'
 
@@ -246,7 +247,8 @@ export async function renderPhotoView(
     const stageRect = stage.getBoundingClientRect()
     const dockInnerRect = dockInner.getBoundingClientRect()
     // stage is fixed inset:0, so top is ~0; still keep it relative.
-    dockInnerTop = Math.max(0, dockInnerRect.top - stageRect.top)
+    // Shrinking the control is purely visual; its reserved safe area stays full.
+    dockInnerTop = Math.max(0, dockInnerRect.bottom - parseFloat(getComputedStyle(dockInner).height) - stageRect.top)
     return { stageW: stageRect.width, stageH: stageRect.height }
   }
 
@@ -700,6 +702,7 @@ export async function renderPhotoView(
   shell.append(bg, content, dockInner)
   container.append(shell)
   void attachGlass(shell, dockInner, signal)
+  attachIdleToolbar(dockInner, signal, 'bottom')
 
   // Re-layout when dock wraps (e.g., narrow widths).
   const ro = new ResizeObserver(() => {
