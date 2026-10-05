@@ -66,12 +66,14 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
       bar.dataset.moving = ''
       const targetW = next ? width : 56, targetH = next ? height : 32
       const dw = targetW - current.width, dh = targetH - current.height
+      const spring = (delta: number, target: number, fraction: number) =>
+        Math.sign(delta) * Math.min(Math.abs(delta) * fraction, target * .08)
       const easing = 'cubic-bezier(.22,.8,.25,1)'
       const size = (w: number, h: number, offset: number) => ({ width: `${w}px`, height: `${h}px`, offset })
       animations.push(bar.animate([
         size(current.width, current.height, 0),
-        size(targetW + dw * .035, targetH + dh * .06, .64),
-        size(targetW - dw * .012, targetH - dh * .02, .82),
+        size(targetW + spring(dw, targetW, .035), targetH + spring(dh, targetH, .06), .64),
+        size(targetW - spring(dw, targetW, .012), targetH - spring(dh, targetH, .02), .82),
         size(targetW, targetH, 1),
       ], { duration: next ? 540 : 460, easing }))
       animations.push(clip.animate([{ opacity: currentOpacity }, { opacity: next ? 1 : 0 }],
