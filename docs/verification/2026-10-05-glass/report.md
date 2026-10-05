@@ -2,6 +2,30 @@
 
 2026-10-05。在已确认的回归实现上继续修改；视觉源码基准仍为 `68e64de^`（`fc069c5a1144d62831c2055ac15273243637b9f8`）。本报告描述这次三项反馈，前次材料保留在 [原报告](../2026-10-05/report.md) 和 [中断后收尾](../2026-10-05/followup.md)。
 
+## 恢复复核：本次最新结论
+
+以下为第二次中断后重新执行的核验。本节之后保留上次的历史结果；**本次生产帧率复测未通过严格的旧版帧率标准，不能用历史通过结果替代。**
+
+**事实：**实际恢复 HEAD 已是 `974131d`，源码、脚本及证据均已提交，工作区干净。未重写既有提交，本轮没有产品源码改动。按小步分别保存：`29b6316` 构建与 Docker 字节核验，`2b96f18` 折射证明，`6485af1` 收放与 CLS，`775e9a7` 生产帧率复测。
+
+实际执行 `npm run build`、`docker compose up -d --build`，产物为 `index-DinQTJPb.js`，136.76 kB / gzip 38.60 kB；七份应用源码 SHA-256 与原证据一致，四份旧版参考源码逐字节一致，Docker 返回的两份 JS/CSS 与本地构建逐字节一致，健康接口为 `ok`。[构建核验](recovery-build.json)。
+
+随后设置 `$env:VERIFY_URL='http://127.0.0.1'`，串行执行以下命令，每项结束即归档并提交：
+
+```powershell
+node scripts/verify-glass.mjs
+node scripts/verify-toolbar.mjs
+node scripts/benchmark-glass.mjs
+```
+
+- **折射通过**：背后唯一红色标记位移 62 px、厚度 6→1 px，黑色直线弯曲。[最新无损对照图](recovery-refraction-comparison.png) 左为关闭折射、右为开启。整个测试浏览器空闲 5 秒内 rAF 请求/执行为 0，CSS 降级和 reduced-motion 检查通过。[原始结果](recovery-glass.json)。
+- **收放通过**：闲置横条 96×8 px，展开过冲实测 1148.77/1100 px，靠近/点击/滚轮恢复；照片和表单矩形不变，单张页和管理页 CLS 均为 0，reduced-motion 瞬时切换。[完整栏](recovery-photo-expanded.jpg)、[横条](recovery-photo-collapsed.jpg)、[管理完整栏](recovery-admin-expanded.jpg)、[管理横条](recovery-admin-collapsed.jpg)、[原始结果](recovery-toolbar.json)。
+- **生产帧率未达标**：三组各五轮，真实平移和开启组的实际折射像素更新均断言成功。中位 FPS 为旧版 **239.255**、当前关闭玻璃 **239.505**、当前开启 **238.611**；开启相对旧版 **−0.269%**，相对关闭 **−0.373%**。最大 P95 均为 **4.30 ms**，每组主文档 ≥50 ms 长任务均为 **0 / 0 ms**。基准退出码为 **1**，保留断言失败栈。[完整逐轮记录](recovery-performance.json)。测量仍为 5 秒输入 + 2.8 秒收尾，包含交互后真实材质更新；FPS 是实际 rAF 时间戳统计，不等于物理显示器呈现频率。
+
+**推断：**已测得过冲、真实折射和稳定布局。多次测试结果存在变化，不能把本次小幅帧率差距擅自认定为噪声，也不能据历史通过记录声称稳定不降帧。
+
+**待办：**消除并重新验证生产页对旧版的帧率差距。之前管理滚动比关闭玻璃低约 0.547% 的记录仍有效，本轮没有重测管理帧率。严格性能目标尚未全部满足。
+
 ## 事实：改了什么
 
 - **折射修复**：删除 `preserveMaterial()`、`source-atop` 材质覆盖，以及所有对库私有字段的访问。成功输出后，工具条关闭旧白色背景和 `backdrop-filter`，使用库实际生成的无损 PNG 作为背景；失败仍保留原 CSS 材质和控件。Regular Glass 配置只有 `{floating:true,cornerRadius:40,blurAmount:0}`。
