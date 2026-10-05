@@ -29,7 +29,7 @@ export function captureGlassScene(root: HTMLElement, glass: HTMLElement) {
         const bitmap = document.createElement('canvas')
         bitmap.width = Math.ceil((innerWidth + 200) * dpr)
         bitmap.height = Math.ceil((innerHeight + 200) * dpr)
-        const buffer = bitmap.getContext('2d')!
+        const buffer = bitmap.getContext('2d', { alpha: false, willReadFrequently: true })!
         buffer.scale(dpr, dpr)
         buffer.fillStyle = color
         buffer.fillRect(0, 0, innerWidth + 200, innerHeight + 200)

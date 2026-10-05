@@ -9,6 +9,9 @@ export async function createGlassRenderer(glass: HTMLElement, signal: AbortSigna
   root.setAttribute('aria-hidden', 'true')
   const scene = document.createElement('canvas')
   scene.dataset.glassScene = ''
+  // This small source is repainted and sampled by the CPU before upload. A
+  // stable software backing avoids GPU readbacks when its dimensions change.
+  scene.getContext('2d', { alpha: false, willReadFrequently: true })
   scene.style.cssText = 'position:absolute;left:-20px;top:-20px;opacity:0;pointer-events:none;'
   const panel = document.createElement('div')
   panel.className = 'glassSurface'
@@ -22,6 +25,7 @@ export async function createGlassRenderer(glass: HTMLElement, signal: AbortSigna
     instance = await LiquidGlass.init({ root, glassElements: [panel] })
     if (signal.aborted) { instance.destroy(); root.remove(); throw new DOMException('Aborted', 'AbortError') }
     const output = panel.querySelector('canvas')!
+    output.getContext('2d', { willReadFrequently: true })
     output.dataset.glassOutput = ''
     return {
       scene,
