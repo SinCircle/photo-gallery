@@ -1,0 +1,69 @@
+{
+  "checkedAt": "2026-10-05T11:43:03.891Z",
+  "recoveredHead": "974131d3a733a8a34077200d3b9671a29b896507",
+  "workingTreeWasClean": true,
+  "commands": [
+    "npm run build",
+    "docker compose up -d --build"
+  ],
+  "sourceHashesVerified": {
+    "src/utils/glass.ts": "54d9f97dbd4f740300b62b51d90b871621aa9797f29d2f3bd8237506cbe5bb55",
+    "src/utils/glassRenderer.ts": "e9f6485e7859f3c1a81508ea4d3437846b396716e1c50483a59961bf4a61d1e2",
+    "src/utils/glassScene.ts": "46cbefac0ee0be25bc17c3f160649cd734c84324326c31dfa9c9b57d3b6a529c",
+    "src/utils/idleToolbar.ts": "7c3416ebee84b869eed203bd5ac3f295d8848bd2900686155bfbf7fee3212601",
+    "src/views/photo.ts": "a5ffecb561007b21407dae7729b5ea913b43259d348f9c9bcc145f1c8227ebe3",
+    "src/views/admin.ts": "8b0edce3e794f54db39905622c6f80e5859255c9b8e8f0cf5fa2da7d1d1cdad0",
+    "src/style.css": "c23e79b67407283dcab076cd3ded6f9b40433e2d67e77f26fe06eb70d91fffe4"
+  },
+  "referenceFilesByteExact": true,
+  "docker": {
+    "image": "sha256:99340880104884d56f94bc4fd0da62dbbd9b294c2a2ad5904eae691938d1bd72",
+    "health": {
+      "status": "ok"
+    },
+    "assets": {
+      "/assets/index-DinQTJPb.js": "53736fb0e7212f05dd008aed788644516976248cc18a1fe3695a91715e3739cf",
+      "/assets/index-BtzvCJtM.css": "aead52cc597cd4467e2c2c067c90347f06f1c94ab878a1d5c920156e7aee07ba"
+    }
+  },
+  "existingProductionPerformance": {
+    "base": "http://127.0.0.1",
+    "startedAt": "2026-10-05T09:43:22.328Z",
+    "status": "passed",
+    "summary": {
+      "legacy": {
+        "medianFPS": 236.30119432056998,
+        "medianActiveFPS": 237.48549477812014,
+        "minFPS": 235.79163196001792,
+        "maxFPS": 238.22643685525728,
+        "maxP95FrameMs": 4.300000000000182,
+        "totalLongTasks": 0,
+        "totalLongTaskMs": 0
+      },
+      "glass-off": {
+        "medianFPS": 238.10134044134608,
+        "medianActiveFPS": 238.4902944645463,
+        "minFPS": 237.32940347280066,
+        "maxFPS": 238.73596801476242,
+        "maxP95FrameMs": 4.300000000000182,
+        "totalLongTasks": 0,
+        "totalLongTaskMs": 0
+      },
+      "glass-on": {
+        "medianFPS": 237.0731082206702,
+        "medianActiveFPS": 237.94276565939563,
+        "minFPS": 235.9197795860832,
+        "maxFPS": 237.83894612742836,
+        "maxP95FrameMs": 4.300000000000182,
+        "totalLongTasks": 0,
+        "totalLongTaskMs": 0
+      }
+    },
+    "acceptance": {
+      "rule": "Five interleaved repetitions: glass-on median FPS >= unmodified legacy median FPS",
+      "legacyDeltaPercent": 0.3266652554675842,
+      "glassOffDeltaPercent": -0.4318464645221787,
+      "legacyParity": true
+    }
+  }
+}
