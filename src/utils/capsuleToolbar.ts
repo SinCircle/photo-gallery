@@ -67,7 +67,7 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
     controls.forEach((control, i) => {
       control.style.visibility = ''
       control.style.opacity = next ? '1' : '0'
-      control.style.translate = next ? '0px 0px' : '0px 14px'
+      control.style.translate = next ? '0px 0px' : '0px 8px'
       animations.push(control.animate([
         { translate: current[i].translate === 'none' ? '0px 0px' : current[i].translate, offset: 0 },
         { translate: next ? '0px -3px' : '0px 10px', offset: .64 },

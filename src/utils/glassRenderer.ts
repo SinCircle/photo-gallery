@@ -22,9 +22,7 @@ export async function createGlassRenderer(glass: HTMLElement, signal: AbortSigna
       if (signal.aborted) { cleanup(); throw new DOMException('Aborted', 'AbortError') }
       for (const capsule of capsules) {
         const output = capsule.querySelector('canvas')!
-        // Avoid downloading the wide EXIF surface on every paint; the compact
-        // button/idle surfaces keep stable, inexpensive read-friendly buffers.
-        output.getContext('2d', { willReadFrequently: capsule.dataset.glassCapsule !== 'exif' })
+        output.getContext('2d', { willReadFrequently: true })
         output.dataset.glassOutput = capsule.dataset.glassCapsule
       }
       return { scene, changed: () => instance!.markChanged(scene) }
