@@ -10,8 +10,8 @@ const report = { base, startedAt: new Date().toISOString(), browser: b.version.p
 const defaultPhoto = '!IMG_20260103_160706.jpg'
 await send('Page.addScriptToEvaluateOnNewDocument', { source: `window.usedGlassContexts=new Set();const gc=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(t,...a){const ctx=gc.call(this,t,...a);if(t==='webgl'&&ctx&&!ctx.__counted){ctx.__counted=true;const draw=ctx.drawArrays.bind(ctx);ctx.drawArrays=(...args)=>{usedGlassContexts.add(this);return draw(...args)}}return ctx};window.layoutShifts=[];new PerformanceObserver(list=>{for(const e of list.getEntries())layoutShifts.push({time:e.startTime,value:e.value,recentInput:e.hadRecentInput})}).observe({type:'layout-shift',buffered:true})` })
 async function rect(selector) { return evaluate(`document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect().toJSON()`) }
-async function ready(id = defaultPhoto) {
-  await navigate(`${base}/?capsules=${encodeURIComponent(id)}#/photo/${encodeURIComponent(id)}`)
+async function ready(id = defaultPhoto, width = 1440, height = 1000) {
+  await navigate(`${base}/?capsules=${encodeURIComponent(id)}#/photo/${encodeURIComponent(id)}`, width, height)
   await until(`document.querySelector('.photoImgHigh')?.currentSrc===new URL('/media/originals/'+${JSON.stringify(encodeURIComponent(id))},location.origin).href && document.querySelector('.photoStage')?.classList.contains('hiDone') && document.querySelector('.dockInner')?.dataset.glass==='webgl' && !document.querySelector('.dockMetaLoading')`)
   await evaluate('document.fonts.ready')
   await send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 200, y: 300, deltaX: 0, deltaY: 1 })
@@ -40,15 +40,14 @@ const checks = {
   async structure() {
     const screens = []
     for (const [width, height] of [[1440, 1000], [390, 844], [320, 740]]) {
-      await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: false })
-      await ready()
+      await ready(defaultPhoto, width, height)
       const data = await evaluate(snapshot)
       noOverlap(data)
       assert.equal(data.contexts, 1)
       assert.equal(data.items.length, 5)
       assert.deepEqual(data.items.filter(x => x.visible).map(x => x.name), ['exif', 'back', 'fit', 'download'])
       assert.ok(data.items.every(x => x.direct && x.canvas && x.border === '0px'))
-      assert.ok(data.items.filter(x => x.visible).every(x => x.rect.left >= 0 && x.rect.right <= width))
+      assert.ok(data.items.filter(x => x.visible).every(x => x.rect.left >= 0 && x.rect.right <= width), JSON.stringify(data.items))
       assert.equal(data.cls, 0)
       await shot(`capsules-${width}`)
       await crop(`capsules-${width}-detail`)
