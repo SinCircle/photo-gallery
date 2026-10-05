@@ -1,0 +1,3489 @@
+{
+  "base": "http://127.0.0.1",
+  "baseline": false,
+  "startedAt": "2026-10-05T13:28:05.644Z",
+  "graphics": {
+    "available": true,
+    "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x000013C0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "browser": "Chrome/154.0.8037.93",
+  "method": "Three separate real-input states. A canvas under the toolbar alternates red/blue at each background mutation. Timing starts immediately after its fillRect. Completion requires reading matching actual rendered output pixels. Live canvas drawImage is instrumented only in the test to read pixels immediately after a paint (no timer-poll quantization); legacy CSS PNG is decoded and sampled. Trusted CDP drag/wheel events also change the real photo transform. Idle samples continue without input, including after collapse. No dataset, URL or rAF counter constitutes completion.",
+  "cases": [
+    {
+      "name": "held-pointer-drag",
+      "before": {
+        "pan": "translate3d(0px, -70.5443px, 0px)",
+        "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+      },
+      "samples": [
+        {
+          "index": 0,
+          "blue": true,
+          "latencyMs": 8.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2367.899999976158,
+          "inputPaintAt": 2368.399999976158,
+          "copyStartedAt": 2368.899999976158,
+          "outputReadAt": 2376.199999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(-70px, -60.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 1,
+          "blue": false,
+          "latencyMs": 5.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2392.699999988079,
+          "inputPaintAt": 2393.199999988079,
+          "copyStartedAt": 2393.699999988079,
+          "outputReadAt": 2398,
+          "toolbar": "expanded",
+          "pan": "translate3d(-68px, -59.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 2,
+          "blue": true,
+          "latencyMs": 5.800000011920929,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2418,
+          "inputPaintAt": 2418.5,
+          "copyStartedAt": 2419,
+          "outputReadAt": 2423.800000011921,
+          "toolbar": "expanded",
+          "pan": "translate3d(-66px, -58.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 3,
+          "blue": false,
+          "latencyMs": 6.199999988079071,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2438.699999988079,
+          "inputPaintAt": 2439.100000023842,
+          "copyStartedAt": 2439.699999988079,
+          "outputReadAt": 2444.899999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(-64px, -57.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 4,
+          "blue": true,
+          "latencyMs": 5,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2464,
+          "inputPaintAt": 2464.399999976158,
+          "copyStartedAt": 2464.899999976158,
+          "outputReadAt": 2469,
+          "toolbar": "expanded",
+          "pan": "translate3d(-62px, -56.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 5,
+          "blue": false,
+          "latencyMs": 5.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2488.800000011921,
+          "inputPaintAt": 2489.199999988079,
+          "copyStartedAt": 2489.600000023842,
+          "outputReadAt": 2494.100000023842,
+          "toolbar": "expanded",
+          "pan": "translate3d(-60px, -55.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 6,
+          "blue": true,
+          "latencyMs": 5.899999976158142,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2518,
+          "inputPaintAt": 2518.399999976158,
+          "copyStartedAt": 2519.300000011921,
+          "outputReadAt": 2523.899999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(-58px, -54.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 7,
+          "blue": false,
+          "latencyMs": 5.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2538.899999976158,
+          "inputPaintAt": 2539.199999988079,
+          "copyStartedAt": 2539.699999988079,
+          "outputReadAt": 2544.199999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(-56px, -53.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 8,
+          "blue": true,
+          "latencyMs": 5.599999964237213,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2576.800000011921,
+          "inputPaintAt": 2577.300000011921,
+          "copyStartedAt": 2578,
+          "outputReadAt": 2582.399999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(-54px, -52.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 9,
+          "blue": false,
+          "latencyMs": 4.899999976158142,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2597.5,
+          "inputPaintAt": 2597.899999976158,
+          "copyStartedAt": 2598.399999976158,
+          "outputReadAt": 2602.399999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(-52px, -60.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 10,
+          "blue": true,
+          "latencyMs": 5.099999964237213,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2622.300000011921,
+          "inputPaintAt": 2622.5,
+          "copyStartedAt": 2623,
+          "outputReadAt": 2627.399999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(-50px, -59.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 11,
+          "blue": false,
+          "latencyMs": 5.099999964237213,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2639.100000023842,
+          "inputPaintAt": 2639.399999976158,
+          "copyStartedAt": 2639.899999976158,
+          "outputReadAt": 2644.199999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(-48px, -58.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 12,
+          "blue": true,
+          "latencyMs": 4.199999988079071,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2660,
+          "inputPaintAt": 2660.300000011921,
+          "copyStartedAt": 2660.800000011921,
+          "outputReadAt": 2664.199999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(-46px, -57.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 13,
+          "blue": false,
+          "latencyMs": 5.5,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2693.699999988079,
+          "inputPaintAt": 2694.100000023842,
+          "copyStartedAt": 2694.600000023842,
+          "outputReadAt": 2699.199999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(-44px, -56.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 14,
+          "blue": true,
+          "latencyMs": 4.199999988079071,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2714.199999988079,
+          "inputPaintAt": 2714.5,
+          "copyStartedAt": 2715,
+          "outputReadAt": 2718.399999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(-42px, -55.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 15,
+          "blue": false,
+          "latencyMs": 4.600000023841858,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2743.699999988079,
+          "inputPaintAt": 2744.100000023842,
+          "copyStartedAt": 2744.800000011921,
+          "outputReadAt": 2748.300000011921,
+          "toolbar": "expanded",
+          "pan": "translate3d(-40px, -54.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 16,
+          "blue": true,
+          "latencyMs": 14.800000011920929,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2769.300000011921,
+          "inputPaintAt": 2770,
+          "copyStartedAt": 2771.199999988079,
+          "outputReadAt": 2784.100000023842,
+          "toolbar": "expanded",
+          "pan": "translate3d(-38px, -53.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 17,
+          "blue": false,
+          "latencyMs": 5.100000023841858,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2802,
+          "inputPaintAt": 2802.399999976158,
+          "copyStartedAt": 2803,
+          "outputReadAt": 2807.100000023842,
+          "toolbar": "expanded",
+          "pan": "translate3d(-36px, -52.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 18,
+          "blue": true,
+          "latencyMs": 4.199999988079071,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2822.800000011921,
+          "inputPaintAt": 2823.100000023842,
+          "copyStartedAt": 2823.699999988079,
+          "outputReadAt": 2827,
+          "toolbar": "expanded",
+          "pan": "translate3d(-34px, -60.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 19,
+          "blue": false,
+          "latencyMs": 6.5,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2852.199999988079,
+          "inputPaintAt": 2852.600000023842,
+          "copyStartedAt": 2853.199999988079,
+          "outputReadAt": 2858.699999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(-32px, -59.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 20,
+          "blue": true,
+          "latencyMs": 4.399999976158142,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2872.800000011921,
+          "inputPaintAt": 2873.199999988079,
+          "copyStartedAt": 2873.899999976158,
+          "outputReadAt": 2877.199999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(-30px, -58.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 21,
+          "blue": false,
+          "latencyMs": 5.800000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2910.699999988079,
+          "inputPaintAt": 2911.399999976158,
+          "copyStartedAt": 2912.300000011921,
+          "outputReadAt": 2916.5,
+          "toolbar": "expanded",
+          "pan": "translate3d(-28px, -57.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 22,
+          "blue": true,
+          "latencyMs": 5.099999964237213,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2944.100000023842,
+          "inputPaintAt": 2944.5,
+          "copyStartedAt": 2945.100000023842,
+          "outputReadAt": 2949.199999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(-26px, -56.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 23,
+          "blue": false,
+          "latencyMs": 5.600000023841858,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2973.199999988079,
+          "inputPaintAt": 2973.600000023842,
+          "copyStartedAt": 2974.199999988079,
+          "outputReadAt": 2978.800000011921,
+          "toolbar": "expanded",
+          "pan": "translate3d(-24px, -55.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 24,
+          "blue": true,
+          "latencyMs": 5,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3015.100000023842,
+          "inputPaintAt": 3015.699999988079,
+          "copyStartedAt": 3016.699999988079,
+          "outputReadAt": 3020.100000023842,
+          "toolbar": "expanded",
+          "pan": "translate3d(-22px, -54.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 25,
+          "blue": false,
+          "latencyMs": 5.900000035762787,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3052.399999976158,
+          "inputPaintAt": 3052.800000011921,
+          "copyStartedAt": 3053.399999976158,
+          "outputReadAt": 3058.300000011921,
+          "toolbar": "expanded",
+          "pan": "translate3d(-20px, -53.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 26,
+          "blue": true,
+          "latencyMs": 5.299999952316284,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3081.600000023842,
+          "inputPaintAt": 3081.899999976158,
+          "copyStartedAt": 3082.399999976158,
+          "outputReadAt": 3086.899999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(-18px, -52.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 27,
+          "blue": false,
+          "latencyMs": 13.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3111,
+          "inputPaintAt": 3112.100000023842,
+          "copyStartedAt": 3112.899999976158,
+          "outputReadAt": 3124.300000011921,
+          "toolbar": "expanded",
+          "pan": "translate3d(-16px, -60.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 28,
+          "blue": true,
+          "latencyMs": 5.600000023841858,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3161,
+          "inputPaintAt": 3161.5,
+          "copyStartedAt": 3162.100000023842,
+          "outputReadAt": 3166.600000023842,
+          "toolbar": "expanded",
+          "pan": "translate3d(-14px, -59.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 29,
+          "blue": false,
+          "latencyMs": 13.399999976158142,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3219.5,
+          "inputPaintAt": 3220,
+          "copyStartedAt": 3220.5,
+          "outputReadAt": 3232.899999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(-12px, -58.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 30,
+          "blue": true,
+          "latencyMs": 12.5,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3244.5,
+          "inputPaintAt": 3244.899999976158,
+          "copyStartedAt": 3245.600000023842,
+          "outputReadAt": 3257,
+          "toolbar": "expanded",
+          "pan": "translate3d(-10px, -57.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 31,
+          "blue": false,
+          "latencyMs": 5,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3277.899999976158,
+          "inputPaintAt": 3278.300000011921,
+          "copyStartedAt": 3278.899999976158,
+          "outputReadAt": 3282.899999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(-8px, -56.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 32,
+          "blue": true,
+          "latencyMs": 6.600000023841858,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3309.399999976158,
+          "inputPaintAt": 3309.899999976158,
+          "copyStartedAt": 3310.399999976158,
+          "outputReadAt": 3316,
+          "toolbar": "expanded",
+          "pan": "translate3d(-6px, -55.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 33,
+          "blue": false,
+          "latencyMs": 6.5,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3328.100000023842,
+          "inputPaintAt": 3328.5,
+          "copyStartedAt": 3329.100000023842,
+          "outputReadAt": 3334.600000023842,
+          "toolbar": "expanded",
+          "pan": "translate3d(-4px, -54.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 34,
+          "blue": true,
+          "latencyMs": 13.5,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3357.300000011921,
+          "inputPaintAt": 3357.899999976158,
+          "copyStartedAt": 3359,
+          "outputReadAt": 3370.800000011921,
+          "toolbar": "expanded",
+          "pan": "translate3d(-2px, -53.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 35,
+          "blue": false,
+          "latencyMs": 7.199999988079071,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3387.199999988079,
+          "inputPaintAt": 3387.800000011921,
+          "copyStartedAt": 3388.5,
+          "outputReadAt": 3394.399999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -52.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 36,
+          "blue": true,
+          "latencyMs": 17.19999998807907,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3407.300000011921,
+          "inputPaintAt": 3407.600000023842,
+          "copyStartedAt": 3408.199999988079,
+          "outputReadAt": 3424.5,
+          "toolbar": "expanded",
+          "pan": "translate3d(2px, -60.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 37,
+          "blue": false,
+          "latencyMs": 18.399999976158142,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3436.600000023842,
+          "inputPaintAt": 3437.100000023842,
+          "copyStartedAt": 3437.600000023842,
+          "outputReadAt": 3455,
+          "toolbar": "expanded",
+          "pan": "translate3d(4px, -59.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 38,
+          "blue": true,
+          "latencyMs": 4.599999964237213,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3474.300000011921,
+          "inputPaintAt": 3474.899999976158,
+          "copyStartedAt": 3475.699999988079,
+          "outputReadAt": 3478.899999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(6px, -58.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 39,
+          "blue": false,
+          "latencyMs": 5.099999964237213,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3495.100000023842,
+          "inputPaintAt": 3495.899999976158,
+          "copyStartedAt": 3496.699999988079,
+          "outputReadAt": 3500.199999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(8px, -57.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 40,
+          "blue": true,
+          "latencyMs": 5.899999976158142,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3512,
+          "inputPaintAt": 3512.699999988079,
+          "copyStartedAt": 3513.199999988079,
+          "outputReadAt": 3517.899999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(10px, -56.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 41,
+          "blue": false,
+          "latencyMs": 8.700000047683716,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3549.399999976158,
+          "inputPaintAt": 3549.899999976158,
+          "copyStartedAt": 3551.100000023842,
+          "outputReadAt": 3558.100000023842,
+          "toolbar": "expanded",
+          "pan": "translate3d(12px, -55.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 42,
+          "blue": true,
+          "latencyMs": 5.099999964237213,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3578.800000011921,
+          "inputPaintAt": 3579.399999976158,
+          "copyStartedAt": 3580.199999988079,
+          "outputReadAt": 3583.899999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(14px, -54.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 43,
+          "blue": false,
+          "latencyMs": 13.399999976158142,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3599.800000011921,
+          "inputPaintAt": 3600.699999988079,
+          "copyStartedAt": 3602,
+          "outputReadAt": 3613.199999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(16px, -53.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 44,
+          "blue": true,
+          "latencyMs": 5.100000023841858,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3632.899999976158,
+          "inputPaintAt": 3633.399999976158,
+          "copyStartedAt": 3634.100000023842,
+          "outputReadAt": 3638,
+          "toolbar": "expanded",
+          "pan": "translate3d(18px, -52.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 45,
+          "blue": false,
+          "latencyMs": 5.900000035762787,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3662.199999988079,
+          "inputPaintAt": 3662.899999976158,
+          "copyStartedAt": 3663.800000011921,
+          "outputReadAt": 3668.100000023842,
+          "toolbar": "expanded",
+          "pan": "translate3d(20px, -60.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 46,
+          "blue": true,
+          "latencyMs": 6.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3687.899999976158,
+          "inputPaintAt": 3688.399999976158,
+          "copyStartedAt": 3689,
+          "outputReadAt": 3694.199999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(22px, -59.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 47,
+          "blue": false,
+          "latencyMs": 6.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3708.199999988079,
+          "inputPaintAt": 3708.800000011921,
+          "copyStartedAt": 3709.5,
+          "outputReadAt": 3714.5,
+          "toolbar": "expanded",
+          "pan": "translate3d(24px, -58.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 48,
+          "blue": true,
+          "latencyMs": 5.699999988079071,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3724.699999988079,
+          "inputPaintAt": 3725.199999988079,
+          "copyStartedAt": 3725.699999988079,
+          "outputReadAt": 3730.399999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(26px, -57.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 49,
+          "blue": false,
+          "latencyMs": 5.199999988079071,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3745.5,
+          "inputPaintAt": 3745.800000011921,
+          "copyStartedAt": 3746.5,
+          "outputReadAt": 3750.699999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(28px, -56.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 50,
+          "blue": true,
+          "latencyMs": 6.5,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3762.199999988079,
+          "inputPaintAt": 3762.5,
+          "copyStartedAt": 3763.300000011921,
+          "outputReadAt": 3768.699999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(30px, -55.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 51,
+          "blue": false,
+          "latencyMs": 5.100000023841858,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3787.5,
+          "inputPaintAt": 3788,
+          "copyStartedAt": 3788.899999976158,
+          "outputReadAt": 3792.600000023842,
+          "toolbar": "expanded",
+          "pan": "translate3d(32px, -54.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 52,
+          "blue": true,
+          "latencyMs": 13.199999988079071,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3804,
+          "inputPaintAt": 3804.5,
+          "copyStartedAt": 3805.300000011921,
+          "outputReadAt": 3817.199999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(34px, -53.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 53,
+          "blue": false,
+          "latencyMs": 5.699999988079071,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3829,
+          "inputPaintAt": 3829.699999988079,
+          "copyStartedAt": 3830.5,
+          "outputReadAt": 3834.699999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(36px, -52.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 54,
+          "blue": true,
+          "latencyMs": 7.399999976158142,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3845.600000023842,
+          "inputPaintAt": 3846,
+          "copyStartedAt": 3846.600000023842,
+          "outputReadAt": 3853,
+          "toolbar": "expanded",
+          "pan": "translate3d(38px, -60.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 55,
+          "blue": false,
+          "latencyMs": 5.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3862.399999976158,
+          "inputPaintAt": 3862.800000011921,
+          "copyStartedAt": 3863.399999976158,
+          "outputReadAt": 3867.699999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(40px, -59.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 56,
+          "blue": true,
+          "latencyMs": 5.099999964237213,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3891.800000011921,
+          "inputPaintAt": 3892.300000011921,
+          "copyStartedAt": 3893.199999988079,
+          "outputReadAt": 3896.899999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(42px, -58.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 57,
+          "blue": false,
+          "latencyMs": 5.400000035762787,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3908.399999976158,
+          "inputPaintAt": 3908.800000011921,
+          "copyStartedAt": 3909.399999976158,
+          "outputReadAt": 3913.800000011921,
+          "toolbar": "expanded",
+          "pan": "translate3d(44px, -57.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 58,
+          "blue": true,
+          "latencyMs": 12.600000023841858,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3925,
+          "inputPaintAt": 3925.5,
+          "copyStartedAt": 3926,
+          "outputReadAt": 3937.600000023842,
+          "toolbar": "expanded",
+          "pan": "translate3d(46px, -56.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 59,
+          "blue": false,
+          "latencyMs": 4.800000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3946,
+          "inputPaintAt": 3946.399999976158,
+          "copyStartedAt": 3947.100000023842,
+          "outputReadAt": 3950.800000011921,
+          "toolbar": "expanded",
+          "pan": "translate3d(48px, -55.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        }
+      ],
+      "summary": {
+        "count": 60,
+        "timeoutCount": 0,
+        "medianMs": 5.600000023841858,
+        "p95Ms": 14.800000011920929,
+        "maxMs": 18.399999976158142
+      },
+      "passed": false
+    },
+    {
+      "name": "wheel",
+      "before": {
+        "pan": "translate3d(0px, -70.5443px, 0px)",
+        "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+      },
+      "samples": [
+        {
+          "index": 0,
+          "blue": true,
+          "latencyMs": 10,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 1711,
+          "inputPaintAt": 1711.3999999761581,
+          "copyStartedAt": 1712.2999999523163,
+          "outputReadAt": 1721,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 1,
+          "blue": false,
+          "latencyMs": 4.700000047683716,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 1735.7999999523163,
+          "inputPaintAt": 1736.199999988079,
+          "copyStartedAt": 1737.0999999642372,
+          "outputReadAt": 1740.5,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 2,
+          "blue": true,
+          "latencyMs": 4.5,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 1769.5,
+          "inputPaintAt": 1770.199999988079,
+          "copyStartedAt": 1770.699999988079,
+          "outputReadAt": 1774,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 3,
+          "blue": false,
+          "latencyMs": 5,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 1790.0999999642372,
+          "inputPaintAt": 1790.5999999642372,
+          "copyStartedAt": 1791.5,
+          "outputReadAt": 1795.0999999642372,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 4,
+          "blue": true,
+          "latencyMs": 4.699999988079071,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 1815.5,
+          "inputPaintAt": 1816.199999988079,
+          "copyStartedAt": 1817,
+          "outputReadAt": 1820.199999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 5,
+          "blue": false,
+          "latencyMs": 4.699999988079071,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 1844.3999999761581,
+          "inputPaintAt": 1844.699999988079,
+          "copyStartedAt": 1845.3999999761581,
+          "outputReadAt": 1849.0999999642372,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 6,
+          "blue": true,
+          "latencyMs": 4.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 1869.2999999523163,
+          "inputPaintAt": 1869.699999988079,
+          "copyStartedAt": 1870.2999999523163,
+          "outputReadAt": 1873.5999999642372,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 7,
+          "blue": false,
+          "latencyMs": 4.099999964237213,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 1894.5,
+          "inputPaintAt": 1894.8999999761581,
+          "copyStartedAt": 1895.5,
+          "outputReadAt": 1898.5999999642372,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 8,
+          "blue": true,
+          "latencyMs": 3.800000011920929,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 1919.5999999642372,
+          "inputPaintAt": 1920.0999999642372,
+          "copyStartedAt": 1920.8999999761581,
+          "outputReadAt": 1923.3999999761581,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 9,
+          "blue": false,
+          "latencyMs": 4.899999976158142,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 1944.3999999761581,
+          "inputPaintAt": 1944.8999999761581,
+          "copyStartedAt": 1945.5999999642372,
+          "outputReadAt": 1949.2999999523163,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 10,
+          "blue": true,
+          "latencyMs": 3.600000023841858,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 1977.7999999523163,
+          "inputPaintAt": 1978.199999988079,
+          "copyStartedAt": 1978.699999988079,
+          "outputReadAt": 1981.3999999761581,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 11,
+          "blue": false,
+          "latencyMs": 4,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 1999,
+          "inputPaintAt": 1999.3999999761581,
+          "copyStartedAt": 2000.199999988079,
+          "outputReadAt": 2003,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 12,
+          "blue": true,
+          "latencyMs": 3.5,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2023.7999999523163,
+          "inputPaintAt": 2024,
+          "copyStartedAt": 2024.5999999642372,
+          "outputReadAt": 2027.2999999523163,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 13,
+          "blue": false,
+          "latencyMs": 3.699999988079071,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2044.5999999642372,
+          "inputPaintAt": 2044.8999999761581,
+          "copyStartedAt": 2045.5,
+          "outputReadAt": 2048.2999999523163,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 14,
+          "blue": true,
+          "latencyMs": 3.5,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2065.399999976158,
+          "inputPaintAt": 2065.7999999523163,
+          "copyStartedAt": 2066.2999999523163,
+          "outputReadAt": 2068.899999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 15,
+          "blue": false,
+          "latencyMs": 3.800000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2086.2999999523163,
+          "inputPaintAt": 2086.699999988079,
+          "copyStartedAt": 2087.399999976158,
+          "outputReadAt": 2090.099999964237,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 16,
+          "blue": true,
+          "latencyMs": 3.099999964237213,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2107.199999988079,
+          "inputPaintAt": 2107.599999964237,
+          "copyStartedAt": 2108.099999964237,
+          "outputReadAt": 2110.2999999523163,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 17,
+          "blue": false,
+          "latencyMs": 3.599999964237213,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2128,
+          "inputPaintAt": 2128.399999976158,
+          "copyStartedAt": 2129,
+          "outputReadAt": 2131.599999964237,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 18,
+          "blue": true,
+          "latencyMs": 3.900000035762787,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2153.099999964237,
+          "inputPaintAt": 2153.399999976158,
+          "copyStartedAt": 2153.899999976158,
+          "outputReadAt": 2157,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 19,
+          "blue": false,
+          "latencyMs": 3.800000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2178.199999988079,
+          "inputPaintAt": 2178.699999988079,
+          "copyStartedAt": 2179.2999999523163,
+          "outputReadAt": 2182,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 20,
+          "blue": true,
+          "latencyMs": 4.100000023841858,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2207.7999999523163,
+          "inputPaintAt": 2208.2999999523163,
+          "copyStartedAt": 2208.7999999523163,
+          "outputReadAt": 2211.899999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 21,
+          "blue": false,
+          "latencyMs": 5.100000023841858,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2236.899999976158,
+          "inputPaintAt": 2237.2999999523163,
+          "copyStartedAt": 2238,
+          "outputReadAt": 2242,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 22,
+          "blue": true,
+          "latencyMs": 3.899999976158142,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2261.699999988079,
+          "inputPaintAt": 2262.099999964237,
+          "copyStartedAt": 2262.699999988079,
+          "outputReadAt": 2265.599999964237,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 23,
+          "blue": false,
+          "latencyMs": 4.100000023841858,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2286.7999999523163,
+          "inputPaintAt": 2287.199999988079,
+          "copyStartedAt": 2288,
+          "outputReadAt": 2290.899999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 24,
+          "blue": true,
+          "latencyMs": 4.199999988079071,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2311.699999988079,
+          "inputPaintAt": 2312.199999988079,
+          "copyStartedAt": 2312.699999988079,
+          "outputReadAt": 2315.899999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 25,
+          "blue": false,
+          "latencyMs": 4.5,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2341.399999976158,
+          "inputPaintAt": 2342,
+          "copyStartedAt": 2342.7999999523163,
+          "outputReadAt": 2345.899999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 26,
+          "blue": true,
+          "latencyMs": 3.899999976158142,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2370.199999988079,
+          "inputPaintAt": 2370.699999988079,
+          "copyStartedAt": 2371.2999999523163,
+          "outputReadAt": 2374.099999964237,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 27,
+          "blue": false,
+          "latencyMs": 3.599999964237213,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2395.199999988079,
+          "inputPaintAt": 2395.599999964237,
+          "copyStartedAt": 2396.199999988079,
+          "outputReadAt": 2398.7999999523163,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 28,
+          "blue": true,
+          "latencyMs": 3.5,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2416,
+          "inputPaintAt": 2416.2999999523163,
+          "copyStartedAt": 2416.899999976158,
+          "outputReadAt": 2419.5,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 29,
+          "blue": false,
+          "latencyMs": 4.100000023841858,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2437.2999999523163,
+          "inputPaintAt": 2437.7999999523163,
+          "copyStartedAt": 2438.599999964237,
+          "outputReadAt": 2441.399999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 30,
+          "blue": true,
+          "latencyMs": 3.5,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2462.199999988079,
+          "inputPaintAt": 2462.599999964237,
+          "copyStartedAt": 2463.199999988079,
+          "outputReadAt": 2465.699999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 31,
+          "blue": false,
+          "latencyMs": 3.900000035762787,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2487.2999999523163,
+          "inputPaintAt": 2487.7999999523163,
+          "copyStartedAt": 2488.399999976158,
+          "outputReadAt": 2491.199999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 32,
+          "blue": true,
+          "latencyMs": 4.199999988079071,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2512.399999976158,
+          "inputPaintAt": 2512.899999976158,
+          "copyStartedAt": 2513.5,
+          "outputReadAt": 2516.599999964237,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 33,
+          "blue": false,
+          "latencyMs": 3.699999988079071,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2541.5,
+          "inputPaintAt": 2541.7999999523163,
+          "copyStartedAt": 2542.5,
+          "outputReadAt": 2545.199999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 34,
+          "blue": true,
+          "latencyMs": 3.699999988079071,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2570.599999964237,
+          "inputPaintAt": 2571,
+          "copyStartedAt": 2571.599999964237,
+          "outputReadAt": 2574.2999999523163,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 35,
+          "blue": false,
+          "latencyMs": 8.199999988079071,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2591.599999964237,
+          "inputPaintAt": 2592.099999964237,
+          "copyStartedAt": 2592.699999988079,
+          "outputReadAt": 2599.7999999523163,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 36,
+          "blue": true,
+          "latencyMs": 4.199999988079071,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2621.099999964237,
+          "inputPaintAt": 2621.699999988079,
+          "copyStartedAt": 2622.2999999523163,
+          "outputReadAt": 2625.2999999523163,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 37,
+          "blue": false,
+          "latencyMs": 4.200000047683716,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2650.2999999523163,
+          "inputPaintAt": 2650.699999988079,
+          "copyStartedAt": 2651.5,
+          "outputReadAt": 2654.5,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 38,
+          "blue": true,
+          "latencyMs": 4.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2675.199999988079,
+          "inputPaintAt": 2675.599999964237,
+          "copyStartedAt": 2676.199999988079,
+          "outputReadAt": 2679.5,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 39,
+          "blue": false,
+          "latencyMs": 3.600000023841858,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2700.099999964237,
+          "inputPaintAt": 2700.399999976158,
+          "copyStartedAt": 2701.099999964237,
+          "outputReadAt": 2703.699999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 40,
+          "blue": true,
+          "latencyMs": 4.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2725.199999988079,
+          "inputPaintAt": 2725.5,
+          "copyStartedAt": 2726.399999976158,
+          "outputReadAt": 2729.5,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 41,
+          "blue": false,
+          "latencyMs": 3.800000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2750.199999988079,
+          "inputPaintAt": 2750.599999964237,
+          "copyStartedAt": 2751.199999988079,
+          "outputReadAt": 2754,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 42,
+          "blue": true,
+          "latencyMs": 3.800000011920929,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2775.199999988079,
+          "inputPaintAt": 2775.599999964237,
+          "copyStartedAt": 2776.199999988079,
+          "outputReadAt": 2779,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 43,
+          "blue": false,
+          "latencyMs": 4.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2800.699999988079,
+          "inputPaintAt": 2801.2999999523163,
+          "copyStartedAt": 2802,
+          "outputReadAt": 2805,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 44,
+          "blue": true,
+          "latencyMs": 3.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2829.599999964237,
+          "inputPaintAt": 2829.899999976158,
+          "copyStartedAt": 2830.5,
+          "outputReadAt": 2832.899999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 45,
+          "blue": false,
+          "latencyMs": 6.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2850.399999976158,
+          "inputPaintAt": 2851,
+          "copyStartedAt": 2851.5,
+          "outputReadAt": 2856.699999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 46,
+          "blue": true,
+          "latencyMs": 3.5,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2875.5,
+          "inputPaintAt": 2875.899999976158,
+          "copyStartedAt": 2876.5,
+          "outputReadAt": 2879,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 47,
+          "blue": false,
+          "latencyMs": 3.5,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2896.2999999523163,
+          "inputPaintAt": 2896.599999964237,
+          "copyStartedAt": 2897.199999988079,
+          "outputReadAt": 2899.7999999523163,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 48,
+          "blue": true,
+          "latencyMs": 4.599999964237213,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2917.699999988079,
+          "inputPaintAt": 2918.2999999523163,
+          "copyStartedAt": 2918.899999976158,
+          "outputReadAt": 2922.2999999523163,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 49,
+          "blue": false,
+          "latencyMs": 4.5,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2946.899999976158,
+          "inputPaintAt": 2947.399999976158,
+          "copyStartedAt": 2948,
+          "outputReadAt": 2951.399999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 50,
+          "blue": true,
+          "latencyMs": 4.600000023841858,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2972.599999964237,
+          "inputPaintAt": 2973.199999988079,
+          "copyStartedAt": 2974.099999964237,
+          "outputReadAt": 2977.199999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 51,
+          "blue": false,
+          "latencyMs": 3.600000023841858,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2996.7999999523163,
+          "inputPaintAt": 2997.199999988079,
+          "copyStartedAt": 2997.899999976158,
+          "outputReadAt": 3000.399999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 52,
+          "blue": true,
+          "latencyMs": 3.799999952316284,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3022,
+          "inputPaintAt": 3022.599999964237,
+          "copyStartedAt": 3023.199999988079,
+          "outputReadAt": 3025.7999999523163,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 53,
+          "blue": false,
+          "latencyMs": 4.5,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3042.599999964237,
+          "inputPaintAt": 3043,
+          "copyStartedAt": 3043.599999964237,
+          "outputReadAt": 3047.099999964237,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 54,
+          "blue": true,
+          "latencyMs": 3.699999988079071,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3067.5,
+          "inputPaintAt": 3067.899999976158,
+          "copyStartedAt": 3068.5,
+          "outputReadAt": 3071.199999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 55,
+          "blue": false,
+          "latencyMs": 4,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3089.699999988079,
+          "inputPaintAt": 3090.099999964237,
+          "copyStartedAt": 3090.699999988079,
+          "outputReadAt": 3093.699999988079,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 56,
+          "blue": true,
+          "latencyMs": 3.399999976158142,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3113.399999976158,
+          "inputPaintAt": 3113.7999999523163,
+          "copyStartedAt": 3114.2999999523163,
+          "outputReadAt": 3116.7999999523163,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 57,
+          "blue": false,
+          "latencyMs": 3.800000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3134.099999964237,
+          "inputPaintAt": 3134.5,
+          "copyStartedAt": 3135.099999964237,
+          "outputReadAt": 3137.899999976158,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 58,
+          "blue": true,
+          "latencyMs": 4.099999964237213,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3159.5,
+          "inputPaintAt": 3159.7999999523163,
+          "copyStartedAt": 3160.2999999523163,
+          "outputReadAt": 3163.599999964237,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.9929px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.97086)"
+        },
+        {
+          "index": 59,
+          "blue": false,
+          "latencyMs": 4.200000047683716,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3188.7999999523163,
+          "inputPaintAt": 3189.199999988079,
+          "copyStartedAt": 3190,
+          "outputReadAt": 3193,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        }
+      ],
+      "summary": {
+        "count": 60,
+        "timeoutCount": 0,
+        "medianMs": 4,
+        "p95Ms": 6.300000011920929,
+        "maxMs": 10
+      },
+      "passed": true
+    },
+    {
+      "name": "released-idle",
+      "before": {
+        "pan": "translate3d(0px, -70.5443px, 0px)",
+        "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+      },
+      "samples": [
+        {
+          "index": 0,
+          "blue": true,
+          "latencyMs": 13,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2496.7000000476837,
+          "inputPaintAt": 2497.5,
+          "copyStartedAt": 2498.400000035763,
+          "outputReadAt": 2509.7000000476837,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 1,
+          "blue": false,
+          "latencyMs": 5.699999988079071,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2601.2000000476837,
+          "inputPaintAt": 2602,
+          "copyStartedAt": 2602.600000023842,
+          "outputReadAt": 2606.900000035763,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 2,
+          "blue": true,
+          "latencyMs": 7.199999988079071,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2694.900000035763,
+          "inputPaintAt": 2695.7000000476837,
+          "copyStartedAt": 2698.400000035763,
+          "outputReadAt": 2702.100000023842,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 3,
+          "blue": false,
+          "latencyMs": 6.200000047683716,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 2788.5,
+          "inputPaintAt": 2789.300000011921,
+          "copyStartedAt": 2790.300000011921,
+          "outputReadAt": 2794.7000000476837,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 4,
+          "blue": true,
+          "latencyMs": 7.700000047683716,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 2895,
+          "inputPaintAt": 2895.7000000476837,
+          "copyStartedAt": 2898.7000000476837,
+          "outputReadAt": 2902.7000000476837,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 5,
+          "blue": false,
+          "latencyMs": 5.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3001.300000011921,
+          "inputPaintAt": 3002.100000023842,
+          "copyStartedAt": 3003.100000023842,
+          "outputReadAt": 3006.600000023842,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 6,
+          "blue": true,
+          "latencyMs": 5.799999952316284,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3094.2000000476837,
+          "inputPaintAt": 3094.900000035763,
+          "copyStartedAt": 3095.5,
+          "outputReadAt": 3100,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 7,
+          "blue": false,
+          "latencyMs": 8.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3187.600000023842,
+          "inputPaintAt": 3188.400000035763,
+          "copyStartedAt": 3191.100000023842,
+          "outputReadAt": 3195.900000035763,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 8,
+          "blue": true,
+          "latencyMs": 9.400000035762787,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3295,
+          "inputPaintAt": 3295.900000035763,
+          "copyStartedAt": 3299.600000023842,
+          "outputReadAt": 3304.400000035763,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 9,
+          "blue": false,
+          "latencyMs": 6.400000035762787,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3401.800000011921,
+          "inputPaintAt": 3402.5,
+          "copyStartedAt": 3403.900000035763,
+          "outputReadAt": 3408.2000000476837,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 10,
+          "blue": true,
+          "latencyMs": 6.199999988079071,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3507.100000023842,
+          "inputPaintAt": 3508,
+          "copyStartedAt": 3508.7000000476837,
+          "outputReadAt": 3513.300000011921,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 11,
+          "blue": false,
+          "latencyMs": 6.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3614.100000023842,
+          "inputPaintAt": 3614.800000011921,
+          "copyStartedAt": 3616.7000000476837,
+          "outputReadAt": 3620.400000035763,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 12,
+          "blue": true,
+          "latencyMs": 6,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3720.2000000476837,
+          "inputPaintAt": 3721,
+          "copyStartedAt": 3721.600000023842,
+          "outputReadAt": 3726.2000000476837,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 13,
+          "blue": false,
+          "latencyMs": 7.800000011920929,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 3826.100000023842,
+          "inputPaintAt": 3826.900000035763,
+          "copyStartedAt": 3829.7000000476837,
+          "outputReadAt": 3833.900000035763,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 14,
+          "blue": true,
+          "latencyMs": 5.599999964237213,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 3931.900000035763,
+          "inputPaintAt": 3932.600000023842,
+          "copyStartedAt": 3934,
+          "outputReadAt": 3937.5,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 15,
+          "blue": false,
+          "latencyMs": 9.099999964237213,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 4038.2000000476837,
+          "inputPaintAt": 4039.100000023842,
+          "copyStartedAt": 4042.7000000476837,
+          "outputReadAt": 4047.300000011921,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 16,
+          "blue": true,
+          "latencyMs": 6,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 4145.100000023842,
+          "inputPaintAt": 4145.900000035763,
+          "copyStartedAt": 4146.800000011921,
+          "outputReadAt": 4151.100000023842,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 17,
+          "blue": false,
+          "latencyMs": 9,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 4238.600000023842,
+          "inputPaintAt": 4239.400000035763,
+          "copyStartedAt": 4243.200000047684,
+          "outputReadAt": 4247.600000023842,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 18,
+          "blue": true,
+          "latencyMs": 5.900000035762787,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 4345.300000011921,
+          "inputPaintAt": 4346.100000023842,
+          "copyStartedAt": 4347.300000011921,
+          "outputReadAt": 4351.200000047684,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 19,
+          "blue": false,
+          "latencyMs": 6.699999988079071,
+          "timedOut": false,
+          "pixels": [
+            254,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 4437.600000023842,
+          "inputPaintAt": 4438.300000011921,
+          "copyStartedAt": 4439.5,
+          "outputReadAt": 4444.300000011921,
+          "toolbar": "expanded",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 20,
+          "blue": true,
+          "latencyMs": 7.800000011920929,
+          "timedOut": false,
+          "pixels": [
+            21,
+            21,
+            254,
+            255
+          ],
+          "sourceChangedAt": 4544.5,
+          "inputPaintAt": 4545.100000023842,
+          "copyStartedAt": 4547.700000047684,
+          "outputReadAt": 4552.300000011921,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 21,
+          "blue": false,
+          "latencyMs": 16.69999998807907,
+          "timedOut": false,
+          "pixels": [
+            248,
+            21,
+            21,
+            255
+          ],
+          "sourceChangedAt": 4639.700000047684,
+          "inputPaintAt": 4640.300000011921,
+          "copyStartedAt": 4651.100000023842,
+          "outputReadAt": 4656.400000035763,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 22,
+          "blue": true,
+          "latencyMs": 8.199999988079071,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 4763.800000011921,
+          "inputPaintAt": 4764.5,
+          "copyStartedAt": 4766.5,
+          "outputReadAt": 4772,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 23,
+          "blue": false,
+          "latencyMs": 6.5,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 4871.5,
+          "inputPaintAt": 4871.900000035763,
+          "copyStartedAt": 4875.200000047684,
+          "outputReadAt": 4878,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 24,
+          "blue": true,
+          "latencyMs": 6.600000023841858,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 4979.600000023842,
+          "inputPaintAt": 4980.100000023842,
+          "copyStartedAt": 4982.400000035763,
+          "outputReadAt": 4986.200000047684,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 25,
+          "blue": false,
+          "latencyMs": 6.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 5088.800000011921,
+          "inputPaintAt": 5089.5,
+          "copyStartedAt": 5090.400000035763,
+          "outputReadAt": 5095.100000023842,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 26,
+          "blue": true,
+          "latencyMs": 12.899999976158142,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 5182.200000047684,
+          "inputPaintAt": 5183.100000023842,
+          "copyStartedAt": 5190.700000047684,
+          "outputReadAt": 5195.100000023842,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 27,
+          "blue": false,
+          "latencyMs": 6.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 5288.300000011921,
+          "inputPaintAt": 5289.100000023842,
+          "copyStartedAt": 5290.700000047684,
+          "outputReadAt": 5294.600000023842,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 28,
+          "blue": true,
+          "latencyMs": 7.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 5395.300000011921,
+          "inputPaintAt": 5395.900000035763,
+          "copyStartedAt": 5399.400000035763,
+          "outputReadAt": 5402.600000023842,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 29,
+          "blue": false,
+          "latencyMs": 6.800000011920929,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 5501.5,
+          "inputPaintAt": 5502.200000047684,
+          "copyStartedAt": 5503.700000047684,
+          "outputReadAt": 5508.300000011921,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 30,
+          "blue": true,
+          "latencyMs": 5,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 5595,
+          "inputPaintAt": 5595.700000047684,
+          "copyStartedAt": 5596.300000011921,
+          "outputReadAt": 5600,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 31,
+          "blue": false,
+          "latencyMs": 8.400000035762787,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 5687.5,
+          "inputPaintAt": 5688.400000035763,
+          "copyStartedAt": 5691.800000011921,
+          "outputReadAt": 5695.900000035763,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 32,
+          "blue": true,
+          "latencyMs": 9.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 5795.900000035763,
+          "inputPaintAt": 5796.800000011921,
+          "copyStartedAt": 5800.400000035763,
+          "outputReadAt": 5805.200000047684,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 33,
+          "blue": false,
+          "latencyMs": 14.800000011920929,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 5905.100000023842,
+          "inputPaintAt": 5906,
+          "copyStartedAt": 5908.800000011921,
+          "outputReadAt": 5919.900000035763,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 34,
+          "blue": true,
+          "latencyMs": 6.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 6011.900000035763,
+          "inputPaintAt": 6012.700000047684,
+          "copyStartedAt": 6013.700000047684,
+          "outputReadAt": 6018.200000047684,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 35,
+          "blue": false,
+          "latencyMs": 16.399999976158142,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 6121.700000047684,
+          "inputPaintAt": 6122.600000023842,
+          "copyStartedAt": 6125.700000047684,
+          "outputReadAt": 6138.100000023842,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 36,
+          "blue": true,
+          "latencyMs": 15.100000023841858,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 6226.5,
+          "inputPaintAt": 6227.400000035763,
+          "copyStartedAt": 6230.300000011921,
+          "outputReadAt": 6241.600000023842,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 37,
+          "blue": false,
+          "latencyMs": 8.899999976158142,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 6332.600000023842,
+          "inputPaintAt": 6333.400000035763,
+          "copyStartedAt": 6334.800000011921,
+          "outputReadAt": 6341.5,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 38,
+          "blue": true,
+          "latencyMs": 7.800000011920929,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 6440.600000023842,
+          "inputPaintAt": 6441.5,
+          "copyStartedAt": 6443.400000035763,
+          "outputReadAt": 6448.400000035763,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 39,
+          "blue": false,
+          "latencyMs": 6.100000023841858,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 6546.800000011921,
+          "inputPaintAt": 6547.600000023842,
+          "copyStartedAt": 6548.600000023842,
+          "outputReadAt": 6552.900000035763,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 40,
+          "blue": true,
+          "latencyMs": 7.100000023841858,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 6653.600000023842,
+          "inputPaintAt": 6654.5,
+          "copyStartedAt": 6655.900000035763,
+          "outputReadAt": 6660.700000047684,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 41,
+          "blue": false,
+          "latencyMs": 6.899999976158142,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 6761.400000035763,
+          "inputPaintAt": 6762.200000047684,
+          "copyStartedAt": 6764.300000011921,
+          "outputReadAt": 6768.300000011921,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 42,
+          "blue": true,
+          "latencyMs": 6.899999976158142,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 6869.700000047684,
+          "inputPaintAt": 6870.400000035763,
+          "copyStartedAt": 6873.100000023842,
+          "outputReadAt": 6876.600000023842,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 43,
+          "blue": false,
+          "latencyMs": 14.399999976158142,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 6975.200000047684,
+          "inputPaintAt": 6975.900000035763,
+          "copyStartedAt": 6977.400000035763,
+          "outputReadAt": 6989.600000023842,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 44,
+          "blue": true,
+          "latencyMs": 5.400000035762787,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 7080.800000011921,
+          "inputPaintAt": 7081.5,
+          "copyStartedAt": 7082.200000047684,
+          "outputReadAt": 7086.200000047684,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 45,
+          "blue": false,
+          "latencyMs": 5.199999988079071,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 7172.300000011921,
+          "inputPaintAt": 7173,
+          "copyStartedAt": 7173.800000011921,
+          "outputReadAt": 7177.5,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 46,
+          "blue": true,
+          "latencyMs": 9.100000023841858,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 7278,
+          "inputPaintAt": 7278.900000035763,
+          "copyStartedAt": 7282,
+          "outputReadAt": 7287.100000023842,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 47,
+          "blue": false,
+          "latencyMs": 6.5,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 7383.800000011921,
+          "inputPaintAt": 7384.5,
+          "copyStartedAt": 7386.400000035763,
+          "outputReadAt": 7390.300000011921,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 48,
+          "blue": true,
+          "latencyMs": 5.899999976158142,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 7488.400000035763,
+          "inputPaintAt": 7489.100000023842,
+          "copyStartedAt": 7491,
+          "outputReadAt": 7494.300000011921,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 49,
+          "blue": false,
+          "latencyMs": 5.600000023841858,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 7581.800000011921,
+          "inputPaintAt": 7582.600000023842,
+          "copyStartedAt": 7583.200000047684,
+          "outputReadAt": 7587.400000035763,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 50,
+          "blue": true,
+          "latencyMs": 7.800000011920929,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 7675.300000011921,
+          "inputPaintAt": 7675.900000035763,
+          "copyStartedAt": 7678.700000047684,
+          "outputReadAt": 7683.100000023842,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 51,
+          "blue": false,
+          "latencyMs": 4.799999952316284,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 7782.200000047684,
+          "inputPaintAt": 7782.900000035763,
+          "copyStartedAt": 7783.600000023842,
+          "outputReadAt": 7787,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 52,
+          "blue": true,
+          "latencyMs": 9.300000011920929,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 7874.5,
+          "inputPaintAt": 7875.300000011921,
+          "copyStartedAt": 7879.100000023842,
+          "outputReadAt": 7883.800000011921,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 53,
+          "blue": false,
+          "latencyMs": 6.199999988079071,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 7981.400000035763,
+          "inputPaintAt": 7982.200000047684,
+          "copyStartedAt": 7983.400000035763,
+          "outputReadAt": 7987.600000023842,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 54,
+          "blue": true,
+          "latencyMs": 5.900000035762787,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 8073.5,
+          "inputPaintAt": 8074.300000011921,
+          "copyStartedAt": 8075.400000035763,
+          "outputReadAt": 8079.400000035763,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 55,
+          "blue": false,
+          "latencyMs": 6.699999988079071,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 8180.800000011921,
+          "inputPaintAt": 8181.600000023842,
+          "copyStartedAt": 8183.700000047684,
+          "outputReadAt": 8187.5,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 56,
+          "blue": true,
+          "latencyMs": 7,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 8272.200000047684,
+          "inputPaintAt": 8272.900000035763,
+          "copyStartedAt": 8275.5,
+          "outputReadAt": 8279.200000047684,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 57,
+          "blue": false,
+          "latencyMs": 7.199999988079071,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 8379.600000023842,
+          "inputPaintAt": 8380.300000011921,
+          "copyStartedAt": 8384,
+          "outputReadAt": 8386.800000011921,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 58,
+          "blue": true,
+          "latencyMs": 8.200000047683716,
+          "timedOut": false,
+          "pixels": [
+            20,
+            20,
+            245,
+            255
+          ],
+          "sourceChangedAt": 8472,
+          "inputPaintAt": 8472.700000047684,
+          "copyStartedAt": 8476.100000023842,
+          "outputReadAt": 8480.200000047684,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        },
+        {
+          "index": 59,
+          "blue": false,
+          "latencyMs": 8.099999964237213,
+          "timedOut": false,
+          "pixels": [
+            245,
+            20,
+            20,
+            255
+          ],
+          "sourceChangedAt": 8580.700000047684,
+          "inputPaintAt": 8581.300000011921,
+          "copyStartedAt": 8584.700000047684,
+          "outputReadAt": 8588.800000011921,
+          "toolbar": "collapsed",
+          "pan": "translate3d(0px, -70.5443px, 0px)",
+          "zoom": "translate3d(-50%, -50%, 0px) scale(1.92874)"
+        }
+      ],
+      "summary": {
+        "count": 60,
+        "timeoutCount": 0,
+        "medianMs": 6.899999976158142,
+        "p95Ms": 15.100000023841858,
+        "maxMs": 16.69999998807907
+      },
+      "passed": false
+    }
+  ],
+  "errors": [],
+  "servedModule": "/assets/index-D8Ox9m7k.js",
+  "pixelReadback": "Copy the exact displayed output pixel to a separate 1x1 CPU canvas and read RGBA there. Timing includes that copy/readback; the display canvas is not converted into a CPU-backed surface by the test.",
+  "status": "failed",
+  "failure": "AssertionError [ERR_ASSERTION]: Every sample in all three states must be <16ms\n    at file:///D:/Portable%20Programs/photo%20gallery/scripts/verify-glass-latency.mjs:78:17"
+}
