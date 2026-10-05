@@ -1,0 +1,16 @@
+services:
+  gallery:
+    build: .
+    image: photo-gallery:latest
+    ports:
+      - "80:80"
+    env_file:
+      - .env
+    environment:
+      # 显式声明，避免 .env 缺失该项时后端启动即报错。
+      # 必须与下面 volumes 的挂载目标一致。
+      PHOTOS_DIR: /data/photos
+    volumes:
+      # 照片放在宿主机上，容器只是读写它。重建镜像不影响照片。
+      - ${PHOTOS_HOST_DIR}:/data/photos
+    restart: unless-stopped
