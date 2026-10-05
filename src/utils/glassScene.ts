@@ -115,6 +115,23 @@ export function captureGlassScene(root: HTMLElement, glass: HTMLElement) {
     ctx.fillStyle = color
     ctx.fillRect(0, 0, width, height)
     for (const layer of paint) layer(ctx)
+    if (nativeCapsules) {
+      // The sampling halo can cross the viewport edge. Extend the last visible
+      // pixels there; the page's empty fill would otherwise refract as a bright
+      // hairline along the bottom capsules.
+      const w = target.width, h = target.height
+      const left = Math.max(0, Math.ceil(-x * dpr))
+      const top = Math.max(0, Math.ceil(-y * dpr))
+      const right = Math.min(w, Math.floor((innerWidth - x) * dpr))
+      const bottom = Math.min(h, Math.floor((innerHeight - y) * dpr))
+      if (right > left && bottom > top) {
+        ctx.setTransform(1, 0, 0, 1, 0, 0)
+        if (left > 0) ctx.drawImage(target, left, 0, 1, h, 0, 0, left, h)
+        if (right < w) ctx.drawImage(target, right - 1, 0, 1, h, right, 0, w - right, h)
+        if (top > 0) ctx.drawImage(target, 0, top, w, 1, 0, 0, w, top)
+        if (bottom < h) ctx.drawImage(target, 0, bottom - 1, w, 1, 0, bottom, w, h - bottom)
+      }
+    }
     if (target !== canvas) {
       const output = canvas.getContext('2d')!
       output.setTransform(1, 0, 0, 1, 0, 0)
