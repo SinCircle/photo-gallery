@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "baseline": true,
+  "hashes": [
+    {
+      "name": "exif",
+      "width": 800,
+      "height": 76,
+      "sha256": "c39c86cf3052e1616eee2721658d796d6c6ac45cc8581447de3ba9357f080eb0"
+    },
+    {
+      "name": "back",
+      "width": 112,
+      "height": 84,
+      "sha256": "87a36960fb23e904ae082ac2859fe1c168481c1c09afc27dec997921bbad54c8"
+    },
+    {
+      "name": "fit",
+      "width": 160,
+      "height": 84,
+      "sha256": "15cfaa7fb4a04da8a7877f9074be86504298e7e0b10ef75d3ddeb1d8ff7a4b7b"
+    },
+    {
+      "name": "download",
+      "width": 112,
+      "height": 84,
+      "sha256": "f0cf0abbaec731a2f46e1eafcef0a6335a0ec29fdb7a4c7ac5b1dcce0d9327d4"
+    }
+  ],
+  "errors": []
+}

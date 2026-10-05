@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "dev": "node scripts/patch-liquidglass.mjs && vite",
+    "build": "node scripts/patch-liquidglass.mjs && tsc && vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
