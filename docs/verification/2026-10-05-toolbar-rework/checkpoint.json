@@ -13,8 +13,11 @@
     "metadataBlurOpacity": true,
     "expandedLayout": true,
     "lightDarkLegibility": true,
-    "idleNativeRAF": 0,
-    "publicLibraryAPIOnly": true
+    "idleNativeRAF": "Superseded by the user's persistent native LiquidGlass lifecycle decision; verify idle shader work instead",
+    "publicLibraryAPIOnly": true,
+    "latencyCases": ["held-pointer-drag", "wheel", "released-idle"],
+    "originalPhotoWithDeferredLoad": true,
+    "positionSizeAndIdlePolicy": true
   },
   "discipline": {
     "commitEachStep": true,
