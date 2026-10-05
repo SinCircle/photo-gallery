@@ -387,7 +387,9 @@ button:focus-visible {
   gap: 12px;
 }
 
+/* Desktop cap: the bar never sprawls past 65% of the page. */
 .photoShell > .toolbarSlot {
+  max-width: 65vw;
   position: fixed;
   left: 18px;
   right: 18px;
