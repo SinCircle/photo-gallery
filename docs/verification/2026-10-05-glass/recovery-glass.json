@@ -1,0 +1,89 @@
+{
+  "verifiedAt": "2026-10-05T11:44:24.786Z",
+  "head": "29b6316c1f3718e813251a0f054ebc258c4c592a",
+  "command": "$env:VERIFY_URL='http://127.0.0.1'; node scripts/verify-glass.mjs",
+  "base": "http://127.0.0.1",
+  "checks": {
+    "refraction": {
+      "lines": [
+        {
+          "x": 550,
+          "expected": [
+            8,
+            13
+          ],
+          "actual": [
+            70,
+            70
+          ],
+          "maxDisplacement": 62,
+          "originalThickness": 6,
+          "refractedThickness": 1
+        },
+        {
+          "x": 70,
+          "expected": [
+            8,
+            13
+          ],
+          "actual": [
+            70,
+            70
+          ],
+          "maxDisplacement": 62,
+          "originalThickness": 6,
+          "refractedThickness": 1
+        },
+        {
+          "x": 1030,
+          "expected": [
+            8,
+            13
+          ],
+          "actual": [
+            70,
+            70
+          ],
+          "maxDisplacement": 62,
+          "originalThickness": 6,
+          "refractedThickness": 1
+        }
+      ],
+      "maxDisplacement": 62,
+      "draws": 0,
+      "background": "rgba(0, 0, 0, 0)",
+      "backdrop": "none",
+      "config": {
+        "floating": true,
+        "cornerRadius": 40,
+        "blurAmount": 0
+      },
+      "isolatedRenderer": false,
+      "separateDocument": true,
+      "rendererFramesRemaining": 1,
+      "rendererHidden": true
+    },
+    "iframeIdle": {
+      "frames": 2,
+      "requested": 0,
+      "executed": 0,
+      "requestedAll": 0,
+      "executedAll": 0
+    },
+    "idle": {
+      "requested": 0,
+      "executed": 0,
+      "active": 0
+    },
+    "refreshAfterIdle": true,
+    "actualPhotoBehindGlass": true,
+    "reducedMotion": true,
+    "noWebGL": {
+      "path": "css",
+      "backdrop": "blur(18px)",
+      "buttons": 3
+    }
+  },
+  "errors": [],
+  "status": "passed"
+}
