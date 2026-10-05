@@ -7,6 +7,9 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
   slot.className = 'toolbarSlot'
   const clip = document.createElement('div')
   clip.className = 'toolbarClip'
+  const material = document.createElement('div')
+  material.className = 'toolbarMaterial'
+  material.setAttribute('aria-hidden', 'true')
   const content = document.createElement('div')
   content.className = 'toolbarContent'
   content.append(...[...bar.children].filter(child => !child.classList.contains('glassRoot')))
@@ -16,7 +19,7 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
   dot.setAttribute('aria-hidden', 'true')
   bar.before(slot)
   slot.append(bar)
-  bar.append(clip, dot)
+  bar.append(material, clip, dot)
   bar.classList.add('idleToolbar')
   bar.dataset.edge = edge
   bar.dataset.toolbar = 'expanded'
