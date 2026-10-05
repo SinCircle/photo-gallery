@@ -1624,6 +1624,10 @@ http {
 # 宿主机上存放照片库的目录（会被挂载进容器）
 PHOTOS_HOST_DIR=/srv/photos
 
+# 容器内照片库路径，必须与 compose 里的挂载目标一致。
+# config.js 要求这个变量，缺失时后端启动即报错。
+PHOTOS_DIR=/data/photos
+
 # Node 监听端口（容器内部）
 PORT=3000
 
@@ -1667,6 +1671,9 @@ COPY --from=server-deps /srv/server/node_modules /srv/server/node_modules
 
 # Nginx 配置
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
+
+# supervisord 配置——CMD 要用它启动，必须复制进镜像，否则容器起不来
+COPY supervisord.conf /srv/supervisord.conf
 
 # 照片库挂载点（运行时由 compose 挂载宿主机目录）
 RUN mkdir -p /data/photos/originals /data/photos/thumbs /data/photos/web
@@ -1713,6 +1720,10 @@ services:
       - "80:80"
     env_file:
       - .env
+    environment:
+      # 显式声明，避免 .env 缺失该项时后端启动即报错。
+      # 必须与下面 volumes 的挂载目标一致。
+      PHOTOS_DIR: /data/photos
     volumes:
       # 照片放在宿主机上，容器只是读写它。重建镜像不影响照片。
       - ${PHOTOS_HOST_DIR}:/data/photos
