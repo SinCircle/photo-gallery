@@ -45,6 +45,8 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
     if (signal.aborted || expanded === next) return
     const current = bar.getBoundingClientRect()
     const currentOpacity = getComputedStyle(clip).opacity
+    const dotOpacity = getComputedStyle(dot).opacity
+    const materialOpacity = getComputedStyle(material).opacity
     const metadata = content.querySelector<HTMLElement>('.dockMeta')
     const currentBlur = metadata ? getComputedStyle(metadata).filter : 'none'
     for (const animation of animations) animation.cancel()
@@ -80,8 +82,10 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
         { duration: next ? 320 : 180, easing }))
       if (metadata) animations.push(metadata.animate([{ filter: currentBlur }, { filter: next ? 'blur(0px)' : 'blur(8px)' }],
         { duration: next ? 380 : 220, easing }))
-      animations.push(dot.animate([{ opacity: next ? 1 : 0 }, { opacity: next ? 0 : 1 }],
-        { duration: 200, delay: next ? 0 : 180, easing }))
+      for (const [element, opacity] of [[dot, dotOpacity], [material, materialOpacity]] as const) {
+        animations.push(element.animate([{ opacity }, { opacity: next ? 0 : 1 }],
+          { duration: 200, delay: next ? 0 : 180, easing, fill: 'backwards' }))
+      }
       animations[0].onfinish = () => {
         delete bar.dataset.moving
         bar.dispatchEvent(new Event('glassrefresh'))
