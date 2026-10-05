@@ -1285,6 +1285,7 @@ export function photosRouter(cfg) {
 
 ```js
 import express from 'express'
+import { pathToFileURL } from 'node:url'
 import { loadConfig } from './config.js'
 import { healthRouter } from './routes/health.js'
 import { photosRouter } from './routes/photos.js'
@@ -1306,7 +1307,7 @@ export function createApp(cfg) {
 }
 
 // 仅在被直接执行时启动监听；被测试 import 时不启动。
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const cfg = loadConfig()
   const app = createApp(cfg)
   app.listen(cfg.port, () => {
@@ -1323,9 +1324,28 @@ Expected: PASS — 5 个测试全部通过
 - [ ] **Step 7: 运行全部测试**
 
 Run: `cd server && npm test`
-Expected: PASS — 全部 49 个测试通过
+Expected: PASS — 全部 48 个测试通过
 
-- [ ] **Step 8: 提交**
+- [ ] **Step 8: 验证入口能真正启动（单元测试无法覆盖这一条）**
+
+**为什么必须单独验证：** 路由测试导入的是导出的 `createApp`，不经过文件末尾的入口判断。
+因此入口判断写错（例如用了 `file://${process.argv[1]}` 而不是 `pathToFileURL`）时，
+所有测试仍然全绿，但 `npm start` 永远不会监听端口——这是只在部署后才暴露的错误。
+
+Run:
+
+```bash
+cd server
+PHOTOS_DIR=/tmp/pg-smoke ADMIN_PASSWORD_HASH=x PORT=3999 timeout 5 node src/index.js &
+sleep 2
+curl -s http://127.0.0.1:3999/api/health
+```
+
+Expected: 输出 `{"status":"ok"}`
+
+若没有输出（连不上），说明入口判断有问题，必须先修好再继续。
+
+- [ ] **Step 9: 提交**
 
 ```bash
 git add server/src/index.js server/src/routes/ server/test/routes.test.js
@@ -1452,6 +1472,7 @@ Expected: FAIL — 找不到模块 `../scripts/migrate.js`
 ```js
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import { pathToFileURL } from 'node:url'
 import { loadConfig } from '../src/config.js'
 import { listImageFiles } from '../src/photos/scan.js'
 import { ingestFile } from '../src/photos/ingest.js'
@@ -1495,7 +1516,7 @@ export async function migrateDirectory(cfg, sourceDir) {
 }
 
 /** 命令行入口：node scripts/migrate.js <源目录> */
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const sourceDir = process.argv[2]
   if (!sourceDir) {
     console.error('用法：node scripts/migrate.js <图片源目录>')
@@ -1826,7 +1847,7 @@ Expected: 构建成功，`dist/` 生成
 - [ ] **Step 7: 验证后端测试仍然全绿**
 
 Run: `cd server && npm test`
-Expected: PASS — 全部 49 个测试通过
+Expected: PASS — 全部 48 个测试通过
 
 - [ ] **Step 8: 提交**
 
