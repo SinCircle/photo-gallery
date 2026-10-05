@@ -23,7 +23,7 @@ try {
       const bar=document.querySelector('.dockInner'),r=bar.getBoundingClientRect(),c=document.createElement('canvas');
       c.id='latency-fixture';c.width=1440;c.height=200;c.style.cssText='position:fixed;pointer-events:none;z-index:19;left:0;bottom:0;width:1440px;height:200px';document.querySelector('.photoShell').append(c);
       window.paintFixture=blue=>{const ctx=c.getContext('2d');ctx.fillStyle=blue?'rgb(20,20,240)':'rgb(240,20,20)';ctx.fillRect(0,0,c.width,c.height);const start=performance.now();c.style.left=(blue?1:0)+'px';bar.dispatchEvent(new Event('glassrefresh'));return start};
-      const probe=document.createElement('canvas');probe.width=8;probe.height=1;const probeCtx=probe.getContext('2d',{willReadFrequently:false});
+      const probe=document.createElement('canvas');probe.width=8;probe.height=1;const probeCtx=probe.getContext('2d',{willReadFrequently:true});
       window.liveOutputs=()=>[...bar.querySelectorAll('canvas[data-glass-output]')].filter(c=>{const p=c.parentElement,r=p.getBoundingClientRect(),s=getComputedStyle(p);return r.width>0&&r.height>0&&s.visibility!=='hidden'&&+s.opacity>.01});
       window.readLivePixels=live=>{probeCtx.clearRect(0,0,1,1);probeCtx.drawImage(live,Math.floor(live.width/2),Math.floor(live.height/2),1,1,0,0,1,1);return [...probeCtx.getImageData(0,0,1,1).data]};
       window.readGlass=async()=>{const live=liveOutputs()[0];if(live)return readLivePixels(live);

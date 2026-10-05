@@ -22,9 +22,9 @@ export async function createGlassRenderer(glass: HTMLElement, signal: AbortSigna
       if (signal.aborted) { cleanup(); throw new DOMException('Aborted', 'AbortError') }
       for (const capsule of capsules) {
         const output = capsule.querySelector('canvas')!
-        // Several panels must stay on the GPU: a CPU-backed output forces a
-        // readback after every panel's Gaussian passes and serializes the group.
-        output.getContext('2d', { willReadFrequently: false })
+        // The shared source performs Gaussian blur once. Keep the small native
+        // outputs readable without a second cross-context copy during sampling.
+        output.getContext('2d', { willReadFrequently: true })
         output.dataset.glassOutput = capsule.dataset.glassCapsule
       }
       return { scene, changed: () => instance!.markChanged(scene) }

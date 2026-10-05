@@ -7,14 +7,9 @@ const rawScenes = new WeakMap<HTMLElement, HTMLCanvasElement>()
 export function captureGlassScene(root: HTMLElement, glass: HTMLElement) {
   const nativeCapsules = glass.hasAttribute('data-capsule-root')
   const rootBox = glass.getBoundingClientRect()
-  const visible = nativeCapsules ? [...glass.querySelectorAll<HTMLElement>(':scope > [data-glass-capsule]:not([hidden])')]
-    .filter(element => getComputedStyle(element).visibility !== 'hidden')
-    .map(element => element.getBoundingClientRect()).filter(rect => rect.width && rect.height) : []
-  const box = visible.length ? {
-    left: Math.min(...visible.map(r => r.left)), top: Math.min(...visible.map(r => r.top)),
-    width: Math.max(...visible.map(r => r.right)) - Math.min(...visible.map(r => r.left)),
-    height: Math.max(...visible.map(r => r.bottom)) - Math.min(...visible.map(r => r.top)),
-  } : rootBox
+  // Keep the shared region/buffers stable while the capsules appear/disappear.
+  // The reserved root contains every visible panel and its motion envelope.
+  const box = rootBox
   if (!box.width || !box.height) return null
   const x = box.left - 20, y = box.top - 20
   const width = box.width + 40, height = box.height + 40
