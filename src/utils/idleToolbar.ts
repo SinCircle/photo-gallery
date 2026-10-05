@@ -77,11 +77,11 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
         size(targetW + spring(dw, targetW, .035), targetH + spring(dh, targetH, .06), .64),
         size(targetW - spring(dw, targetW, .012), targetH - spring(dh, targetH, .02), .82),
         size(targetW, targetH, 1),
-      ], { duration: next ? 540 : 460, easing }))
+      ], { duration: next ? 540 : 460, delay: next ? 0 : 80, easing, fill: 'backwards' }))
       animations.push(clip.animate([{ opacity: currentOpacity }, { opacity: next ? 1 : 0 }],
-        { duration: next ? 320 : 180, easing }))
+        { duration: next ? 320 : 180, delay: next ? 100 : 0, easing, fill: 'backwards' }))
       if (metadata) animations.push(metadata.animate([{ filter: currentBlur }, { filter: next ? 'blur(0px)' : 'blur(8px)' }],
-        { duration: next ? 380 : 220, easing }))
+        { duration: next ? 380 : 220, delay: next ? 100 : 0, easing, fill: 'backwards' }))
       for (const [element, opacity] of [[dot, dotOpacity], [material, materialOpacity]] as const) {
         animations.push(element.animate([{ opacity }, { opacity: next ? 0 : 1 }],
           { duration: 200, delay: next ? 0 : 180, easing, fill: 'backwards' }))
