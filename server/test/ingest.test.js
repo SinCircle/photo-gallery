@@ -46,10 +46,12 @@ describe('ingestFile', () => {
     const id = 'photo1.jpg'
     const record = await ingestFile(cfg, { sourcePath: src, id })
 
-    const thumb = await fs.stat(path.join(cfg.thumbsDir, `${id}.jpg`))
-    const web = await fs.stat(path.join(cfg.webDir, `${id}.jpg`))
+    const thumb = await fs.stat(path.join(cfg.thumbsDir, id))
+    const web = await fs.stat(path.join(cfg.webDir, id))
     expect(thumb.size).toBeGreaterThan(0)
     expect(web.size).toBeGreaterThan(0)
+    expect(await fs.readdir(cfg.thumbsDir)).toEqual([id])
+    expect(await fs.readdir(cfg.webDir)).toEqual([id])
 
     expect(record.derived).toEqual({ thumb: true, web: true })
   })
@@ -59,8 +61,8 @@ describe('ingestFile', () => {
     const id = 'big.jpg'
     await ingestFile(cfg, { sourcePath: src, id })
 
-    const thumbMeta = await sharp(path.join(cfg.thumbsDir, `${id}.jpg`)).metadata()
-    const webMeta = await sharp(path.join(cfg.webDir, `${id}.jpg`)).metadata()
+    const thumbMeta = await sharp(path.join(cfg.thumbsDir, id)).metadata()
+    const webMeta = await sharp(path.join(cfg.webDir, id)).metadata()
     expect(Math.max(thumbMeta.width, thumbMeta.height)).toBeLessThanOrEqual(720)
     expect(Math.max(webMeta.width, webMeta.height)).toBeLessThanOrEqual(1920)
   })
@@ -70,7 +72,7 @@ describe('ingestFile', () => {
     const id = 'small.jpg'
     await ingestFile(cfg, { sourcePath: src, id })
 
-    const thumbMeta = await sharp(path.join(cfg.thumbsDir, `${id}.jpg`)).metadata()
+    const thumbMeta = await sharp(path.join(cfg.thumbsDir, id)).metadata()
     expect(thumbMeta.width).toBe(300)
   })
 

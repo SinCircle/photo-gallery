@@ -149,6 +149,15 @@ export default defineConfig({
 import path from 'node:path'
 
 /**
+ * 拼接照片库内的子路径。
+ * 这些路径会原样出现在 URL 中（/media/originals/...），必须始终使用正斜杠，
+ * 不能用 path.join——它在 Windows 上会产生反斜杠，导致 URL 与磁盘路径不一致。
+ */
+function joinUrlPath(base, ...segments) {
+  return [base.replace(/[\\/]+$/, ''), ...segments].join('/')
+}
+
+/**
  * 从环境变量读取配置。这是全项目唯一读取 process.env 的地方。
  * 传入 env 参数以便测试，默认取 process.env。
  */
@@ -170,10 +179,10 @@ export function loadConfig(env = process.env) {
 
   return {
     photosDir,
-    originalsDir: path.join(photosDir, 'originals'),
-    thumbsDir: path.join(photosDir, 'thumbs'),
-    webDir: path.join(photosDir, 'web'),
-    indexPath: path.join(photosDir, 'index.json'),
+    originalsDir: joinUrlPath(photosDir, 'originals'),
+    thumbsDir: joinUrlPath(photosDir, 'thumbs'),
+    webDir: joinUrlPath(photosDir, 'web'),
+    indexPath: joinUrlPath(photosDir, 'index.json'),
     adminPasswordHash,
     port,
   }
@@ -382,29 +391,120 @@ export async function writeIndex(indexPath, index) {
 
 /** 按 id 新增或覆盖一条记录，返回写入后的记录。 */
 export async function upsertPhoto(indexPath, photo) {
-  const index = await readIndex(indexPath)
-  const photos = index.photos.filter((p) => p.id !== photo.id)
-  photos.push(photo)
-  await writeIndex(indexPath, { ...index, photos })
-  return photo
+  return withLock(indexPath, async () => {
+    const index = await readIndex(indexPath)
+    const photos = index.photos.filter((p) => p.id !== photo.id)
+    photos.push(photo)
+    await writeIndex(indexPath, { ...index, photos })
+    return photo
+  })
 }
 
 /** 按 id 删除一条记录。id 不存在时静默成功。 */
 export async function removePhoto(indexPath, id) {
-  const index = await readIndex(indexPath)
-  const photos = index.photos.filter((p) => p.id !== id)
-  if (photos.length === index.photos.length) return false
-  await writeIndex(indexPath, { ...index, photos })
-  return true
+  return withLock(indexPath, async () => {
+    const index = await readIndex(indexPath)
+    const photos = index.photos.filter((p) => p.id !== id)
+    if (photos.length === index.photos.length) return false
+    await writeIndex(indexPath, { ...index, photos })
+    return true
+  })
 }
 ```
 
-- [ ] **Step 4: 运行测试，确认通过**
+- [ ] **Step 4: 补上并发串行化**
+
+**背景：** 上面的 `withLock` 是必需的，不是可选项。多个 `upsertPhoto` 并发执行时，
+它们各自读出同一份索引、各自写入，后写的会覆盖先写的——丢更新。
+更严重的是所有写入共用同一个 `.tmp` 文件名，并发时会互相 rename/删除，直接抛 `ENOENT` 崩溃。
+
+实测复现（20 个并发 upsert）：
+
+```
+Error: ENOENT: no such file or directory, rename '...\index.json.tmp' -> '...\index.json'
+```
+
+在 `server/src/photos/store.js` 末尾追加：
+
+```js
+/**
+ * 把针对同一个索引文件的写操作串行化。
+ *
+ * 为什么必需：index.json 是「整个文件读-改-写」。两个写操作并发时，
+ * 后一个会基于旧快照覆盖前一个的结果，造成丢更新；且它们共用同一个
+ * .tmp 文件名，互相 rename/删除会直接抛 ENOENT。
+ *
+ * 实现：按索引路径维护一条 Promise 链，新的写操作排在链尾。
+ * 用链而不是锁标志，是为了保证同一次操作抛错不会卡死后续操作。
+ */
+const writeChains = new Map()
+
+function withLock(indexPath, fn) {
+  const prev = writeChains.get(indexPath) ?? Promise.resolve()
+  const next = prev.then(fn, fn)
+  // 无论成功失败都让链条继续，错误由调用方通过 next 感知。
+  writeChains.set(
+    indexPath,
+    next.then(
+      () => undefined,
+      () => undefined,
+    ),
+  )
+  return next
+}
+```
+
+- [ ] **Step 5: 写并发测试**
+
+在 `server/test/store.test.js` 末尾追加：
+
+```js
+describe('并发写入', () => {
+  it('20 个并发 upsert 全部保留，一条不丢', async () => {
+    await Promise.all(
+      Array.from({ length: 20 }, (_, i) => upsertPhoto(indexPath, { id: `p${i}.jpg` })),
+    )
+    const idx = await readIndex(indexPath)
+    expect(idx.photos).toHaveLength(20)
+  })
+
+  it('并发 upsert 同一 id 只留一条', async () => {
+    await Promise.all(
+      Array.from({ length: 10 }, (_, i) => upsertPhoto(indexPath, { id: 'same.jpg', n: i })),
+    )
+    const idx = await readIndex(indexPath)
+    expect(idx.photos).toHaveLength(1)
+  })
+
+  it('并发的 upsert 与 remove 不互相破坏', async () => {
+    await upsertPhoto(indexPath, { id: 'keep.jpg' })
+    await Promise.all([
+      removePhoto(indexPath, 'keep.jpg'),
+      upsertPhoto(indexPath, { id: 'new.jpg' }),
+    ])
+    const idx = await readIndex(indexPath)
+    expect(idx.photos.map((p) => p.id)).toEqual(['new.jpg'])
+  })
+
+  it('链条中的失败不影响后续写入', async () => {
+    await upsertPhoto(indexPath, { id: 'a.jpg' })
+    const circular = {}
+    circular.self = circular
+    const failed = upsertPhoto(indexPath, { id: 'bad.jpg', circular })
+    await expect(failed).rejects.toThrow()
+    await upsertPhoto(indexPath, { id: 'b.jpg' })
+    const idx = await readIndex(indexPath)
+    expect(idx.photos.map((p) => p.id).sort()).toEqual(['a.jpg', 'b.jpg'])
+  })
+})
+```
+
+- [ ] **Step 6: 运行测试，确认通过**
 
 Run: `cd server && npx vitest run test/store.test.js`
-Expected: PASS — 12 个测试全部通过
+Expected: PASS — 15 个测试全部通过
 
-- [ ] **Step 5: 提交**
+- [ ] **Step 7: 提交**
 
 ```bash
 git add server/src/photos/store.js server/test/store.test.js
@@ -698,8 +798,8 @@ describe('ingestFile', () => {
     const id = 'photo1.jpg'
     const record = await ingestFile(cfg, { sourcePath: src, id })
 
-    const thumb = await fs.stat(path.join(cfg.thumbsDir, `${id}.jpg`))
-    const web = await fs.stat(path.join(cfg.webDir, `${id}.jpg`))
+    const thumb = await fs.stat(path.join(cfg.thumbsDir, id))
+    const web = await fs.stat(path.join(cfg.webDir, id))
     expect(thumb.size).toBeGreaterThan(0)
     expect(web.size).toBeGreaterThan(0)
 
@@ -711,8 +811,8 @@ describe('ingestFile', () => {
     const id = 'big.jpg'
     await ingestFile(cfg, { sourcePath: src, id })
 
-    const thumbMeta = await sharp(path.join(cfg.thumbsDir, `${id}.jpg`)).metadata()
-    const webMeta = await sharp(path.join(cfg.webDir, `${id}.jpg`)).metadata()
+    const thumbMeta = await sharp(path.join(cfg.thumbsDir, id)).metadata()
+    const webMeta = await sharp(path.join(cfg.webDir, id)).metadata()
     expect(Math.max(thumbMeta.width, thumbMeta.height)).toBeLessThanOrEqual(720)
     expect(Math.max(webMeta.width, webMeta.height)).toBeLessThanOrEqual(1920)
   })
@@ -722,7 +822,7 @@ describe('ingestFile', () => {
     const id = 'small.jpg'
     await ingestFile(cfg, { sourcePath: src, id })
 
-    const thumbMeta = await sharp(path.join(cfg.thumbsDir, `${id}.jpg`)).metadata()
+    const thumbMeta = await sharp(path.join(cfg.thumbsDir, id)).metadata()
     expect(thumbMeta.width).toBe(300)
   })
 
@@ -814,7 +914,7 @@ export async function ingestFile(cfg, { sourcePath, id }) {
       .rotate()
       .resize({ width: THUMB_MAX, height: THUMB_MAX, fit: 'inside', withoutEnlargement: true })
       .jpeg({ quality: JPEG_QUALITY, mozjpeg: true })
-      .toFile(path.join(cfg.thumbsDir, `${id}.jpg`))
+      .toFile(path.join(cfg.thumbsDir, id))
     derived.thumb = true
   } catch (err) {
     warnings.push(`缩略图生成失败：${err.message}`)
@@ -825,7 +925,7 @@ export async function ingestFile(cfg, { sourcePath, id }) {
       .rotate()
       .resize({ width: WEB_MAX, height: WEB_MAX, fit: 'inside', withoutEnlargement: true })
       .jpeg({ quality: JPEG_QUALITY, mozjpeg: true })
-      .toFile(path.join(cfg.webDir, `${id}.jpg`))
+      .toFile(path.join(cfg.webDir, id))
     derived.web = true
   } catch (err) {
     warnings.push(`网页图生成失败：${err.message}`)
@@ -1223,7 +1323,7 @@ Expected: PASS — 5 个测试全部通过
 - [ ] **Step 7: 运行全部测试**
 
 Run: `cd server && npm test`
-Expected: PASS — 全部 40 个测试通过
+Expected: PASS — 全部 49 个测试通过
 
 - [ ] **Step 8: 提交**
 
@@ -1304,8 +1404,8 @@ describe('migrateDirectory', () => {
   it('为每张图生成衍生图', async () => {
     await addSource('a.jpg')
     await migrateDirectory(cfg, sourceDir)
-    await fs.access(path.join(cfg.thumbsDir, 'a.jpg.jpg'))
-    await fs.access(path.join(cfg.webDir, 'a.jpg.jpg'))
+    await fs.access(path.join(cfg.thumbsDir, 'a.jpg'))
+    await fs.access(path.join(cfg.webDir, 'a.jpg'))
   })
 
   it('重复运行不产生重复条目', async () => {
@@ -1726,7 +1826,7 @@ Expected: 构建成功，`dist/` 生成
 - [ ] **Step 7: 验证后端测试仍然全绿**
 
 Run: `cd server && npm test`
-Expected: PASS — 全部 40 个测试通过
+Expected: PASS — 全部 49 个测试通过
 
 - [ ] **Step 8: 提交**
 

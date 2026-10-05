@@ -48,7 +48,7 @@ export async function ingestFile(cfg, { sourcePath, id }) {
       .rotate()
       .resize({ width: THUMB_MAX, height: THUMB_MAX, fit: 'inside', withoutEnlargement: true })
       .jpeg({ quality: JPEG_QUALITY, mozjpeg: true })
-      .toFile(path.join(cfg.thumbsDir, `${id}.jpg`))
+      .toFile(path.join(cfg.thumbsDir, id))
     derived.thumb = true
   } catch (err) {
     warnings.push(`缩略图生成失败：${err.message}`)
@@ -59,7 +59,7 @@ export async function ingestFile(cfg, { sourcePath, id }) {
       .rotate()
       .resize({ width: WEB_MAX, height: WEB_MAX, fit: 'inside', withoutEnlargement: true })
       .jpeg({ quality: JPEG_QUALITY, mozjpeg: true })
-      .toFile(path.join(cfg.webDir, `${id}.jpg`))
+      .toFile(path.join(cfg.webDir, id))
     derived.web = true
   } catch (err) {
     warnings.push(`网页图生成失败：${err.message}`)
