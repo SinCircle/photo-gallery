@@ -46,7 +46,8 @@ try {
       await send('Input.dispatchMouseEvent', { type: 'mousePressed', x: 720, y: 450, button: 'left', clickCount: 1 })
       await sleep(650)
       await evaluate(`(()=>{
-        window.__bench={start:performance.now(),previous:0,intervals:[],activeIntervals:[],pan:document.querySelector('.photoPan').style.transform,surface:document.querySelector('.dockInner').style.getPropertyValue('--glass-refraction')};__metrics.longTasks=[];
+        window.glassPixels=()=>{const c=document.querySelector('[data-glass-output]');if(!c)return null;const ctx=c.getContext('2d'),pixels=[];for(const x of [.25,.5,.75])for(const y of [.25,.5,.75])pixels.push(...ctx.getImageData(Math.floor(c.width*x),Math.floor(c.height*y),1,1).data);return pixels.join(',')};
+        const surfacePixels=glassPixels();window.__bench={start:performance.now(),previous:0,intervals:[],activeIntervals:[],pan:document.querySelector('.photoPan').style.transform,surfacePixels};__metrics.longTasks=[];
         const frame=t=>{const b=__bench;if(b.previous){b.intervals.push(t-b.previous);if(t-b.start<=5000)b.activeIntervals.push(t-b.previous)}b.previous=t;if(t-b.start<7800)requestAnimationFrame(frame);else b.done=true};requestAnimationFrame(frame);
       })()`)
       const start = performance.now()
@@ -63,13 +64,13 @@ try {
       const stats = await evaluate(`(()=>{
         const b=__bench,sorted=[...b.intervals].sort((a,b)=>a-b),sum=b.intervals.reduce((a,b)=>a+b,0),active=b.activeIntervals.reduce((a,b)=>a+b,0);
         const tasks=__metrics.longTasks.filter(t=>t.start>=b.start);
-        return {fps:1000*b.intervals.length/sum,activeFPS:1000*b.activeIntervals.length/active,p95FrameMs:sorted[Math.floor(sorted.length*.95)],maxFrameMs:sorted.at(-1),frames:b.intervals.length,longTaskCount:tasks.length,longTaskTotalMs:tasks.reduce((s,t)=>s+t.duration,0),longTaskMaxMs:Math.max(0,...tasks.map(t=>t.duration)),longTasks:tasks,glass:document.querySelector('.dockInner').dataset.glass||'legacy-css',panBefore:b.pan,panAfter:document.querySelector('.photoPan').style.transform,panChanged:b.pan!==document.querySelector('.photoPan').style.transform,snapshotUpdated:!!b.surface&&b.surface!==document.querySelector('.dockInner').style.getPropertyValue('--glass-refraction')};
+        const afterPixels=glassPixels();return {fps:1000*b.intervals.length/sum,activeFPS:1000*b.activeIntervals.length/active,p95FrameMs:sorted[Math.floor(sorted.length*.95)],maxFrameMs:sorted.at(-1),frames:b.intervals.length,longTaskCount:tasks.length,longTaskTotalMs:tasks.reduce((s,t)=>s+t.duration,0),longTaskMaxMs:Math.max(0,...tasks.map(t=>t.duration)),longTasks:tasks,glass:document.querySelector('.dockInner').dataset.glass||'legacy-css',panBefore:b.pan,panAfter:document.querySelector('.photoPan').style.transform,panChanged:b.pan!==document.querySelector('.photoPan').style.transform,pixelsBefore:b.surfacePixels,pixelsAfter:afterPixels,pixelsChanged:b.surfacePixels!==null&&b.surfacePixels!==afterPixels};
       })()`)
       report.runs.push({ case: config.name, repeat, loaderId: navigation.loaderId, inputTicks: ticks, ...stats })
       assert.ok(stats.panChanged, 'Trusted drag events must actually pan the photo')
       if (config.name === 'glass-on') {
         assert.equal(stats.glass, 'webgl', 'The enabled case must not fall back during measurement')
-        assert.ok(stats.snapshotUpdated, 'The interaction must refresh actual refracted pixels')
+        assert.ok(stats.pixelsChanged, 'The interaction must change actual rendered pixels; pixel latency is tested separately')
       }
       console.log(`${config.name} #${repeat + 1}: FPS=${stats.fps.toFixed(3)} active=${stats.activeFPS.toFixed(3)} p95=${stats.p95FrameMs.toFixed(2)}ms longTasks=${stats.longTaskCount}/${stats.longTaskTotalMs}ms`)
       if (noGL) await send('Page.removeScriptToEvaluateOnNewDocument', { identifier: noGL.identifier })
