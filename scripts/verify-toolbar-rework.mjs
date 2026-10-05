@@ -77,7 +77,7 @@ const checks = {
   },
   async refraction() {
     await ready()
-    await evaluate(`(()=>{const c=document.createElement('canvas');c.id='refraction-pattern';c.width=1440;c.height=1000;c.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:19;width:1440px;height:1000px';document.querySelector('.photoShell').append(c);window.paintPattern=()=>{const r=document.querySelector('.dockInner').getBoundingClientRect(),ctx=c.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,1440,1000);ctx.fillStyle='black';for(let x=r.x+12;x<1440;x+=37)ctx.fillRect(x,0,4,1000);ctx.fillStyle='red';ctx.fillRect(0,r.y+8,1440,6);document.querySelector('.dockInner').dispatchEvent(new Event('glassrefresh'))};paintPattern()})()`)
+    await evaluate(`(()=>{const c=document.createElement('canvas');c.id='refraction-pattern';c.width=1440;c.height=1000;c.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:19;width:1440px;height:1000px';document.querySelector('.photoShell').append(c);window.paintPattern=()=>{const r=document.querySelector('.dockInner').getBoundingClientRect(),ctx=c.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,1440,1000);ctx.fillStyle='black';for(let x=r.x+12;x<1440;x+=37)ctx.fillRect(x,0,4,1000);ctx.fillStyle='red';ctx.fillRect(0,Math.round(r.y+r.height*.22),1440,Math.min(12,Math.round(r.height*.25)));document.querySelector('.dockInner').dispatchEvent(new Event('glassrefresh'))};paintPattern()})()`)
     const states = []
     for (const name of ['expanded', 'collapsed']) {
       if (name === 'collapsed') {
