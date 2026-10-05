@@ -1,0 +1,31 @@
+{
+  "startedAt": "2026-10-05T12:20:12.530Z",
+  "baseline": "0c6ea5cc8f06ba720d2f4987c8917e53edaaec9b",
+  "requirements": {
+    "pixelLatencyMsLessThan": 16,
+    "liveDuringInteraction": true,
+    "geometryBothEndpoints": true,
+    "collapsedSize": [
+      56,
+      32
+    ],
+    "nonlinearOvershoot": true,
+    "metadataBlurOpacity": true,
+    "expandedLayout": true,
+    "lightDarkLegibility": true,
+    "idleNativeRAF": 0,
+    "publicLibraryAPIOnly": true
+  },
+  "discipline": {
+    "commitEachStep": true,
+    "noPush": true,
+    "repositoryOnly": true,
+    "preservePaletteFontsRadiiShadows": true
+  },
+  "identifiedCauses": [
+    "pointer-held render guard",
+    "collapsed-state render guard",
+    "240ms trailing debounce",
+    "PNG encode/decode per update"
+  ]
+}
