@@ -1,0 +1,34 @@
+.adminShell .topbarInner,
+.adminUpload {
+  flex-wrap: wrap;
+}
+
+.adminShell input,
+.adminShell textarea {
+  width: 100%;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  background: var(--glass);
+  color: var(--ink);
+  font: inherit;
+}
+
+.adminShell input[type='file'] {
+  width: auto;
+  max-width: 100%;
+}
+
+.adminFields,
+.adminLogin,
+.adminShell label {
+  display: grid;
+  gap: 10px;
+}
+
+.adminFields { padding: 12px; }
+.adminLogin { break-inside: avoid; }
+.adminFeedback:not(:empty) {
+  margin-bottom: 14px;
+  color: var(--ink-muted);
+}

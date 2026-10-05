@@ -70,6 +70,12 @@ PHOTOS_DIR=/tmp/pg-dev ADMIN_PASSWORD_HASH=dev npm run dev
 npm install && npm run dev
 ```
 
+开发期 `/media/` 直接从 `PHOTOS_DIR` 读图，不需要 Docker。若使用本仓库的
+compose `.env`，前端自动使用对应的 `PHOTOS_HOST_DIR`；也可在 PowerShell 中
+设置 `$env:PHOTOS_DIR = '照片库的绝对路径'`。后端另开终端，以同一个本机目录
+设置 `PHOTOS_DIR`、配置 `ADMIN_PASSWORD_HASH` 后运行 `npm run dev`。
+生产图片仍由 Nginx 直接发送。
+
 ## 已知限制
 
 - 原图公开可访问，任何人知道文件名即可获取。

@@ -1,5 +1,6 @@
 import { renderGalleryView } from './views/gallery.ts'
 import { renderPhotoView } from './views/photo.ts'
+import { renderAdminView } from './views/admin.ts'
 
 export function startRouter(container: HTMLElement) {
   let transitionTimer: number | null = null
@@ -31,6 +32,9 @@ export function startRouter(container: HTMLElement) {
       if (hash === '#/' || hash === '#') {
         document.body.classList.remove('isPhoto')
         void renderGalleryView(container, signal).catch(showError)
+      } else if (hash === '#/admin') {
+        document.body.classList.remove('isPhoto')
+        void renderAdminView(container, signal).catch(showError)
       } else {
         const photoMatch = hash.match(/^#\/photo\/(.+)$/)
         if (photoMatch) {
