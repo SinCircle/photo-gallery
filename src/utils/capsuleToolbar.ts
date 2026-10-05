@@ -1,5 +1,6 @@
 const IDLE_MS = 2800
-const MOTION_MS = 810
+const OPEN_MS = 810
+const CLOSE_MS = 720
 const EASING = 'cubic-bezier(.22,.8,.25,1)'
 
 // All four controls stay in their own reserved grid cells. They fade/slide out
@@ -74,7 +75,7 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
         { translate: next ? '0px -3px' : '0px 10px', offset: .64 },
         { translate: next ? '0px 1px' : '0px 7px', offset: .82 },
         { translate: next ? '0px 0px' : '0px 8px', offset: 1 },
-      ], { duration: MOTION_MS, easing: EASING, fill: 'backwards' })
+      ], { duration: next ? OPEN_MS : CLOSE_MS, easing: 'ease-in-out', fill: 'backwards' })
       openingCompletion ||= move
       animations.push(move)
       const fade = control.animate([{ opacity: current[i].opacity }, { opacity: next ? 1 : 0 }],
@@ -95,7 +96,7 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
       }
     })
     const toggleFade = toggle.animate([{ opacity: toggleOpacity }, { opacity: next ? 0 : 1 }],
-      { duration: next ? 240 : 450, delay: next ? 0 : 360, easing: EASING, fill: 'backwards' })
+      { duration: next ? 240 : 450, delay: next ? 0 : 270, easing: EASING, fill: 'backwards' })
     animations.push(toggleFade)
     if (next) toggleFade.onfinish = () => {
       if (generation !== version || signal.aborted) return
