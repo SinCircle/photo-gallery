@@ -46,7 +46,8 @@ try {
       await send('Input.dispatchMouseEvent', { type: 'mousePressed', x: 720, y: 450, button: 'left', clickCount: 1 })
       await sleep(650)
       await evaluate(`(()=>{
-        window.glassPixels=()=>{const c=document.querySelector('[data-glass-output]');if(!c)return null;const ctx=c.getContext('2d'),pixels=[];for(const x of [.25,.5,.75])for(const y of [.25,.5,.75])pixels.push(...ctx.getImageData(Math.floor(c.width*x),Math.floor(c.height*y),1,1).data);return pixels.join(',')};
+        const probe=document.createElement('canvas');probe.width=probe.height=3;const ctx=probe.getContext('2d',{willReadFrequently:true});
+        window.glassPixels=()=>{const c=document.querySelector('[data-glass-output]');if(!c)return null;ctx.clearRect(0,0,3,3);for(let x=0;x<3;x++)for(let y=0;y<3;y++)ctx.drawImage(c,Math.floor(c.width*(x+1)/4),Math.floor(c.height*(y+1)/4),1,1,x,y,1,1);return [...ctx.getImageData(0,0,3,3).data].join(',')};
         const surfacePixels=glassPixels();window.__bench={start:performance.now(),previous:0,intervals:[],activeIntervals:[],pan:document.querySelector('.photoPan').style.transform,surfacePixels};__metrics.longTasks=[];
         const frame=t=>{const b=__bench;if(b.previous){b.intervals.push(t-b.previous);if(t-b.start<=5000)b.activeIntervals.push(t-b.previous)}b.previous=t;if(t-b.start<7800)requestAnimationFrame(frame);else b.done=true};requestAnimationFrame(frame);
       })()`)

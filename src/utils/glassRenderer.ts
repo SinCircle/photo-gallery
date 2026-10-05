@@ -22,10 +22,6 @@ export async function createGlassRenderer(glass: HTMLElement, signal: AbortSigna
     instance = await LiquidGlass.init({ root, glassElements: [panel] })
     if (signal.aborted) { instance.destroy(); root.remove(); throw new DOMException('Aborted', 'AbortError') }
     const output = panel.querySelector('canvas')!
-    // Keep the display canvas backing stable across geometry changes and pixel
-    // reads; only this small output uses a read-friendly context, not the photo
-    // source or the full-size blurred background.
-    output.getContext('2d', { willReadFrequently: true })
     output.dataset.glassOutput = ''
     return {
       scene,

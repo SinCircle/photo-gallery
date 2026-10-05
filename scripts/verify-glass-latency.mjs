@@ -22,7 +22,9 @@ try {
       const bar=document.querySelector('.dockInner'),r=bar.getBoundingClientRect(),c=document.createElement('canvas');
       c.id='latency-fixture';c.width=1440;c.height=200;c.style.cssText='position:fixed;pointer-events:none;z-index:19;left:0;bottom:0;width:1440px;height:200px';document.querySelector('.photoShell').append(c);
       window.paintFixture=blue=>{const ctx=c.getContext('2d');ctx.fillStyle=blue?'rgb(20,20,240)':'rgb(240,20,20)';ctx.fillRect(0,0,c.width,c.height);const start=performance.now();c.style.left=(blue?1:0)+'px';bar.dispatchEvent(new Event('glassrefresh'));return start};
-      window.readGlass=async()=>{const live=bar.querySelector('canvas[data-glass-output]');if(live)return [...live.getContext('2d').getImageData(Math.floor(live.width/2),Math.floor(live.height/2),1,1).data];
+      const probe=document.createElement('canvas');probe.width=probe.height=1;const probeCtx=probe.getContext('2d',{willReadFrequently:true});
+      window.readLivePixels=live=>{probeCtx.clearRect(0,0,1,1);probeCtx.drawImage(live,Math.floor(live.width/2),Math.floor(live.height/2),1,1,0,0,1,1);return [...probeCtx.getImageData(0,0,1,1).data]};
+      window.readGlass=async()=>{const live=bar.querySelector('canvas[data-glass-output]');if(live)return readLivePixels(live);
         const url=getComputedStyle(bar).backgroundImage.slice(5,-2);if(!url)return [0,0,0,0];if(window.pixelURL!==url){const img=await createImageBitmap(await(await fetch(url)).blob());const target=document.createElement('canvas');target.width=img.width;target.height=img.height;target.getContext('2d').drawImage(img,0,0);img.close();window.pixelCanvas=target;window.pixelURL=url}const target=window.pixelCanvas;return [...target.getContext('2d').getImageData(Math.floor(target.width/2),Math.floor(target.height/2),1,1).data]};
       paintFixture(false);
       window.armSample=(index,blue)=>{
@@ -35,7 +37,7 @@ try {
         if(!bar.querySelector('canvas[data-glass-output]'))poll();
       };
       const finish=(latency,pixels)=>{const s=window.sampleState;if(!s||s.start===undefined)return;clearTimeout(s.deadline);window.sampleState=null;sampleResolve({index:s.index,blue:s.blue,latencyMs:latency,timedOut:latency===null,pixels,sourceChangedAt:s.start,inputPaintAt:s.inputPaintAt,copyStartedAt:s.copyStartedAt,outputReadAt:s.outputReadAt,toolbar:bar.dataset.toolbar,pan:document.querySelector('.photoPan').style.transform,zoom:document.querySelector('.photoZoom').style.transform})};
-      const check=async()=>{const s=window.sampleState;if(!s||s.start===undefined)return;const live=bar.querySelector('canvas[data-glass-output]');const pixels=live?[...live.getContext('2d').getImageData(Math.floor(live.width/2),Math.floor(live.height/2),1,1).data]:await readGlass();s.outputReadAt=performance.now();if(s.blue?pixels[2]-pixels[0]>60:pixels[0]-pixels[2]>60)finish(s.outputReadAt-s.start,pixels)};
+      const check=async()=>{const s=window.sampleState;if(!s||s.start===undefined)return;const live=bar.querySelector('canvas[data-glass-output]');const pixels=live?readLivePixels(live):await readGlass();s.outputReadAt=performance.now();if(s.blue?pixels[2]-pixels[0]>60:pixels[0]-pixels[2]>60)finish(s.outputReadAt-s.start,pixels)};
       const poll=async()=>{await check();if(window.sampleState?.start!==undefined)setTimeout(poll,0)};
       const output=bar.querySelector('canvas[data-glass-output]');if(output){const ctx=output.getContext('2d'),draw=ctx.drawImage.bind(ctx);ctx.drawImage=(...args)=>{if(window.sampleState?.start!==undefined)sampleState.copyStartedAt=performance.now();draw(...args);void check()}};
       const input=bar.querySelector('canvas[data-glass-scene]');if(input){const ctx=input.getContext('2d'),draw=ctx.drawImage.bind(ctx);ctx.drawImage=(...args)=>{draw(...args);if(args[0]===c&&window.sampleState?.start!==undefined)sampleState.inputPaintAt=performance.now()}};
