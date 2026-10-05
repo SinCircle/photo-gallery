@@ -16,7 +16,7 @@ async function click(x, y) {
 }
 async function ready(id = defaultPhoto) {
   await navigate(photoURL(id))
-  await until(`document.querySelector('.photoStage')?.classList.contains('hiDone') && !document.querySelector('.dockMetaLoading')`)
+  await until(`document.querySelector('.photoImgHigh')?.currentSrc===new URL('/media/originals/'+${JSON.stringify(encodeURIComponent(id))},location.origin).href && document.querySelector('.photoStage')?.classList.contains('hiDone') && !document.querySelector('.dockMetaLoading')`)
   await evaluate('document.fonts.ready')
   await until(`document.querySelector('.dockInner').dataset.glass==='webgl'`)
   await wake()
@@ -104,7 +104,7 @@ const checks = {
       assert.ok(Math.abs(result.canvas.y - (result.bar.y - 20)) < 1)
       assert.ok(Math.abs(result.canvas.width - (result.bar.width + 40)) < 1)
       assert.ok(Math.abs(result.canvas.height - (result.bar.height + 40)) < 1)
-      assert.ok(result.lines.some(l => l.displacement >= 2 || Math.abs(l.originalThickness - l.refractedThickness) >= 2), 'Marker must move/deform, not merely brighten')
+      assert.ok(result.lines.some(l => l.expected && l.actual && (l.displacement >= 2 || Math.abs(l.originalThickness - l.refractedThickness) >= 2)), 'A visible marker must move/deform, not merely brighten or disappear')
       await shot(`refraction-${name}`)
       await crop(`refraction-${name}-detail`)
       await evaluate(`document.querySelector('.glassRoot').style.visibility='hidden';document.querySelector('.toolbarMaterial').style.visibility='hidden'`)
@@ -128,7 +128,8 @@ const checks = {
     const result = []
     for (const { name, photo } of choices) {
       await ready(photo.id)
-      await send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 720, y: 450, deltaX: 0, deltaY: -400 })
+      const imageRect = await rect('.photoImgHigh')
+      await send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 720, y: 450, deltaX: 0, deltaY: -Math.log(Math.max(1.5, 1400 / imageRect.height)) / .0018 })
       await sleep(500)
       await wake()
       await shot(`${name}-photo`)
