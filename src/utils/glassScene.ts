@@ -20,30 +20,30 @@ export function captureGlassScene(root: HTMLElement, glass: HTMLElement) {
     const after = getComputedStyle(background, '::after')
     const scale = Math.max(rect.width / low.naturalWidth, rect.height / low.naturalHeight)
     const w = low.naturalWidth * scale, h = low.naturalHeight * scale
-    const left = rect.x + (rect.width - w) / 2 - x, top = rect.y + (rect.height - h) / 2 - y
-    key.push(low.currentSrc, left, top, w, h, css.filter, css.opacity, after.backgroundColor)
-    const backgroundKey = JSON.stringify(key)
+    const left = rect.x + (rect.width - w) / 2, top = rect.y + (rect.height - h) / 2
+    const backgroundKey = JSON.stringify([low.currentSrc, left, top, w, h, innerWidth, innerHeight, dpr, color, css.filter, css.opacity, after.backgroundColor])
+    key.push(backgroundKey)
     paint.push(ctx => {
       let cached = backgrounds.get(root)
       if (cached?.key !== backgroundKey) {
         const bitmap = document.createElement('canvas')
-        bitmap.width = Math.ceil(width * dpr)
-        bitmap.height = Math.ceil(height * dpr)
+        bitmap.width = Math.ceil((innerWidth + 200) * dpr)
+        bitmap.height = Math.ceil((innerHeight + 200) * dpr)
         const buffer = bitmap.getContext('2d')!
         buffer.scale(dpr, dpr)
         buffer.fillStyle = color
-        buffer.fillRect(0, 0, width, height)
+        buffer.fillRect(0, 0, innerWidth + 200, innerHeight + 200)
         buffer.globalAlpha = Number(css.opacity)
         buffer.filter = css.filter
-        buffer.drawImage(low, left, top, w, h)
+        buffer.drawImage(low, left + 100, top + 100, w, h)
         buffer.filter = 'none'
         buffer.fillStyle = after.backgroundColor
-        buffer.fillRect(0, 0, width, height)
+        buffer.fillRect(0, 0, innerWidth + 200, innerHeight + 200)
         cached = { key: backgroundKey, canvas: bitmap }
         backgrounds.set(root, cached)
       }
       ctx.save()
-      ctx.drawImage(cached.canvas, 0, 0, width, height)
+      ctx.drawImage(cached.canvas, -100 - x, -100 - y, innerWidth + 200, innerHeight + 200)
       ctx.restore()
     })
   }
@@ -74,13 +74,14 @@ export function captureGlassScene(root: HTMLElement, glass: HTMLElement) {
       ctx.restore()
     })
   }
-  return { key: JSON.stringify(key), x, y, width, height, draw: () => {
-    const canvas = document.createElement('canvas')
-    canvas.width = Math.ceil(width * dpr)
-    canvas.height = Math.ceil(height * dpr)
-    canvas.style.cssText = `position:absolute;inset:0;width:${width}px;height:${height}px;`
+  return { key: JSON.stringify(key), x, y, width, height, draw: (canvas = document.createElement('canvas')) => {
+    if (canvas.width !== Math.ceil(width * dpr)) canvas.width = Math.ceil(width * dpr)
+    if (canvas.height !== Math.ceil(height * dpr)) canvas.height = Math.ceil(height * dpr)
+    canvas.style.width = `${width}px`
+    canvas.style.height = `${height}px`
     const ctx = canvas.getContext('2d')!
-    ctx.scale(dpr, dpr)
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    ctx.globalAlpha = 1
     ctx.fillStyle = color
     ctx.fillRect(0, 0, width, height)
     for (const layer of paint) layer(ctx)

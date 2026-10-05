@@ -15,7 +15,7 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
   let keyboardFocus = false
 
   const controls = () => [...bar.children].filter((child): child is HTMLElement =>
-    child instanceof HTMLElement && !child.classList.contains('glassSurface'))
+    child instanceof HTMLElement && !child.classList.contains('glassRoot'))
   const setExpanded = (next: boolean) => {
     if (signal.aborted || next === expanded) return
     const current = getComputedStyle(bar).transform

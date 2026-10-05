@@ -89,18 +89,14 @@ button:focus-visible {
 /* Successful shader output is the material. CSS remains the fallback only. */
 .glass[data-glass='webgl'] {
   background: transparent;
-  background-image: var(--glass-refraction);
-  background-size: var(--glass-refraction-size);
-  background-position: var(--glass-refraction-position);
-  background-repeat: no-repeat;
-  background-origin: border-box;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
 .topbarInner[data-glass] { position: relative; }
-[data-glass] > :not(.glassSurface) { position: relative; z-index: 1; }
+[data-glass] > :not(.glassRoot) { position: relative; z-index: 1; }
+.glassRoot { position: absolute; left: -1px; top: -1px; width: calc(100% + 2px); height: calc(100% + 2px); pointer-events: none; }
 .idleToolbar { will-change: transform; }
-.idleToolbar[data-toolbar='collapsed'] > :not(.glassSurface) {
+.idleToolbar[data-toolbar='collapsed'] > :not(.glassRoot) {
   visibility: hidden;
   pointer-events: none;
 }
