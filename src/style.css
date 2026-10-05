@@ -485,11 +485,7 @@ button:focus-visible {
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  padding: 0 8px;
-  border-radius: var(--radius-sm);
-  background: var(--glass);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  padding: 0;
 
   /* Hide scrollbar but keep scrollability */
   scrollbar-width: none; /* Firefox */
@@ -500,49 +496,68 @@ button:focus-visible {
   display: none; /* Chrome/Safari/Edge */
 }
 
-/* Photo controls are the native glass elements; their common grid has no plate. */
+/* The photo controls are one native glass bar, laid out in a single row. */
 .capsuleDock {
   position: relative;
   width: 100%;
-  height: 96px;
-  display: grid;
-  grid-template-columns: 72px 120px 1fr 72px;
-  grid-template-rows: 36px 44px;
-  gap: 16px;
-  align-items: center;
+  height: 44px;
+  display: flex;
+  justify-content: center;
+  /* Anchored to the bottom so the bar keeps its footing while it shrinks. */
+  align-items: flex-end;
   pointer-events: none;
 }
 .capsuleDock > [data-glass-scene] { position: absolute; }
-.capsuleDock > .glassCapsule {
+.capsuleDock > .dockBar {
   position: relative;
   z-index: 1;
+  /* Sized by its contents, capped by the slot (65vw on desktop). */
+  width: max-content;
+  max-width: 100%;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  padding: 0 14px;
   border: 0;
   border-radius: 999px;
   background: rgba(255, 255, 255, .35);
   box-shadow: var(--shadow);
   backdrop-filter: blur(var(--capsule-blur));
   -webkit-backdrop-filter: blur(var(--capsule-blur));
-  min-width: 0;
-  height: 44px;
-  padding: 0 12px;
+  overflow: hidden;
   pointer-events: auto;
+  /* Collapsing shrinks this one element into the idle capsule, so the bar and
+     the small capsule are the same box at both ends of the motion. */
+  will-change: width, height;
 }
-.capsuleDock[data-glass='webgl'] > .glassCapsule {
+/* One faint white veil over the whole bar, in place of plates behind labels. */
+.capsuleDock > .dockBar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, .18);
+  pointer-events: none;
+  z-index: 2;
+}
+.capsuleDock[data-glass='webgl'] > .dockBar {
   background: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
-.capsuleDock > .glassCapsule > canvas[data-glass-output] {
-  /* A small fraction of the same blur control feathers the refractive rim. */
-  filter: blur(calc(var(--capsule-blur) * .25));
+.capsuleDock > .dockBar > canvas[data-glass-output] {
+  z-index: 0;
+  border-radius: inherit;
 }
-.capsuleDock > .glassCapsule[hidden] { display: none; }
-.capsuleDock > .dockMetaCapsule { grid-column: 1 / -1; grid-row: 1; height: 36px; padding: 0 16px; }
-.capsuleDock > .dockBack { grid-column: 1; grid-row: 2; }
-.capsuleDock > .dockFit { grid-column: 2; grid-row: 2; }
-.capsuleDock > .dockDownload { grid-column: 4; grid-row: 2; }
+.capsuleDock > .dockBar > .dockMeta,
+.capsuleDock > .dockBar > .dockAction { position: relative; z-index: 3; }
 .capsuleDock .dockMeta {
-  height: 36px;
+  grid-area: auto;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 44px;
   padding: 0;
   color: var(--ink);
   background: none;
@@ -550,24 +565,80 @@ button:focus-visible {
   -webkit-backdrop-filter: none;
   border-radius: inherit;
 }
+.capsuleDock > .dockBar > .dockBack,
+.capsuleDock > .dockBar > .dockFit,
+.capsuleDock > .dockBar > .dockDownload { flex: 0 0 auto; }
+/* Clickable items carry no chrome of their own. The padding is only a hit area,
+   so hovering brightens and lifts that whole capsule-shaped zone, not the text. */
+.capsuleDock .dockAction {
+  appearance: none;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 999px;
+  transform-origin: 50% 50%;
+  transition: filter 260ms cubic-bezier(.2,.8,.2,1), transform 260ms cubic-bezier(.2,.8,.2,1);
+}
+.capsuleDock .dockAction:hover { filter: brightness(1.3); transform: scale(1.08); }
+.capsuleDock .dockAction:active { transform: scale(1.03); }
 .capsuleDock .capsuleLabel, .capsuleDock .dockMetaItem {
-  background: var(--glass);
-  border-radius: 5px;
-  box-shadow: 0 0 4px 2px var(--glass);
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
   text-shadow: none;
 }
-.capsuleDock > .dockToggle {
+.capsuleDock .capsuleDot {
   position: absolute;
-  left: calc(50% - 28px);
-  bottom: 0;
-  width: 56px;
-  height: 32px;
-  cursor: pointer;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: var(--ink-muted);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 4;
 }
-.capsuleDot { display: block; width: 6px; height: 6px; margin: auto; border-radius: 50%; background: var(--ink-muted); box-shadow: 0 0 6px 3px rgba(255, 255, 255, .7); }
+/* While the photo is still arriving the bar stays in its idle shape and runs a
+   three-dot relay: a dot is born in the left slot, walks to the middle, then to
+   the right, and leaves to the right as the next one appears. */
+.capsuleDock .capsuleDots {
+  position: absolute;
+  inset: 0;
+  display: none;
+  pointer-events: none;
+  z-index: 4;
+}
+.capsuleDock .dockBar[data-loading] .capsuleDots { display: block; }
+.capsuleDock .capsuleDots i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 50%;
+  background: var(--ink-muted);
+  opacity: 0;
+  animation: capsuleDotTravel 1.65s cubic-bezier(.45,.05,.4,1) infinite;
+}
+.capsuleDock .capsuleDots i:nth-child(2) { animation-delay: .55s; }
+.capsuleDock .capsuleDots i:nth-child(3) { animation-delay: 1.1s; }
+@keyframes capsuleDotTravel {
+  0% { transform: translateX(-13px) scale(.55); opacity: 0; }
+  10% { transform: translateX(-13px) scale(1); opacity: .85; }
+  38% { transform: translateX(0) scale(1); opacity: .85; }
+  64% { transform: translateX(13px) scale(1); opacity: .85; }
+  84% { transform: translateX(13px) scale(1); opacity: .85; }
+  100% { transform: translateX(30px) scale(.55); opacity: 0; }
+}
 @media (max-width: 560px) {
-  .capsuleDock { height: 156px; grid-template-columns: 1fr 1fr; grid-template-rows: 36px 44px 44px; }
-  .capsuleDock > .dockDownload { grid-column: 2; grid-row: 3; width: 72px; justify-self: end; }
+  .capsuleDock > .dockBar { gap: 8px; padding: 0 11px; }
 }
 
 .empty {
@@ -631,4 +702,9 @@ button:focus-visible {
   .dockMetaLoadingDot {
     animation: none;
   }
+
+  /* One steady dot instead of the travelling loop. */
+  .capsuleDock .capsuleDots i { animation: none; opacity: 0; }
+  .capsuleDock .capsuleDots i:nth-child(2) { opacity: .8; }
+  .capsuleDock .dockAction { transition: none; }
 }

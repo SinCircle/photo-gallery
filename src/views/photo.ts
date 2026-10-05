@@ -141,17 +141,16 @@ export async function renderPhotoView(
 
   // Bottom fixed dock: back + metadata + download.
   const dockInner = el('div', { className: 'dockInner capsuleDock' })
-  const backBtn = el('button', { className: 'btn glassCapsule dockBack', type: 'button' }, [
+  const dockBar = el('div', { className: 'dockBar' })
+  dockBar.dataset.glassCapsule = 'bar'
+  const backBtn = el('button', { className: 'dockAction dockBack', type: 'button' }, [
     el('span', { className: 'capsuleLabel' }, ['返回']),
   ])
-  backBtn.dataset.glassCapsule = 'back'
   backBtn.addEventListener('click', async () => {
     window.location.hash = '#/'
   })
 
   const metaList = el('div', { className: 'dockMeta' })
-  const metaCapsule = el('div', { className: 'glassCapsule dockMetaCapsule' }, [metaList])
-  metaCapsule.dataset.glassCapsule = 'exif'
   metaList.tabIndex = 0
   const metaLoading = el('div', { className: 'dockMetaLoading' }, [
     el('span', { className: 'dockMetaLoadingDot' }),
@@ -179,6 +178,9 @@ export async function renderPhotoView(
 
   function updateMetaDisplay() {
     if (!imageReady || !metaReady) {
+      // Until the photo and its metadata both arrive the bar stays in its idle
+      // shape and shows the travelling-dot loop instead of the controls.
+      dockBar.dataset.loading = ''
       metaList.hidden = false
       if (metaList.firstChild !== metaLoading || metaList.childNodes.length !== 1) {
         metaList.replaceChildren(metaLoading)
@@ -186,6 +188,7 @@ export async function renderPhotoView(
       updateDockStacking()
       return
     }
+    delete dockBar.dataset.loading
 
     const items = metaItems
     if (items.length === 0) {
@@ -217,8 +220,7 @@ export async function renderPhotoView(
   // Full-res natural size (used only for 1:1 mode).
   let fullNaturalW = 0
 
-  // Measured layout metrics (avoid hard-coded dock geometry).
-  let dockInnerTop = 0
+  // Measured stage metrics.
   let layoutMetrics: { stageW: number; stageH: number } | undefined
 
   // Decide one redundant mode (fitHeight or fitWidth) under contain's safe area.
@@ -241,35 +243,22 @@ export async function renderPhotoView(
   }
 
   function measureLayout() {
-    // Transforms do not change the stage or reserved dock layout. Refresh these
-    // only on layout/size changes, instead of forcing reads on every drag event.
+    // Transforms do not change the stage. Refresh these only on layout/size
+    // changes, instead of forcing reads on every drag event.
     if (layoutMetrics) return layoutMetrics
     const stageRect = stage.getBoundingClientRect()
-    const dockInnerRect = dockSlot.getBoundingClientRect()
-    // stage is fixed inset:0, so top is ~0; still keep it relative.
-    // Shrinking the control is purely visual; its reserved safe area stays full.
-    dockInnerTop = Math.max(0, dockInnerRect.top - stageRect.top)
     return layoutMetrics = { stageW: stageRect.width, stageH: stageRect.height }
   }
 
-  function safeMetrics(stageW: number, stageH: number, m: FitMode) {
+  function safeMetrics(stageW: number, stageH: number, _mode: FitMode) {
     const side = 18
     const gutter = 18
 
     const w = Math.max(1, stageW - side * 2)
-    if (m === 'contain') {
-      // Center within the region above the dock glass (not including dock padding).
-      const bottom = Math.max(gutter, Math.min(stageH - gutter, dockInnerTop - gutter))
-      const top = gutter
-      const h = Math.max(1, bottom - top)
-      const centerOffsetY = (top + bottom) / 2 - stageH / 2
-      return { w, h, centerOffsetY }
-    }
-
-    // Other modes may render behind the dock.
+    // The bar floats over the photo, so the image keeps equal top and bottom
+    // margins rather than reserving a strip for the dock.
     const h = Math.max(1, stageH - gutter * 2)
-    const centerOffsetY = 0
-    return { w, h, centerOffsetY }
+    return { w, h, centerOffsetY: 0 }
   }
 
   function computeScaleFor(m: FitMode, stageW: number, stageH: number) {
@@ -482,8 +471,7 @@ export async function renderPhotoView(
   scheduleHiStart(260)
 
   const fitLabel = el('span', { className: 'capsuleLabel' }, [`比例：${labelForCurrentScale()}`])
-  const fitBtn = el('button', { className: 'btn glassCapsule dockFit', type: 'button' }, [fitLabel])
-  fitBtn.dataset.glassCapsule = 'fit'
+  const fitBtn = el('button', { className: 'dockAction dockFit', type: 'button' }, [fitLabel])
   fitBtn.addEventListener('click', () => {
     if (!boxReady) return
 
@@ -674,8 +662,7 @@ export async function renderPhotoView(
   const downloadLabel = albumSave ? '保存' : '下载'
 
   const downloadText = el('span', { className: 'capsuleLabel' }, [downloadLabel])
-  const downloadBtn = el('button', { className: 'btn glassCapsule dockDownload', type: 'button' }, [downloadText])
-  downloadBtn.dataset.glassCapsule = 'download'
+  const downloadBtn = el('button', { className: 'dockAction dockDownload', type: 'button' }, [downloadText])
   downloadBtn.addEventListener('click', async () => {
     downloadText.textContent = '等待'
     downloadBtn.disabled = true
@@ -703,7 +690,8 @@ export async function renderPhotoView(
     }
   })
 
-  dockInner.append(metaCapsule, backBtn, fitBtn, downloadBtn)
+  dockBar.append(backBtn, fitBtn, metaList, downloadBtn)
+  dockInner.append(dockBar)
   shell.append(bg, content, dockInner)
   container.append(shell)
   const dockSlot = attachCapsuleToolbar(dockInner, signal)

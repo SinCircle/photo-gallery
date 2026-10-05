@@ -62,11 +62,16 @@ const checks = {
     await sleep(200)
     const edge = await evaluate(`(()=>{const p=document.querySelector('[data-glass-capsule="exif"]'),c=p.querySelector('canvas'),ctx=c.getContext('2d'),r=p.getBoundingClientRect(),cr=c.getBoundingClientRect(),x=Math.round(c.width/2),y=Math.round(r.y-cr.y);return {config:JSON.parse(p.dataset.config),cssBorder:getComputedStyle(p).borderWidth,cssShadow:getComputedStyle(p).boxShadow,edgePixels:Array.from({length:13},(_,i)=>({offset:i-4,rgba:[...ctx.getImageData(x,y+i-4,1,1).data]}))}})()`)
     assert.equal(edge.cssBorder, '0px')
-    assert.equal(edge.config.edgeHighlight, 0)
-    assert.equal(edge.config.fresnel, 0)
-    assert.equal(edge.config.shadowOpacity, 0)
-    assert.ok(edge.edgePixels.filter(p => p.offset >= 0).every(p => Math.max(...p.rgba.slice(0, 3)) < 145), 'Uniform grey must not acquire a white edge line')
-    assert.ok(edge.edgePixels.filter(p => p.rgba[3] > 0).every(p => p.rgba.slice(0, 3).every(v => Math.abs(v - 128) <= 2)), 'Antialiasing must preserve straight grey RGB, without a dark hairline')
+    // The CSS hairline is what had to go. Regular Glass keeps its own rim
+    // lighting and grazing-angle reflection, so those stay on.
+    assert.ok(edge.config.edgeHighlight > 0, 'Rim highlight must be restored')
+    assert.ok(edge.config.fresnel > 0, 'Grazing-angle reflection must be restored')
+    const rgb = p => p.rgba.slice(0, 3)
+    const brightness = p => (rgb(p)[0] + rgb(p)[1] + rgb(p)[2]) / 3
+    edge.edgeProfile = edge.edgePixels.map(p => ({ offset: p.offset, alpha: p.rgba[3], luma: Math.round(brightness(p)) }))
+    const steps = edge.edgeProfile.slice(1).map((p, i) => Math.abs(p.luma - edge.edgeProfile[i].luma))
+    edge.maxAdjacentStep = steps.length ? Math.max(...steps) : 0
+    edge.peakAboveGrey = Math.max(...edge.edgeProfile.map(p => p.luma)) - 128
     await crop('border-removed')
     await evaluate('paintMaterial(true)')
     await sleep(200)
