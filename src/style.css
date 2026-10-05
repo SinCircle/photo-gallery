@@ -98,7 +98,9 @@ button:focus-visible {
 .idleToolbar { position: absolute; left: 50%; transform: translateX(-50%); margin: 0; padding: 0; display: block; pointer-events: auto; }
 .idleToolbar[data-edge='bottom'] { top: 100%; transform: translate(-50%, -100%); }
 .idleToolbar[data-edge='top'] { top: 0; }
-.idleToolbar > .toolbarMaterial { position: absolute; inset: 8px; border-radius: inherit; background: var(--glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); pointer-events: none; z-index: 0; }
+.idleToolbar > .toolbarMaterial { position: absolute; left: 50%; bottom: 7px; width: 16px; height: 16px; margin-left: -8px; border-radius: inherit; background: var(--glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); pointer-events: none; z-index: 0; opacity: 0; }
+.idleToolbar[data-edge='top'] > .toolbarMaterial { bottom: auto; top: 7px; }
+.idleToolbar[data-toolbar='collapsed'] > .toolbarMaterial { opacity: 1; }
 .idleToolbar > .toolbarClip { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
 .idleToolbar[data-moving] > .toolbarClip { overflow: visible; }
 .toolbarContent { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); padding: 12px; }
@@ -483,7 +485,11 @@ button:focus-visible {
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 2px;
+  padding: 0 8px;
+  border-radius: var(--radius-sm);
+  background: var(--glass);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
 
   /* Hide scrollbar but keep scrollability */
   scrollbar-width: none; /* Firefox */
