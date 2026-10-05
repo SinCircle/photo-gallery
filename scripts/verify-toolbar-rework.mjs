@@ -135,7 +135,7 @@ const checks = {
     assert.equal(idle.shaderDraws, 0)
     assert.equal(idle.longTasks.length, 0)
     await evaluate(`document.querySelector('#refraction-pattern').remove()`)
-    return { states, idle, note: 'The measured canvas is the library-injected displayed output. Transparent controls were hidden only for marker comparison. White interior stays on in refracted screenshots; no material is repainted into the shader canvas.' }
+    return { states, idle, note: 'The measured canvas is the library-injected displayed output. Text controls were hidden only for marker comparison. The capsule dot backing remains visible; no CSS material is repainted into the shader canvas.' }
   },
   async photos() {
     await ready()

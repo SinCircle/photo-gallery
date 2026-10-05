@@ -9,6 +9,8 @@ const repetitions = Number(process.env.BENCH_REPETITIONS || 5)
 const browser = await browserSession('performance', 9252)
 const { evaluate, send, until, navigate } = browser
 const report = { base, startedAt: new Date().toISOString(), repetitions, graphics: browser.graphics, browser: browser.version.product, method: '1440x1000 Chrome headless; each case forces a fresh document, then applies the same -350px wheel zoom so actual panning is possible; 200 trusted CDP drag events at fixed 25ms targets + 9 wheel events; assert pan matrix changes; 5s input + 2.8s settle (includes asynchronous bitmap update); actual rAF timestamps and main-document PerformanceObserver longtask >=50ms; interleaved cases', runs: [], errors: browser.errors }
+report.servedModule = (await (await fetch(base)).text()).match(/<script[^>]+src="([^"]+)"/)?.[1]
+report.pixelReadback = 'Nine actual output pixels copied to a separate 3x3 CPU probe before/after measurement. The displayed canvas remains GPU-backed. Pixel latency acceptance is independently measured in verify-glass-latency.mjs.'
 const reference = createServer(async (req, res) => {
   try {
     const uri = decodeURIComponent((req.url || '/').split('?')[0])
