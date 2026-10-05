@@ -1,144 +1,99 @@
-import type { LiquidGlass as GlassInstance } from '@ybouane/liquidglass'
+import { captureGlassScene } from './glassScene'
 
-// 1.0.3 has a perpetual loop and no public pause API. Keep its renderer intact,
-// but cancel its next frame after each event-driven paint. Version is pinned.
-type ScheduledGlass = {
-  _rafId: number
-  _renderLoop: () => void
-  _captureGlassContent: (...args: unknown[]) => Promise<void>
-}
+const REGULAR_GLASS = JSON.stringify({ floating: true, cornerRadius: 40, blurAmount: 0 })
 
+// The public API has init/destroy, but no pause. Render a small, isolated scene,
+// copy its documented DOM output, then destroy the instance. The page displays
+// refracted pixels without keeping the library's render loop alive.
 export async function attachGlass(root: HTMLElement, glass: HTMLElement, signal: AbortSignal) {
-  glass.dataset.config = JSON.stringify({ floating: true, cornerRadius: 40, blurAmount: 0 })
+  glass.dataset.config = REGULAR_GLASS
   glass.dataset.glass = 'css'
-  const preference = window.matchMedia('(prefers-reduced-motion: reduce)')
-  let dispose = () => {}
+  const preference = matchMedia('(prefers-reduced-motion: reduce)')
+  let timer = 0
+  let busy = false
+  let again = false
   let generation = 0
-  const local = new AbortController()
-  signal.addEventListener('abort', () => {
-    generation++
-    local.abort()
-    dispose()
-  }, { once: true })
+  let previous = ''
+  let surface: HTMLElement | undefined
 
-  // Regular Glass's floating gesture must not capture clicks from old buttons.
-  glass.addEventListener('pointerdown', (event) => {
-    if ((event.target as Element).closest('button, a, input, textarea')) event.stopPropagation()
-  }, { signal: local.signal })
-
-  const start = async () => {
-    const token = ++generation
-    dispose()
-    glass.dataset.glass = 'css'
-    if (signal.aborted || preference.matches) return
-    const probe = document.createElement('canvas').getContext('webgl')
-    if (!probe) return
-    probe.getExtension('WEBGL_lose_context')?.loseContext()
-    let instance: GlassInstance | undefined
-    const rootStyle = root.getAttribute('style')
-    const glassStyle = glass.getAttribute('style')
-    const restoreStyles = () => {
-      if (rootStyle === null) root.removeAttribute('style'); else root.setAttribute('style', rootStyle)
-      if (glassStyle === null) glass.removeAttribute('style'); else glass.setAttribute('style', glassStyle)
-    }
+  const render = async () => {
+    if (signal.aborted || preference.matches || glass.dataset.toolbar === 'collapsed') return
+    if (busy) { again = true; return }
+    const token = generation
+    let sample: HTMLElement | undefined
+    let instance: Awaited<ReturnType<typeof import('@ybouane/liquidglass').LiquidGlass.init>> | undefined
+    busy = true
     try {
-      await document.fonts.ready
-      if (token !== generation || signal.aborted) return
+      const scene = captureGlassScene(root, glass)
+      if (!scene || scene.key === previous) return
       const { LiquidGlass } = await import('@ybouane/liquidglass')
-      instance = await LiquidGlass.init({ root, glassElements: [glass] })
-      if (token !== generation || signal.aborted) { instance.destroy(); restoreStyles(); return }
-      const scheduled = instance as unknown as ScheduledGlass
-      if (typeof scheduled._renderLoop !== 'function' || typeof scheduled._rafId !== 'number') {
-        throw new Error('Unsupported LiquidGlass scheduler')
-      }
-      cancelAnimationFrame(scheduled._rafId)
-      const paint = scheduled._renderLoop.bind(instance)
-      // The shader canvas otherwise paints over the legacy CSS background and
-      // adds its own outer shadow. Composite through the existing CSS material
-      // and boundary; keep Regular Glass's configuration untouched.
-      const preserveMaterial = () => {
-        const canvas = instance!.glassCanvases.get(glass)
-        const ctx = canvas?.getContext('2d')
-        if (!canvas || !ctx) return
-        const css = getComputedStyle(glass)
-        const pixelRatio = canvas.width / parseFloat(canvas.style.width)
-        const border = parseFloat(css.borderLeftWidth)
-        const x = -parseFloat(canvas.style.left) + border
-        const y = -parseFloat(canvas.style.top) + border
-        const width = glass.clientWidth
-        const height = glass.clientHeight
-        const radius = Math.max(0, parseFloat(css.borderTopLeftRadius) - border)
-        ctx.save()
-        ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
-        ctx.beginPath()
-        ctx.roundRect(x, y, width, height, radius)
-        ctx.globalCompositeOperation = 'destination-in'
-        ctx.fillStyle = '#000'
-        ctx.fill()
-        ctx.globalCompositeOperation = 'source-atop'
-        ctx.fillStyle = css.backgroundColor
-        ctx.fill()
-        ctx.restore()
-      }
-      const events = new AbortController()
-      let frame = 0
-      let stopped = false
-      const wake = () => {
-        if (stopped || frame) return
-        frame = requestAnimationFrame(() => {
-          frame = 0
-          instance!.markChanged()
-          paint()
-          cancelAnimationFrame(scheduled._rafId)
-          preserveMaterial()
-        })
-      }
-      scheduled._renderLoop = wake
-      const capture = scheduled._captureGlassContent.bind(instance)
-      scheduled._captureGlassContent = async (...args) => {
-        await capture(...args)
-        if (!stopped) { instance!.markChanged(); wake() }
-      }
-      const cacheUpdate = instance.capture.onCacheUpdate
-      instance.capture.onCacheUpdate = (element) => { cacheUpdate?.(element); wake() }
-      const changed = () => { instance!.markChanged(); wake() }
-      const observer = new MutationObserver((records) => {
-        const relevant = records.filter(r => !(r.target instanceof HTMLCanvasElement) && r.target !== root)
-        if (!relevant.length) return
-        for (const child of root.children) {
-          if (child !== glass && child instanceof HTMLElement) instance!.capture.invalidateCache(child)
-        }
-        changed()
-      })
-      observer.observe(root, { subtree: true, childList: true, characterData: true, attributes: true,
-        attributeFilter: ['src', 'class', 'style'] })
-      for (const event of ['resize', 'scroll', 'pointerdown', 'pointermove', 'pointerup', 'wheel']) {
-        window.addEventListener(event, changed, { passive: true, signal: events.signal })
-      }
-      root.addEventListener('load', changed, { capture: true, signal: events.signal })
-      root.addEventListener('transitionend', changed, { signal: events.signal })
-      instance.renderer.canvas.addEventListener('webglcontextlost', () => {
-        dispose()
-        glass.dataset.glass = 'css'
-      }, { signal: events.signal })
-      dispose = () => {
-        stopped = true
-        cancelAnimationFrame(frame)
-        cancelAnimationFrame(scheduled._rafId)
-        observer.disconnect()
-        events.abort()
-        instance!.destroy()
-        restoreStyles()
-      }
+      if (signal.aborted || token !== generation || preference.matches) return
+      sample = document.createElement('div')
+      sample.setAttribute('aria-hidden', 'true')
+      sample.style.cssText = `position:fixed;left:${scene.x}px;top:${scene.y}px;width:${scene.width}px;height:${scene.height}px;opacity:0;pointer-events:none;z-index:-1;`
+      const panel = document.createElement('div')
+      panel.dataset.config = REGULAR_GLASS
+      panel.style.cssText = `position:absolute;left:20px;top:20px;width:${scene.width - 40}px;height:${scene.height - 40}px;background:transparent;`
+      sample.append(scene.canvas, panel)
+      document.body.append(sample)
+      instance = await LiquidGlass.init({ root: sample, glassElements: [panel] })
+      // init resolves before the first paint; read only the documented DOM output.
+      await new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
+      if (signal.aborted || token !== generation || preference.matches) return
+      const output = panel.querySelector('canvas')
+      if (!output?.width || !output.height) throw new Error('No glass output')
+      const canvas = document.createElement('canvas')
+      canvas.width = output.width
+      canvas.height = output.height
+      canvas.style.cssText = output.style.cssText
+      canvas.style.zIndex = '0'
+      const context = canvas.getContext('2d')
+      if (!context) throw new Error('Canvas unavailable')
+      context.drawImage(output, 0, 0)
+      const next = document.createElement('span')
+      next.className = 'glassSurface'
+      next.setAttribute('aria-hidden', 'true')
+      next.append(canvas)
+      surface?.remove()
+      surface = next
+      glass.prepend(next)
       glass.dataset.glass = 'webgl'
-      changed()
+      previous = scene.key
     } catch {
-      instance?.destroy()
-      for (const canvas of glass.querySelectorAll('canvas')) canvas.remove()
-      restoreStyles()
+      surface?.remove()
+      surface = undefined
+      previous = ''
       glass.dataset.glass = 'css'
+    } finally {
+      instance?.destroy()
+      sample?.remove()
+      busy = false
+      if (again) { again = false; schedule() }
     }
   }
-  preference.addEventListener('change', () => { void start() }, { signal: local.signal })
-  await start()
+  const schedule = () => {
+    clearTimeout(timer)
+    timer = window.setTimeout(() => { void render() }, 240)
+  }
+  signal.addEventListener('abort', () => {
+    generation++
+    clearTimeout(timer)
+    surface?.remove()
+  }, { once: true })
+  preference.addEventListener('change', () => {
+    generation++
+    previous = ''
+    surface?.remove()
+    surface = undefined
+    glass.dataset.glass = 'css'
+    if (!preference.matches) schedule()
+  }, { signal })
+  root.addEventListener('load', schedule, { capture: true, signal })
+  root.addEventListener('transitionend', schedule, { signal })
+  glass.addEventListener('glassrefresh', schedule, { signal })
+  for (const event of ['resize', 'scroll', 'pointerup', 'wheel']) {
+    window.addEventListener(event, schedule, { passive: true, signal })
+  }
+  await document.fonts.ready
+  schedule()
 }

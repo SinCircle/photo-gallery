@@ -3,6 +3,7 @@ import { getAllPhotos, thumbnailUrl, originalUrl } from '../photos'
 import type { Photo } from '../photos'
 import { clear, el } from '../utils/dom'
 import { invalidateGallery } from './gallery'
+import { attachGlass } from '../utils/glass'
 
 const MAX_UPLOAD_BYTES = Math.floor(14.7 * 1024 * 1024)
 
@@ -36,6 +37,7 @@ export async function renderAdminView(container: HTMLElement, signal: AbortSigna
   content.append(feedback, list)
   shell.append(topbar, content)
   container.append(shell)
+  void attachGlass(shell, bar, signal)
 
   const showError = (error: unknown) => {
     feedback.textContent = error instanceof Error ? error.message : '请求失败'
