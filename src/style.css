@@ -500,6 +500,69 @@ button:focus-visible {
   display: none; /* Chrome/Safari/Edge */
 }
 
+/* Photo controls are the native glass elements; their common grid has no plate. */
+.capsuleDock {
+  position: relative;
+  width: 100%;
+  height: 96px;
+  display: grid;
+  grid-template-columns: 72px 120px 1fr 72px;
+  grid-template-rows: 36px 44px;
+  gap: 16px;
+  align-items: center;
+  pointer-events: none;
+}
+.capsuleDock > [data-glass-scene] { position: absolute; }
+.capsuleDock > .glassCapsule {
+  position: relative;
+  z-index: 1;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .35);
+  box-shadow: none;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  min-width: 0;
+  height: 44px;
+  padding: 0 12px;
+  pointer-events: auto;
+}
+.capsuleDock[data-glass='webgl'] > .glassCapsule {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.capsuleDock > .glassCapsule[hidden] { display: none; }
+.capsuleDock > .dockMetaCapsule { grid-column: 1 / -1; grid-row: 1; height: 36px; padding: 0 16px; }
+.capsuleDock > .dockBack { grid-column: 1; grid-row: 2; }
+.capsuleDock > .dockFit { grid-column: 2; grid-row: 2; }
+.capsuleDock > .dockDownload { grid-column: 4; grid-row: 2; }
+.capsuleDock .dockMeta {
+  height: 36px;
+  padding: 0;
+  color: var(--ink);
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-radius: inherit;
+}
+.capsuleDock .capsuleLabel, .capsuleDock .dockMetaItem {
+  text-shadow: 0 0 3px rgba(255, 255, 255, .9), 0 0 7px rgba(255, 255, 255, .9);
+}
+.capsuleDock > .dockToggle {
+  position: absolute;
+  left: calc(50% - 28px);
+  bottom: 0;
+  width: 56px;
+  height: 32px;
+  cursor: pointer;
+}
+.capsuleDot { display: block; width: 6px; height: 6px; margin: auto; border-radius: 50%; background: var(--ink-muted); box-shadow: 0 0 6px 3px rgba(255, 255, 255, .7); }
+@media (max-width: 360px) {
+  .capsuleDock { height: 156px; grid-template-columns: 1fr 1fr; grid-template-rows: 36px 44px 44px; }
+  .capsuleDock > .dockDownload { grid-column: 2; grid-row: 3; width: 72px; justify-self: end; }
+}
+
 .empty {
   padding: 24px 18px;
   text-align: center;

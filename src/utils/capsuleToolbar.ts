@@ -1,0 +1,132 @@
+const IDLE_MS = 2800
+const MOTION_MS = 810
+const EASING = 'cubic-bezier(.22,.8,.25,1)'
+
+// All four controls stay in their own reserved grid cells. They fade/slide out
+// before the single idle capsule appears, so visible glass faces never pile up.
+export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
+  const slot = document.createElement('div')
+  slot.className = 'toolbarSlot'
+  root.before(slot)
+  slot.append(root)
+  root.dataset.capsuleRoot = ''
+  root.dataset.toolbar = 'expanded'
+  const controls = [...root.querySelectorAll<HTMLElement>(':scope > [data-glass-capsule]')]
+  const toggle = document.createElement('button')
+  toggle.type = 'button'
+  toggle.className = 'glassCapsule dockToggle'
+  toggle.dataset.glassCapsule = 'idle'
+  toggle.setAttribute('aria-label', '展开工具条')
+  const dot = document.createElement('span')
+  dot.className = 'capsuleDot'
+  dot.setAttribute('aria-hidden', 'true')
+  toggle.append(dot)
+  toggle.hidden = true
+  root.append(toggle)
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)')
+  const pointers = new Set<number>()
+  let expanded = true, nearby = false, keyboardFocus = false
+  let lastActivity = performance.now(), timer = 0, generation = 0
+  let animations: Animation[] = []
+
+  const settle = () => {
+    for (const control of controls) {
+      control.hidden = !expanded
+      control.style.opacity = ''
+      control.style.translate = ''
+      const label = control.querySelector<HTMLElement>('.dockMeta')
+      if (label) label.style.filter = ''
+    }
+    toggle.hidden = expanded
+    toggle.style.opacity = ''
+    delete root.dataset.moving
+    root.dispatchEvent(new Event('glassrefresh'))
+  }
+  const setExpanded = (next: boolean) => {
+    if (expanded === next || signal.aborted) return
+    const current = controls.map(control => ({
+      opacity: control.hidden ? '0' : getComputedStyle(control).opacity,
+      translate: control.hidden ? '0px 14px' : getComputedStyle(control).translate,
+      blur: control.hidden ? 'blur(8px)' : getComputedStyle(control.querySelector('.dockMeta') || control).filter,
+    }))
+    const toggleOpacity = toggle.hidden ? '0' : getComputedStyle(toggle).opacity
+    const version = ++generation
+    for (const animation of animations) animation.cancel()
+    animations = []
+    expanded = next
+    root.dataset.toolbar = next ? 'expanded' : 'collapsed'
+    for (const control of controls) control.inert = !next
+    if (reduced.matches) { settle(); return }
+    root.dataset.moving = next ? 'opening' : 'closing'
+    toggle.hidden = false
+    toggle.style.opacity = next ? '0' : '1'
+    controls.forEach((control, i) => {
+      control.hidden = false
+      control.style.opacity = next ? '1' : '0'
+      control.style.translate = next ? '0px 0px' : '0px 14px'
+      animations.push(control.animate([
+        { translate: current[i].translate === 'none' ? '0px 0px' : current[i].translate, offset: 0 },
+        { translate: next ? '0px -3px' : '0px 17px', offset: .64 },
+        { translate: next ? '0px 1px' : '0px 13px', offset: .82 },
+        { translate: next ? '0px 0px' : '0px 14px', offset: 1 },
+      ], { duration: MOTION_MS, easing: EASING, fill: 'backwards' }))
+      animations.push(control.animate([{ opacity: current[i].opacity }, { opacity: next ? 1 : 0 }],
+        { duration: next ? 570 : 480, delay: next ? 240 : 0, easing: EASING, fill: 'backwards' }))
+      const label = control.querySelector<HTMLElement>('.dockMeta')
+      if (label) {
+        label.style.filter = next ? 'blur(0px)' : 'blur(8px)'
+        animations.push(label.animate([{ filter: current[i].blur }, { filter: next ? 'blur(0px)' : 'blur(8px)' }],
+          { duration: next ? 570 : 480, delay: next ? 240 : 0, easing: EASING, fill: 'backwards' }))
+      }
+    })
+    animations.push(toggle.animate([{ opacity: toggleOpacity }, { opacity: next ? 0 : 1 }],
+      { duration: next ? 240 : 330, delay: next ? 0 : 480, easing: EASING, fill: 'backwards' }))
+    void Promise.all(animations.map(animation => animation.finished)).then(() => {
+      if (generation === version && !signal.aborted) settle()
+    }).catch(() => {})
+    root.dispatchEvent(new Event('glassgeometry'))
+  }
+  const checkIdle = () => {
+    timer = 0
+    if (signal.aborted) return
+    const remaining = IDLE_MS - (performance.now() - lastActivity)
+    if (remaining > 0) { timer = window.setTimeout(checkIdle, remaining); return }
+    const focused = document.activeElement
+    if (pointers.size || nearby || (root.contains(focused) && keyboardFocus)) { arm(); return }
+    setExpanded(false)
+  }
+  const arm = () => {
+    lastActivity = performance.now()
+    if (!timer) timer = window.setTimeout(checkIdle, IDLE_MS)
+  }
+  const wake = () => { setExpanded(true); arm() }
+  toggle.addEventListener('click', wake, { signal })
+  window.addEventListener('pointermove', event => {
+    nearby = (expanded ? controls : [toggle]).some(control => {
+      const r = control.getBoundingClientRect()
+      return event.clientX >= r.left - 40 && event.clientX <= r.right + 40 &&
+        event.clientY >= r.top - 40 && event.clientY <= r.bottom + 40
+    })
+    if (nearby) wake()
+    else if (pointers.size) arm()
+  }, { passive: true, signal })
+  window.addEventListener('pointerdown', event => { keyboardFocus = false; pointers.add(event.pointerId); wake() }, { passive: true, signal })
+  const release = (event: PointerEvent) => { pointers.delete(event.pointerId); arm() }
+  window.addEventListener('pointerup', release, { passive: true, signal })
+  window.addEventListener('pointercancel', release, { passive: true, signal })
+  for (const event of ['wheel', 'scroll']) window.addEventListener(event, wake, { passive: true, signal })
+  window.addEventListener('keydown', () => { keyboardFocus = true; wake() }, { signal })
+  root.addEventListener('focusin', wake, { signal })
+  reduced.addEventListener('change', () => {
+    generation++
+    for (const animation of animations) animation.cancel()
+    animations = []
+    settle()
+  }, { signal })
+  signal.addEventListener('abort', () => {
+    clearTimeout(timer)
+    for (const animation of animations) animation.cancel()
+  }, { once: true })
+  arm()
+  return slot
+}

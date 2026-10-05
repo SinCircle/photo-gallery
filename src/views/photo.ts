@@ -8,7 +8,7 @@ import {
 import { formatDateTime, photoMetadata } from '../utils/exif'
 import { getAllPhotos, thumbnailUrl, originalUrl, photoFileName } from '../photos'
 import { attachGlass } from '../utils/glass'
-import { attachIdleToolbar } from '../utils/idleToolbar'
+import { attachCapsuleToolbar } from '../utils/capsuleToolbar'
 
 type FitMode = 'contain' | 'fitHeight' | 'fitWidth' | 'oneToOne'
 
@@ -140,17 +140,19 @@ export async function renderPhotoView(
   content.append(stage)
 
   // Bottom fixed dock: back + metadata + download.
-  const dockInner = el('div', { className: 'glass dockInner' })
-
-  const dockLeft = el('div', { className: 'dockLeft' })
-  const dockRight = el('div', { className: 'dockRight' })
-
-  const backBtn = el('button', { className: 'btn', type: 'button' }, ['返回'])
+  const dockInner = el('div', { className: 'dockInner capsuleDock' })
+  const backBtn = el('button', { className: 'btn glassCapsule dockBack', type: 'button' }, [
+    el('span', { className: 'capsuleLabel' }, ['返回']),
+  ])
+  backBtn.dataset.glassCapsule = 'back'
   backBtn.addEventListener('click', async () => {
     window.location.hash = '#/'
   })
 
   const metaList = el('div', { className: 'dockMeta' })
+  const metaCapsule = el('div', { className: 'glassCapsule dockMetaCapsule' }, [metaList])
+  metaCapsule.dataset.glassCapsule = 'exif'
+  metaList.tabIndex = 0
   const metaLoading = el('div', { className: 'dockMetaLoading' }, [
     el('span', { className: 'dockMetaLoadingDot' }),
     el('span', { className: 'dockMetaLoadingDot' }),
@@ -479,7 +481,9 @@ export async function renderPhotoView(
   // Kick off hi-res after thumb is up (or a short delay if thumb isn't ready).
   scheduleHiStart(260)
 
-  const fitBtn = el('button', { className: 'btn', type: 'button' }, [`比例：${labelForCurrentScale()}`])
+  const fitLabel = el('span', { className: 'capsuleLabel' }, [`比例：${labelForCurrentScale()}`])
+  const fitBtn = el('button', { className: 'btn glassCapsule dockFit', type: 'button' }, [fitLabel])
+  fitBtn.dataset.glassCapsule = 'fit'
   fitBtn.addEventListener('click', () => {
     if (!boxReady) return
 
@@ -519,7 +523,7 @@ export async function renderPhotoView(
     translateX = -centerX * scale
     translateY = -newSafe.centerOffsetY - centerY * scale
 
-    fitBtn.textContent = `比例：${labelForCurrentScale()}`
+    fitLabel.textContent = `比例：${labelForCurrentScale()}`
     clampPan(stageW, stageH)
     apply(stageW, stageH)
   })
@@ -604,7 +608,7 @@ export async function renderPhotoView(
       const nextScale = pinchStartScale * (distance / pinchStartDistance)
 
       const changed = applyScaleAtPoint(stageW, stageH, centerX, centerY, nextScale)
-      if (changed) fitBtn.textContent = `比例：${labelForCurrentScale()}`
+      if (changed) fitLabel.textContent = `比例：${labelForCurrentScale()}`
       return
     }
 
@@ -653,7 +657,7 @@ export async function renderPhotoView(
     const anchorX = e.clientX - stageRect.left
     const anchorY = e.clientY - stageRect.top
     const changed = applyScaleAtPoint(stageW, stageH, anchorX, anchorY, scale * zoomFactor)
-    if (changed) fitBtn.textContent = `比例：${labelForCurrentScale()}`
+    if (changed) fitLabel.textContent = `比例：${labelForCurrentScale()}`
   }
 
   stage.addEventListener('pointerdown', onPointerDown)
@@ -669,9 +673,11 @@ export async function renderPhotoView(
   const albumSave = supportsAlbumSave()
   const downloadLabel = albumSave ? '保存' : '下载'
 
-  const downloadBtn = el('button', { className: 'btn', type: 'button' }, [downloadLabel])
+  const downloadText = el('span', { className: 'capsuleLabel' }, [downloadLabel])
+  const downloadBtn = el('button', { className: 'btn glassCapsule dockDownload', type: 'button' }, [downloadText])
+  downloadBtn.dataset.glassCapsule = 'download'
   downloadBtn.addEventListener('click', async () => {
-    downloadBtn.textContent = '等待'
+    downloadText.textContent = '等待'
     downloadBtn.disabled = true
     let blob: Blob | null = null
     try {
@@ -679,14 +685,14 @@ export async function renderPhotoView(
       const stamp = meta.date ? `SinCircle  ${formatDateTime(meta.date)}` : 'SinCircle'
       blob = await generateBorderedBlob({ url: originalUrl(photo), stampText: stamp })
       await saveBorderedImage(blob)
-      downloadBtn.textContent = downloadLabel
+      downloadText.textContent = downloadLabel
     } catch (err) {
       // Mobile has no download fallback — surface the failure so it's visible.
       const reason = err instanceof Error ? err.name : '未知错误'
       console.error('保存到相册失败', err)
-      downloadBtn.textContent = `失败(${reason})`
+      downloadText.textContent = `失败(${reason})`
       window.setTimeout(() => {
-        if (!downloadBtn.disabled) downloadBtn.textContent = downloadLabel
+        if (!downloadBtn.disabled) downloadText.textContent = downloadLabel
       }, 2000)
       // If the watermarked image was generated but saving failed (e.g. no Web
       // Share on Huawei's browser), fall back to a long-press hint. It shows
@@ -697,12 +703,10 @@ export async function renderPhotoView(
     }
   })
 
-  dockLeft.append(backBtn, fitBtn)
-  dockRight.append(downloadBtn)
-  dockInner.append(dockLeft, metaList, dockRight)
+  dockInner.append(metaCapsule, backBtn, fitBtn, downloadBtn)
   shell.append(bg, content, dockInner)
   container.append(shell)
-  const dockSlot = attachIdleToolbar(dockInner, signal, 'bottom')
+  const dockSlot = attachCapsuleToolbar(dockInner, signal)
   void attachGlass(shell, dockInner, signal)
 
   // Re-layout when dock wraps (e.g., narrow widths).
