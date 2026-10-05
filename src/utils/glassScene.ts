@@ -6,6 +6,7 @@ export function captureGlassScene(root: HTMLElement, glass: HTMLElement) {
   const nativeCapsules = glass.hasAttribute('data-capsule-root')
   const rootBox = glass.getBoundingClientRect()
   const visible = nativeCapsules ? [...glass.querySelectorAll<HTMLElement>(':scope > [data-glass-capsule]:not([hidden])')]
+    .filter(element => getComputedStyle(element).visibility !== 'hidden')
     .map(element => element.getBoundingClientRect()).filter(rect => rect.width && rect.height) : []
   const box = visible.length ? {
     left: Math.min(...visible.map(r => r.left)), top: Math.min(...visible.map(r => r.top)),

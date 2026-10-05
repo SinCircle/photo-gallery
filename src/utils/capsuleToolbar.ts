@@ -21,7 +21,8 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
   dot.className = 'capsuleDot'
   dot.setAttribute('aria-hidden', 'true')
   toggle.append(dot)
-  toggle.hidden = true
+  toggle.style.visibility = 'hidden'
+  toggle.style.translate = '0px -200vh'
   root.append(toggle)
   const reduced = matchMedia('(prefers-reduced-motion: reduce)')
   const pointers = new Set<number>()
@@ -31,13 +32,14 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
 
   const settle = () => {
     for (const control of controls) {
-      control.hidden = !expanded
+      control.style.visibility = expanded ? '' : 'hidden'
       control.style.opacity = ''
-      control.style.translate = ''
+      control.style.translate = expanded ? '' : '0px -200vh'
       const label = control.querySelector<HTMLElement>('.dockMeta')
       if (label) label.style.filter = ''
     }
-    toggle.hidden = expanded
+    toggle.style.visibility = expanded ? 'hidden' : ''
+    toggle.style.translate = expanded ? '0px -200vh' : ''
     toggle.style.opacity = ''
     delete root.dataset.moving
     root.dispatchEvent(new Event('glassrefresh'))
@@ -45,11 +47,11 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
   const setExpanded = (next: boolean) => {
     if (expanded === next || signal.aborted) return
     const current = controls.map(control => ({
-      opacity: control.hidden ? '0' : getComputedStyle(control).opacity,
-      translate: control.hidden ? '0px 14px' : getComputedStyle(control).translate,
-      blur: control.hidden ? 'blur(8px)' : getComputedStyle(control.querySelector('.dockMeta') || control).filter,
+      opacity: control.style.visibility === 'hidden' ? '0' : getComputedStyle(control).opacity,
+      translate: control.style.visibility === 'hidden' ? '0px 14px' : getComputedStyle(control).translate,
+      blur: control.style.visibility === 'hidden' ? 'blur(8px)' : getComputedStyle(control.querySelector('.dockMeta') || control).filter,
     }))
-    const toggleOpacity = toggle.hidden ? '0' : getComputedStyle(toggle).opacity
+    const toggleOpacity = toggle.style.visibility === 'hidden' ? '0' : getComputedStyle(toggle).opacity
     const version = ++generation
     for (const animation of animations) animation.cancel()
     animations = []
@@ -58,10 +60,11 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
     for (const control of controls) control.inert = !next
     if (reduced.matches) { settle(); return }
     root.dataset.moving = next ? 'opening' : 'closing'
-    toggle.hidden = false
+    toggle.style.visibility = ''
+    toggle.style.translate = ''
     toggle.style.opacity = next ? '0' : '1'
     controls.forEach((control, i) => {
-      control.hidden = false
+      control.style.visibility = ''
       control.style.opacity = next ? '1' : '0'
       control.style.translate = next ? '0px 0px' : '0px 14px'
       animations.push(control.animate([
