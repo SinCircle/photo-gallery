@@ -56,3 +56,23 @@ if (source.startsWith(marker)) {
   await writeFile(file, marker + '\n' + source)
   console.log('Applied LiquidGlass 1.0.3 native buffer patch')
 }
+
+// With an already-blurred input, the two identity FBO blits add no information.
+// Bind the same uploaded texture to both shader samplers in this exact case.
+source = await readFile(file, 'utf8')
+const fastMarker = '// photo-gallery: zero-blur identity fast path v1'
+if (!source.includes(fastMarker)) {
+  const replace = (before, after) => {
+    assert.equal(source.split(before).length, 2, 'Fast-path patch target must match exactly once')
+    source = source.replace(before, after)
+  }
+  replace('    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);\n    gl.bindFramebuffer(gl.FRAMEBUFFER, fboSet.bg.fbo);',
+    '    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);\n    this._zeroBlur = blurAmount === 0;\n    if (this._zeroBlur) return;\n    gl.bindFramebuffer(gl.FRAMEBUFFER, fboSet.bg.fbo);')
+  replace('    gl.activeTexture(gl.TEXTURE0);\n    gl.bindTexture(gl.TEXTURE_2D, fboSet.bg.tex);',
+    '    gl.activeTexture(gl.TEXTURE0);\n    gl.bindTexture(gl.TEXTURE_2D, this._zeroBlur ? this.bgTex : fboSet.bg.tex);')
+  replace('    gl.activeTexture(gl.TEXTURE1);\n    gl.bindTexture(gl.TEXTURE_2D, fboSet.blurA.tex);',
+    '    gl.activeTexture(gl.TEXTURE1);\n    gl.bindTexture(gl.TEXTURE_2D, this._zeroBlur ? this.bgTex : fboSet.blurA.tex);')
+  source = source.replace(marker, marker + '\n' + fastMarker)
+  await writeFile(file, source)
+  console.log('Applied exact zero-blur identity fast path')
+}

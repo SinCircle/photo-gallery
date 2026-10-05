@@ -64,18 +64,29 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
     toggle.style.visibility = ''
     toggle.style.translate = ''
     toggle.style.opacity = next ? '0' : '1'
+    let openingCompletion: Animation | undefined
     controls.forEach((control, i) => {
       control.style.visibility = ''
       control.style.opacity = next ? '1' : '0'
       control.style.translate = next ? '0px 0px' : '0px 8px'
-      animations.push(control.animate([
+      const move = control.animate([
         { translate: current[i].translate === 'none' ? '0px 0px' : current[i].translate, offset: 0 },
         { translate: next ? '0px -3px' : '0px 10px', offset: .64 },
         { translate: next ? '0px 1px' : '0px 7px', offset: .82 },
         { translate: next ? '0px 0px' : '0px 8px', offset: 1 },
-      ], { duration: MOTION_MS, easing: EASING, fill: 'backwards' }))
-      animations.push(control.animate([{ opacity: current[i].opacity }, { opacity: next ? 1 : 0 }],
-        { duration: next ? 570 : 480, delay: next ? 240 : 0, easing: EASING, fill: 'backwards' }))
+      ], { duration: MOTION_MS, easing: EASING, fill: 'backwards' })
+      openingCompletion ||= move
+      animations.push(move)
+      const fade = control.animate([{ opacity: current[i].opacity }, { opacity: next ? 1 : 0 }],
+        { duration: next ? 570 : 480, delay: next ? 240 : 0, easing: EASING, fill: 'backwards' })
+      animations.push(fade)
+      if (!next) fade.onfinish = () => {
+        if (generation !== version || signal.aborted) return
+        control.style.visibility = 'hidden'
+        move.cancel()
+        control.style.translate = '0px -200vh'
+        root.dispatchEvent(new Event('glassrefresh'))
+      }
       const label = control.querySelector<HTMLElement>('.dockMeta')
       if (label) {
         label.style.filter = next ? 'blur(0px)' : 'blur(8px)'
@@ -83,9 +94,16 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
           { duration: next ? 570 : 480, delay: next ? 240 : 0, easing: EASING, fill: 'backwards' }))
       }
     })
-    animations.push(toggle.animate([{ opacity: toggleOpacity }, { opacity: next ? 0 : 1 }],
-      { duration: next ? 240 : 450, delay: next ? 0 : 360, easing: EASING, fill: 'backwards' }))
-    void Promise.all(animations.map(animation => animation.finished)).then(() => {
+    const toggleFade = toggle.animate([{ opacity: toggleOpacity }, { opacity: next ? 0 : 1 }],
+      { duration: next ? 240 : 450, delay: next ? 0 : 360, easing: EASING, fill: 'backwards' })
+    animations.push(toggleFade)
+    if (next) toggleFade.onfinish = () => {
+      if (generation !== version || signal.aborted) return
+      toggle.style.visibility = 'hidden'
+      toggle.style.translate = '0px -200vh'
+      root.dispatchEvent(new Event('glassrefresh'))
+    }
+    void (next ? openingCompletion! : toggleFade).finished.then(() => {
       if (generation === version && !signal.aborted) settle()
     }).catch(() => {})
     root.dispatchEvent(new Event('glassgeometry'))
