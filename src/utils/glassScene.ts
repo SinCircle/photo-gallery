@@ -43,7 +43,9 @@ export function captureGlassScene(root: HTMLElement, glass: HTMLElement) {
         backgrounds.set(root, cached)
       }
       ctx.save()
-      ctx.drawImage(cached.canvas, -100 - x, -100 - y, innerWidth + 200, innerHeight + 200)
+      const sx = Math.max(0, x + 100), sy = Math.max(0, y + 100)
+      const sw = Math.min(width, innerWidth + 200 - sx), sh = Math.min(height, innerHeight + 200 - sy)
+      ctx.drawImage(cached.canvas, sx * dpr, sy * dpr, sw * dpr, sh * dpr, sx - x - 100, sy - y - 100, sw, sh)
       ctx.restore()
     })
   }
@@ -70,7 +72,17 @@ export function captureGlassScene(root: HTMLElement, glass: HTMLElement) {
         ctx.roundRect(bounds.x - x, bounds.y - y, bounds.width, bounds.height, radius)
         ctx.clip()
       }
-      ctx.drawImage(image as HTMLImageElement | HTMLCanvasElement, rect.x - x, rect.y - y, rect.width, rect.height)
+      const media = image as HTMLImageElement | HTMLCanvasElement
+      const naturalW = media instanceof HTMLImageElement ? media.naturalWidth : media.width
+      const naturalH = media instanceof HTMLImageElement ? media.naturalHeight : media.height
+      // Crop in source coordinates before resampling. Downscaling a whole
+      // original (often 24MP) just to clip a narrow strip can stall the first
+      // interactive frame; only the pixels actually behind the glass are used.
+      const left = Math.max(x, rect.left), top = Math.max(y, rect.top)
+      const right = Math.min(x + width, rect.right), bottom = Math.min(y + height, rect.bottom)
+      ctx.drawImage(media, (left - rect.left) * naturalW / rect.width, (top - rect.top) * naturalH / rect.height,
+        (right - left) * naturalW / rect.width, (bottom - top) * naturalH / rect.height,
+        left - x, top - y, right - left, bottom - top)
       ctx.restore()
     })
   }
