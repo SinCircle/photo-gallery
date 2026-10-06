@@ -142,7 +142,7 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
 
   const applyChrome = (expanded: boolean) => {
     // The bevel is sized to the pill it is currently drawn on.
-    bar.dataset.config = regularGlassConfig(expanded ? 18 : 14)
+    bar.dataset.config = regularGlassConfig(14)
     if (expanded) bar.removeAttribute('role')
     else bar.setAttribute('role', 'button')
     bar.setAttribute('aria-label', loading() ? '图片加载中' : '展开工具条')

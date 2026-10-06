@@ -21,10 +21,8 @@ export function regularGlassConfig(zRadius = 18) {
     cornerRadius: 22,
     zRadius,
     opacity: 1,
-    // The refracted photo carries its own colour cast, which reads as grubby
-    // against the page; desaturate it and lift it so the bar stays clean.
-    saturation: -0.4,
-    brightness: 0.12,
+    saturation: 0,
+    brightness: 0,
     shadowOpacity: 0.3,
     shadowSpread: 10,
     bevelMode: 0,
