@@ -1,9 +1,9 @@
 const IDLE_MS = 2800
-const OPEN_MS = 1400
-const CLOSE_MS = 1250
+const OPEN_MS = 1800
+const CLOSE_MS = 1600
 const EASING = 'cubic-bezier(.22,.8,.25,1)'
 // Slight overshoot so the geometry settles like a spring instead of stopping dead.
-const MORPH_EASING = 'cubic-bezier(.3,.9,.28,1.06)'
+const MORPH_EASING = 'cubic-bezier(.32,.72,.24,1)'
 
 const IDLE_W = 56
 const IDLE_H = 32
@@ -29,6 +29,58 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
   for (let i = 0; i < 3; i++) dots.append(document.createElement('i'))
   bar.append(dot, dots)
   const reduced = matchMedia('(prefers-reduced-motion: reduce)')
+  // The bar straddles whatever the photo happens to be, so one flat colour for
+  // the labels is wrong somewhere. Sample the pixels the bar sits on and fill
+  // the text with a matching gradient instead: each slice of the gradient takes
+  // the opposite tone from the slice of photo behind that part of the bar.
+  const SAMPLES = 24
+  const inkProbe = document.createElement('canvas')
+  inkProbe.width = SAMPLES
+  inkProbe.height = 1
+  const inkCtx = inkProbe.getContext('2d', { willReadFrequently: true })
+  const LIGHT_INK = '#ffffff'
+  const DARK_INK = '#111111'
+  let inkReadAt = 0
+  const readInk = () => {
+    if (!inkCtx) return
+    const now = performance.now()
+    if (now - inkReadAt < 220) return
+    inkReadAt = now
+    const scene = root.querySelector<HTMLCanvasElement>('canvas[data-glass-scene]')
+    const sceneBox = scene?.getBoundingClientRect()
+    if (!scene?.width || !sceneBox?.width || !sceneBox.height) return
+    const barBox = bar.getBoundingClientRect()
+    const scale = scene.width / sceneBox.width
+    const x = Math.max(0, Math.round((barBox.left - sceneBox.left) * scale))
+    const y = Math.min(scene.height - 1, Math.max(0, Math.round((barBox.top + barBox.height / 2 - sceneBox.top) * scale)))
+    const width = Math.min(scene.width - x, Math.round(barBox.width * scale))
+    if (width < 1) return
+    inkCtx.clearRect(0, 0, SAMPLES, 1)
+    inkCtx.drawImage(scene, x, y, width, 1, 0, 0, SAMPLES, 1)
+    const data = inkCtx.getImageData(0, 0, SAMPLES, 1).data
+    const luma = Array.from({ length: SAMPLES }, (_, i) =>
+      0.2126 * data[i * 4] + 0.7152 * data[i * 4 + 1] + 0.0722 * data[i * 4 + 2])
+    // Piecewise-constant stops: the switch lands exactly where the photo does,
+    // so no slice of text ends up straddling a boundary as a washed-out grey.
+    const stops: string[] = []
+    for (let i = 0; i < SAMPLES; i++) {
+      const ink = luma[i] < 133 ? LIGHT_INK : DARK_INK
+      stops.push(`${ink} ${((i / SAMPLES) * 100).toFixed(3)}%`, `${ink} ${(((i + 1) / SAMPLES) * 100).toFixed(3)}%`)
+    }
+    bar.style.setProperty('--dock-ink-gradient', `linear-gradient(90deg, ${stops.join(', ')})`)
+    bar.dataset.ink = 'gradient'
+    const middle = luma.map((_, i) => i).filter(i => Math.abs(i - (SAMPLES - 1) / 2) <= 2)
+    const centre = middle.reduce((a, i) => a + luma[i], 0) / middle.length
+    bar.dataset.tone = centre < 133 ? 'dark' : 'light'
+    // The buttons are short enough to take a flat tone from their own pixels.
+    for (const item of items) {
+      if (!(item instanceof HTMLButtonElement)) continue
+      const box = item.getBoundingClientRect()
+      const mid = Math.min(SAMPLES - 1, Math.max(0, Math.round(((box.left + box.width / 2 - barBox.left) / barBox.width) * SAMPLES)))
+      item.style.color = luma[mid] < 133 ? LIGHT_INK : DARK_INK
+      item.style.textShadow = luma[mid] < 133 ? '0 1px 3px rgba(0,0,0,.45)' : 'none'
+    }
+  }
   const pointers = new Set<number>()
   // `intent` is what the user asked for; `loading` overrides it while the photo
   // is still arriving, because there is nothing to configure yet.
@@ -60,6 +112,7 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
     dot.style.opacity = expanded ? '0' : loading() ? '0' : '1'
     applyChrome(expanded)
     delete root.dataset.moving
+    if (expanded) { readInk(); startTone() } else stopTone()
     root.dispatchEvent(new Event('glassrefresh'))
   }
   const morph = () => {
@@ -87,14 +140,14 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
       const value = from + (to - from) * k
       return { offset, width: `${Math.max(24, value)}px` }
     })
-    // Damped oscillation: the bar carries momentum past its destination and
-    // rings back down, instead of easing stiffly into place.
+    // One heavy overshoot and a short settling step: the bar reads as having
+    // weight rather than bouncing.
     const widthKeys: Keyframe[] = expanded
-      ? [[0, 0], [.42, 1.12], [.63, .94], [.8, 1.045], [.91, .982], [1, 1]]
-      : [[0, 0], [.5, 1.055], [.7, .955], [.85, 1.022], [.94, .992], [1, 1]]
+      ? [[0, 0], [.46, 1.04], [.74, .992], [1, 1]]
+      : [[0, 0], [.5, 1.026], [.78, .993], [1, 1]]
     const heightKeys: Keyframe[] = expanded
-      ? [[0, 0], [.42, 1.1], [.63, .95], [.8, 1.04], [.91, .985], [1, 1]]
-      : [[0, 0], [.5, 1.06], [.7, .95], [.85, 1.025], [.94, .99], [1, 1]]
+      ? [[0, 0], [.46, 1.038], [.74, .993], [1, 1]]
+      : [[0, 0], [.5, 1.03], [.78, .993], [1, 1]]
     const widthFrames = spring(from.width, targetWidth, widthKeys)
     const heightFrames = spring(from.height, targetHeight, heightKeys)
     animations.push(bar.animate(
@@ -131,6 +184,9 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
     }).catch(() => {})
     root.dispatchEvent(new Event('glassgeometry'))
   }
+  let toneTimer = 0
+  const startTone = () => { if (!toneTimer) toneTimer = window.setInterval(readInk, 480) }
+  const stopTone = () => { if (toneTimer) { window.clearInterval(toneTimer); toneTimer = 0 } }
   const checkIdle = () => {
     timer = 0
     if (signal.aborted) return
@@ -181,6 +237,7 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
   }, { signal })
   signal.addEventListener('abort', () => {
     clearTimeout(timer)
+    stopTone()
     for (const animation of animations) animation.cancel()
   }, { once: true })
   shown = wanted()

@@ -1,6 +1,6 @@
 import { captureGlassScene } from './glassScene'
 import { createGlassRenderer } from './glassRenderer'
-import { GLASS_BLUR_PX, regularGlassConfig } from './glassConfig'
+import { regularGlassConfig } from './glassConfig'
 
 const REGULAR_GLASS = JSON.stringify({ floating: true, cornerRadius: 40, blurAmount: 0 })
 let available: boolean | undefined
@@ -18,7 +18,6 @@ function supportsWebGL() {
 export async function attachGlass(root: HTMLElement, glass: HTMLElement, signal: AbortSignal) {
   const capsules = glass.hasAttribute('data-capsule-root')
   glass.dataset.config = capsules ? regularGlassConfig() : REGULAR_GLASS
-  if (capsules) glass.style.setProperty('--capsule-blur', `${GLASS_BLUR_PX}px`)
   glass.dataset.glass = 'css'
   if (!supportsWebGL()) return
   const lifetime = new AbortController()

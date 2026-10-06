@@ -529,6 +529,8 @@ button:focus-visible {
   backdrop-filter: blur(var(--capsule-blur));
   -webkit-backdrop-filter: blur(var(--capsule-blur));
   overflow: hidden;
+  --dock-ink: var(--ink);
+  color: var(--dock-ink);
   pointer-events: auto;
   /* Collapsing shrinks this one element into the idle capsule, so the bar and
      the small capsule are the same box at both ends of the motion. */
@@ -540,7 +542,7 @@ button:focus-visible {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: rgba(255, 255, 255, .18);
+  background: rgba(255, 255, 255, .1);
   pointer-events: none;
   z-index: 2;
 }
@@ -561,8 +563,16 @@ button:focus-visible {
   min-width: 0;
   height: 44px;
   padding: 0;
-  color: var(--ink);
-  background: none;
+  font-weight: 600;
+  color: var(--dock-ink);
+  /* The run of labels is wide, so it is filled by the computed gradient that
+     matches the photo slice by slice instead of a single flat colour. */
+}
+.capsuleDock > .dockBar[data-ink='gradient'] .dockMeta {
+  background-image: var(--dock-ink-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   border-radius: inherit;
@@ -570,14 +580,20 @@ button:focus-visible {
 .capsuleDock > .dockBar > .dockBack,
 .capsuleDock > .dockBar > .dockFit,
 .capsuleDock > .dockBar > .dockDownload { flex: 0 0 auto; }
+/* On a dark photo the labels flip to white rather than staying black on dark
+   glass. The tone is measured from the pixels under the bar. */
+.capsuleDock > .dockBar[data-tone='dark'] { --dock-ink: rgba(255, 255, 255, .96); }
+.capsuleDock > .dockBar[data-tone='dark'] .dockAction,
+.capsuleDock > .dockBar[data-tone='dark'] .dockMetaItem { text-shadow: 0 1px 3px rgba(0, 0, 0, .45); }
 /* Clickable items carry no chrome of their own. The padding is only a hit area,
    so hovering brightens and lifts that whole capsule-shaped zone, not the text. */
 .capsuleDock .dockAction {
   appearance: none;
   border: 0;
   background: none;
-  color: var(--ink);
+  color: var(--dock-ink);
   font: inherit;
+  font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
   padding: 6px 12px;
@@ -627,17 +643,18 @@ button:focus-visible {
   border-radius: 50%;
   background: var(--ink-muted);
   opacity: 0;
-  animation: capsuleDotTravel 1.65s cubic-bezier(.45,.05,.4,1) infinite;
+  animation: capsuleDotTravel 1.8s cubic-bezier(.4,.05,.35,1) infinite;
 }
-.capsuleDock .capsuleDots i:nth-child(2) { animation-delay: .55s; }
-.capsuleDock .capsuleDots i:nth-child(3) { animation-delay: 1.1s; }
+.capsuleDock .capsuleDots i:nth-child(2) { animation-delay: .6s; }
+.capsuleDock .capsuleDots i:nth-child(3) { animation-delay: 1.2s; }
+/* Three fixed slots. A dot is born in the left one, steps to the middle, then
+   to the right, and leaves to the right as the next dot takes the left slot. */
 @keyframes capsuleDotTravel {
-  0% { transform: translateX(-13px) scale(.55); opacity: 0; }
-  10% { transform: translateX(-13px) scale(1); opacity: .85; }
-  38% { transform: translateX(0) scale(1); opacity: .85; }
-  64% { transform: translateX(13px) scale(1); opacity: .85; }
-  84% { transform: translateX(13px) scale(1); opacity: .85; }
-  100% { transform: translateX(30px) scale(.55); opacity: 0; }
+  0% { transform: translateX(-13px) scale(.5); opacity: 0; }
+  7%, 30% { transform: translateX(-13px) scale(1); opacity: .85; }
+  37%, 58% { transform: translateX(0) scale(1); opacity: .85; }
+  65%, 86% { transform: translateX(13px) scale(1); opacity: .85; }
+  95%, 100% { transform: translateX(27px) scale(.5); opacity: 0; }
 }
 @media (max-width: 560px) {
   .capsuleDock > .dockBar { gap: 8px; padding: 0 11px; }
