@@ -98,9 +98,9 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
       const low = Math.floor(t)
       const high = Math.min(SAMPLES - 1, low + 1)
       const ink = inkAt(low) + (inkAt(high) - inkAt(low)) * (t - low)
-      // Never pure black or white, but close enough to stay crisp: the greys in
-      // between are what read as grubby.
-      const value = Math.min(238, Math.max(20, toSrgb(ink)))
+      // Pure black and white are allowed; the ratio formula still only reaches
+      // them where a patch really needs it.
+      const value = toSrgb(ink)
       stops.push(`rgb(${value},${value},${value}) ${((i / (STOPS - 1)) * 100).toFixed(2)}%`)
     }
     const barBoxNow = bar.getBoundingClientRect()
