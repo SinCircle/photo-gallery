@@ -76,6 +76,10 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
   </filter></defs>`
   root.append(filters)
   let fallback: HTMLCanvasElement | undefined
+  const inkRaster = document.createElement('canvas')
+  inkRaster.height = 1
+  const raster = inkRaster.getContext('2d')!
+  let rasterKey = ''
   const readInk = () => {
     const barBox = bar.getBoundingClientRect()
     if (!barBox.width) return
@@ -133,6 +137,22 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
     const values = Array.from({ length: 48 }, (_, i) => inkForBackdrop(backdropAt(sampled, i / 47, veil)))
     const stops = values.map((v, i) => `rgb(${v.toFixed(3)},${v.toFixed(3)},${v.toFixed(3)}) ${(i / 47 * 100).toFixed(4)}%`)
     bar.style.setProperty('--dock-ink-gradient', `linear-gradient(90deg, ${stops.join(', ')})`)
+    // Store the computed ramp in a tiny, explicitly quantised texture. Reusing
+    // identical pixels avoids CSS gradient raster/dither differences between
+    // outline-on/off paints, even on labels whose outline was never enabled.
+    const key = `${barBox.width}:${stops.join()}`
+    if (key !== rasterKey) {
+      inkRaster.width = Math.max(1, Math.ceil(barBox.width * 2))
+      const pixels = raster.createImageData(inkRaster.width, 1)
+      for (let x = 0; x < inkRaster.width; x++) {
+        const t = (x + .5) / inkRaster.width * 47, low = Math.floor(t), high = Math.min(47, low + 1)
+        const v = Math.round(values[low] + (values[high] - values[low]) * (t - low))
+        pixels.data.set([v, v, v, 255], x * 4)
+      }
+      raster.putImageData(pixels, 0, 0)
+      bar.style.setProperty('--dock-ink-texture', `url("${inkRaster.toDataURL()}")`)
+      rasterKey = key
+    }
     bar.style.setProperty('--dock-ink-size', `${barBox.width}px 100%`)
     bar.dataset.tone = backdropAt(sampled, .5, veil) < .18 ? 'dark' : 'light'
     bar.dataset.ink = 'gradient'

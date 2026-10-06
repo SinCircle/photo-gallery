@@ -580,7 +580,7 @@ button:focus-visible {
   position: relative;
   z-index: 1;
   display: inline-block;
-  background-image: var(--dock-ink-gradient);
+  background-image: var(--dock-ink-texture, var(--dock-ink-gradient));
   background-size: var(--dock-ink-size);
   background-repeat: no-repeat;
   -webkit-background-clip: text;
