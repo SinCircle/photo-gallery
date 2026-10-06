@@ -575,9 +575,11 @@ button:focus-visible {
   /* The run of labels is wide, so it is filled by the computed gradient that
      matches the photo slice by slice instead of a single flat colour. */
 }
-.capsuleDock > .dockBar[data-ink='gradient'] .dockMeta {
-  /* The run of labels is a window onto one bar-wide gradient, so it reads as a
-     single continuous colour rather than each label picking its own. */
+.capsuleDock > .dockBar[data-ink='gradient'] .dockMetaItem {
+  /* Every label is a window onto one bar-wide gradient, so the run reads as a
+     single continuous colour rather than each label picking its own. Filling
+     each item separately — rather than the row as a block — is what lets a
+     halo below land on one item without shading the rest. */
   background-image: var(--dock-ink-gradient);
   background-size: var(--dock-ink-size);
   background-repeat: no-repeat;
@@ -625,6 +627,17 @@ button:focus-visible {
 }
 .capsuleDock .dockAction:hover { --dock-lift: .22; transform: scale(1.08); }
 .capsuleDock .dockAction:active { --dock-lift: .3; transform: scale(1.03); }
+/* A patch of photo the ink cannot separate from on its own gets a halo in the
+   opposite tone, which is dropped behind the glyphs rather than over them, so
+   the computed ink stays the colour it was computed as. */
+.capsuleDock .dockAction[data-halo='dark'],
+.capsuleDock .dockMetaItem[data-halo='dark'] {
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, .8)) drop-shadow(0 0 3px rgba(0, 0, 0, .5));
+}
+.capsuleDock .dockAction[data-halo='light'],
+.capsuleDock .dockMetaItem[data-halo='light'] {
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, .95)) drop-shadow(0 0 3px rgba(255, 255, 255, .6));
+}
 .capsuleDock .capsuleLabel, .capsuleDock .dockMetaItem {
   background: none;
   border-radius: 0;

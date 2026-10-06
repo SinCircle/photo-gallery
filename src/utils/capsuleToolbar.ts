@@ -36,8 +36,6 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
   // the text with a matching gradient instead: each slice of the gradient takes
   // the opposite tone from the slice of photo behind that part of the bar.
   const SAMPLES = 24
-  const metaList = bar.querySelector<HTMLElement>('.dockMeta')
-  const inkTargets = () => items.filter((item): item is HTMLElement => item instanceof HTMLElement)
   const inkProbe = document.createElement('canvas')
   inkProbe.width = SAMPLES
   inkProbe.height = 1
@@ -54,11 +52,16 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
     const barBox = bar.getBoundingClientRect()
     const scale = scene.width / sceneBox.width
     const x = Math.max(0, Math.round((barBox.left - sceneBox.left) * scale))
-    const y = Math.min(scene.height - 1, Math.max(0, Math.round((barBox.top + barBox.height / 2 - sceneBox.top) * scale)))
+    // Read the band the labels sit in, not a single pixel row of it. The glass
+    // refracts a neighbourhood, so one row's extremes are not what a glyph sees;
+    // reading them as if they were was enough to fail a whole label over a
+    // stray dark pixel at the bar's rounded end.
+    const y = Math.max(0, Math.round((barBox.top + barBox.height * 0.2 - sceneBox.top) * scale))
+    const height = Math.max(1, Math.min(scene.height - y, Math.round(barBox.height * 0.6 * scale)))
     const width = Math.min(scene.width - x, Math.round(barBox.width * scale))
     if (width < 1) return
     inkCtx.clearRect(0, 0, SAMPLES, 1)
-    inkCtx.drawImage(scene, x, y, width, 1, 0, 0, SAMPLES, 1)
+    inkCtx.drawImage(scene, x, y, width, height, 0, 0, SAMPLES, 1)
     const data = inkCtx.getImageData(0, 0, SAMPLES, 1).data
     // Relative luminance, not raw sRGB: contrast has to be reasoned about in
     // linear light or the ratios below are meaningless.
@@ -90,6 +93,31 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
       for (let k = -1; k <= 1; k++) sum += veiled(lumaAt(i + k))
       return Math.min(1, Math.max(0, inkValue(sum / 3, preferLight)))
     }
+    // Where even the row's own direction cannot reach a legible ratio there is
+    // nothing left to raise the ink to, so separation comes from a halo in the
+    // opposite tone — the same trick as white text with a dark shadow, placed
+    // only on the patches whose ratio actually asks for it.
+    const contrast = (a: number, b: number) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
+    const HALO_BELOW = 4.5
+    const haloFor = (box: DOMRect) => {
+      if (!barBoxNow.width) return ''
+      const at = (x: number) => Math.round(((x - barBoxNow.left) / barBoxNow.width) * (SAMPLES - 1))
+      const first = Math.max(0, at(box.left))
+      const last = Math.min(SAMPLES - 1, at(box.right))
+      let backdrop = 0
+      let ink = 0
+      let n = 0
+      for (let i = first; i <= last; i++) {
+        backdrop += veiled(lumaAt(i))
+        ink += inkAt(i)
+        n++
+      }
+      if (!n) return ''
+      // Judged over the label's whole footprint rather than its worst single
+      // sample: one stray dark pixel at the end of the bar is not a label that
+      // cannot be read.
+      return contrast(backdrop / n, ink / n) < HALO_BELOW ? (preferLight ? 'dark' : 'light') : ''
+    }
     const STOPS = 48
     const stops: string[] = []
     for (let i = 0; i < STOPS; i++) {
@@ -109,15 +137,17 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
     bar.dataset.tone = centre < 0.18 ? 'dark' : 'light'
     bar.dataset.ink = 'gradient'
     // Every label is a window onto that one gradient, so they line up as a
-    // single run instead of each picking its own colour.
-    const scroll = metaList?.scrollLeft ?? 0
-    for (const target of inkTargets()) {
+    // single run instead of each picking its own colour. Metadata is filled per
+    // item rather than as one block so a halo can land on the item that needs
+    // it alone.
+    for (const target of bar.querySelectorAll<HTMLElement>('.dockAction, .dockMetaItem')) {
       const box = target.getBoundingClientRect()
-      const offset = -(box.left - barBoxNow.left - (target === metaList ? scroll : 0))
+      const offset = -(box.left - barBoxNow.left)
       // Actions carry a second, hover-driven layer under the ink; it stays put.
       target.style.backgroundPosition = target.classList.contains('dockAction')
         ? `${offset}px 0, 0 0`
         : `${offset}px 0`
+      target.dataset.halo = haloFor(box)
     }
   }
   const pointers = new Set<number>()
