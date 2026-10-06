@@ -5,6 +5,8 @@ const EASING = 'cubic-bezier(.22,.8,.25,1)'
 // Slight overshoot so the geometry settles like a spring instead of stopping dead.
 const MORPH_EASING = 'cubic-bezier(.32,.72,.24,1)'
 
+import { regularGlassConfig } from './glassConfig'
+
 const IDLE_W = 56
 const IDLE_H = 32
 
@@ -58,29 +60,54 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
     inkCtx.clearRect(0, 0, SAMPLES, 1)
     inkCtx.drawImage(scene, x, y, width, 1, 0, 0, SAMPLES, 1)
     const data = inkCtx.getImageData(0, 0, SAMPLES, 1).data
+    // Relative luminance, not raw sRGB: contrast has to be reasoned about in
+    // linear light or the ratios below are meaningless.
+    const toLinear = (v: number) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
     const sampled = Array.from({ length: SAMPLES }, (_, i) =>
-      0.2126 * data[i * 4] + 0.7152 * data[i * 4 + 1] + 0.0722 * data[i * 4 + 2])
+      0.2126 * toLinear(data[i * 4] / 255) + 0.7152 * toLinear(data[i * 4 + 1] / 255) + 0.0722 * toLinear(data[i * 4 + 2] / 255))
     const lumaAt = (i: number) => sampled[Math.min(SAMPLES - 1, Math.max(0, i))]
-    // One gradient spans the whole row. Rather than inverting anything, each
-    // point takes the tone that sits as far as possible from the photo behind
-    // it, and the crossover is a smooth ramp so the colour never jumps mid-word.
+    const toSrgb = (y: number) => Math.round(255 * (y <= 0.0031308 ? y * 12.92 : 1.055 * y ** (1 / 2.4) - 0.055))
+    const contrast = (a: number, b: number) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
+    // Continuity beats maximum contrast: the row commits to one direction and
+    // pushes the ink as far as that direction allows (brighter, or darker)
+    // before it will turn around. Only a patch where that direction simply
+    // cannot deliver a legible ratio gets the opposite one.
+    const TARGET_RATIO = 9.5
+    const FLOOR_RATIO = 5
+    const inkValue = (y: number, light: boolean) =>
+      light ? TARGET_RATIO * (y + 0.05) - 0.05 : (y + 0.05) / TARGET_RATIO - 0.05
+    const sorted = [...sampled].sort((a, b) => a - b)
+    const median = sorted[Math.floor(SAMPLES / 2)]
+    const preferLight = median < 0.18
+    const choose = (y: number) => {
+      const preferred = Math.min(1, Math.max(0, inkValue(y, preferLight)))
+      if (contrast(y, preferred) >= FLOOR_RATIO) return preferred
+      const other = Math.min(1, Math.max(0, inkValue(y, !preferLight)))
+      return contrast(y, other) > contrast(y, preferred) ? other : preferred
+    }
+    const inkAt = (i: number) => {
+      // A short moving average keeps the switch from landing as a hard step.
+      let sum = 0
+      for (let k = -1; k <= 1; k++) sum += choose(lumaAt(i + k))
+      return sum / 3
+    }
     const STOPS = 48
     const stops: string[] = []
     for (let i = 0; i < STOPS; i++) {
       const t = (i / (STOPS - 1)) * (SAMPLES - 1)
       const low = Math.floor(t)
       const high = Math.min(SAMPLES - 1, low + 1)
-      const luma = lumaAt(low) + (lumaAt(high) - lumaAt(low)) * (t - low)
-      const ramp = Math.min(1, Math.max(0, (luma - 104) / 56))
-      const eased = ramp * ramp * (3 - 2 * ramp)
-      const value = Math.round(255 * (1 - eased))
+      const ink = inkAt(low) + (inkAt(high) - inkAt(low)) * (t - low)
+      // Never pure black or white, but close enough to stay crisp: the greys in
+      // between are what read as grubby.
+      const value = Math.min(238, Math.max(20, toSrgb(ink)))
       stops.push(`rgb(${value},${value},${value}) ${((i / (STOPS - 1)) * 100).toFixed(2)}%`)
     }
     const barBoxNow = bar.getBoundingClientRect()
     bar.style.setProperty('--dock-ink-gradient', `linear-gradient(90deg, ${stops.join(', ')})`)
     bar.style.setProperty('--dock-ink-size', `${barBoxNow.width}px 100%`)
     const centre = lumaAt(Math.round((SAMPLES - 1) / 2))
-    bar.dataset.tone = centre < 133 ? 'dark' : 'light'
+    bar.dataset.tone = centre < 0.18 ? 'dark' : 'light'
     bar.dataset.ink = 'gradient'
     // Every label is a window onto that one gradient, so they line up as a
     // single run instead of each picking its own colour.
@@ -102,6 +129,8 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
   const wanted = () => intent && !loading()
 
   const applyChrome = (expanded: boolean) => {
+    // The bevel is sized to the pill it is currently drawn on.
+    bar.dataset.config = regularGlassConfig(expanded ? 18 : 14)
     if (expanded) bar.removeAttribute('role')
     else bar.setAttribute('role', 'button')
     bar.setAttribute('aria-label', loading() ? '图片加载中' : '展开工具条')
