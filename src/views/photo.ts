@@ -228,7 +228,7 @@ export async function renderPhotoView(
   let fullNaturalW = 0
 
   // Measured stage metrics.
-  let layoutMetrics: { stageW: number; stageH: number } | undefined
+  let layoutMetrics: { stageW: number; stageH: number; left: number; top: number } | undefined
 
   // Decide one redundant mode (fitHeight or fitWidth) under contain's safe area.
   // This must be stable across all current modes, otherwise the skipped option can “come back”
@@ -254,7 +254,7 @@ export async function renderPhotoView(
     // changes, instead of forcing reads on every drag event.
     if (layoutMetrics) return layoutMetrics
     const stageRect = stage.getBoundingClientRect()
-    return layoutMetrics = { stageW: stageRect.width, stageH: stageRect.height }
+    return layoutMetrics = { stageW: stageRect.width, stageH: stageRect.height, left: stageRect.left, top: stageRect.top }
   }
 
   function safeMetrics(stageW: number, stageH: number, _mode: FitMode) {
@@ -504,8 +504,11 @@ export async function renderPhotoView(
   let startTY = 0
   const activePointers = new Map<number, { x: number; y: number }>()
   let pinching = false
+  let pinchPointers: number[] = []
   let pinchStartDistance = 0
   let pinchStartScale = 1
+  let pinchImageX = 0, pinchImageY = 0
+  let gestureFrame = 0
 
   const setDragging = (nextDragging: boolean) => {
     dragging = nextDragging
@@ -527,14 +530,21 @@ export async function renderPhotoView(
   }
 
   const beginPinch = () => {
-    const points = [...activePointers.values()]
-    if (points.length < 2) return
+    pinchPointers = [...activePointers.keys()].slice(0, 2)
+    if (pinchPointers.length < 2) return
+    const points = pinchPointers.map(id => activePointers.get(id)!)
 
     const dx = points[1].x - points[0].x
     const dy = points[1].y - points[0].y
 
     pinchStartDistance = Math.max(1, Math.hypot(dx, dy))
     pinchStartScale = scale
+    const { stageW, stageH, left, top } = measureLayout()
+    const safe = safeMetrics(stageW, stageH, mode)
+    // Keep one image-space anchor for the entire gesture. Recomputing it from
+    // each finger's separate pointermove lets the centre drift back and forth.
+    pinchImageX = ((points[0].x + points[1].x) / 2 - left - stageW / 2 - translateX) / scale
+    pinchImageY = ((points[0].y + points[1].y) / 2 - top - stageH / 2 - translateY - safe.centerOffsetY) / scale
 
     pinching = true
     setDragging(false)
@@ -545,11 +555,29 @@ export async function renderPhotoView(
     if (document.documentElement.dataset.photoTransition) return
     if (e.pointerType === 'mouse' && e.button !== 0) return
 
+    flushGesture()
+    if (!activePointers.size) {
+      // Catch an in-flight fit/wheel tween at its displayed position before
+      // direct manipulation disables transitions, avoiding a jump to its end.
+      const moving = pan.getAnimations().length || zoom.getAnimations().length
+      if (moving) {
+        const p = new DOMMatrix(getComputedStyle(pan).transform)
+        const z = new DOMMatrix(getComputedStyle(zoom).transform)
+        const { stageW, stageH } = measureLayout()
+        scale = z.a
+        translateX = p.e
+        translateY = p.f - safeMetrics(stageW, stageH, mode).centerOffsetY
+        isFreeZoom = Math.abs(scale - computeScaleFor(mode, stageW, stageH)) > 1e-3
+        updateFitLabel()
+      }
+      stage.classList.add('isManipulating')
+      if (moving) { const { stageW, stageH } = measureLayout(); apply(stageW, stageH) }
+    }
     activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
     stage.setPointerCapture(e.pointerId)
 
     if (activePointers.size >= 2) {
-      beginPinch()
+      if (!pinching) beginPinch()
       return
     }
 
@@ -557,47 +585,67 @@ export async function renderPhotoView(
     tryStartDragging(e.clientX, e.clientY)
   }
 
-  const onPointerMove = (e: PointerEvent) => {
-    if (!activePointers.has(e.pointerId)) return
-    scheduleHiStart(650)
-    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
-
-    const { stageW, stageH } = measureLayout()
+  const updateGesture = () => {
+    gestureFrame = 0
+    if (signal.aborted) return
+    const { stageW, stageH, left, top } = measureLayout()
 
     if (pinching && activePointers.size >= 2) {
-      const points = [...activePointers.values()]
+      const points = pinchPointers.map(id => activePointers.get(id)!)
       const centerClientX = (points[0].x + points[1].x) / 2
       const centerClientY = (points[0].y + points[1].y) / 2
-      const stageRect = stage.getBoundingClientRect()
-      const centerX = centerClientX - stageRect.left
-      const centerY = centerClientY - stageRect.top
       const dx = points[1].x - points[0].x
       const dy = points[1].y - points[0].y
       const distance = Math.max(1, Math.hypot(dx, dy))
       const nextScale = pinchStartScale * (distance / pinchStartDistance)
-
-      const changed = applyScaleAtPoint(stageW, stageH, centerX, centerY, nextScale)
-      if (changed) updateFitLabel()
+      const { minScale, maxScale } = scaleBounds(stageW, stageH)
+      scale = Math.min(maxScale, Math.max(minScale, nextScale))
+      translateX = centerClientX - left - stageW / 2 - pinchImageX * scale
+      translateY = centerClientY - top - stageH / 2 - safeMetrics(stageW, stageH, mode).centerOffsetY - pinchImageY * scale
+      clampPan(stageW, stageH)
+      apply(stageW, stageH)
+      isFreeZoom = Math.abs(scale - computeScaleFor(mode, stageW, stageH)) > 1e-3
+      updateFitLabel()
       return
     }
 
     if (!dragging) return
-    const dx = e.clientX - startX
-    const dy = e.clientY - startY
+    const point = activePointers.values().next().value
+    if (!point) return
+    const dx = point.x - startX
+    const dy = point.y - startY
     translateX = startTX + dx
     translateY = startTY + dy
     clampPan(stageW, stageH)
     apply(stageW, stageH)
   }
 
+  const flushGesture = () => {
+    if (!gestureFrame) return
+    cancelAnimationFrame(gestureFrame)
+    updateGesture()
+  }
+  const onPointerMove = (e: PointerEvent) => {
+    if (!activePointers.has(e.pointerId)) return
+    scheduleHiStart(650)
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+    // Both fingers report separately. Paint their latest positions together,
+    // once per frame, instead of exposing an intermediate one-finger scale.
+    if (!gestureFrame) gestureFrame = requestAnimationFrame(updateGesture)
+  }
+
   const onPointerUp = (e: PointerEvent) => {
     if (!activePointers.has(e.pointerId)) return
+    flushGesture()
     activePointers.delete(e.pointerId)
     scheduleHiStart(650)
     if (stage.hasPointerCapture(e.pointerId)) stage.releasePointerCapture(e.pointerId)
+    if (!activePointers.size) stage.classList.remove('isManipulating')
+    if (pinching && activePointers.size >= 2 && pinchPointers.includes(e.pointerId)) beginPinch()
 
     if (pinching && activePointers.size < 2) {
       pinching = false
+      pinchPointers = []
       if (activePointers.size === 1) {
         const remaining = [...activePointers.values()][0]
         tryStartDragging(remaining.x, remaining.y)
@@ -638,11 +686,16 @@ export async function renderPhotoView(
   stage.addEventListener('wheel', onWheel, { passive: false })
 
   window.addEventListener('blur', () => {
+    cancelAnimationFrame(gestureFrame)
+    gestureFrame = 0
     activePointers.clear()
     pinching = false
+    pinchPointers = []
+    stage.classList.remove('isManipulating')
     setDragging(false)
     scheduleHiStart(650)
   }, { signal })
+  signal.addEventListener('abort', () => cancelAnimationFrame(gestureFrame), { once: true })
 
   window.addEventListener('resize', () => relayout(false), { signal })
 

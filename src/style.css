@@ -384,7 +384,9 @@ button:focus-visible {
 }
 
 .photoStage.isDragging .photoPan,
-.photoStage.isDragging .photoZoom {
+.photoStage.isDragging .photoZoom,
+.photoStage.isManipulating .photoPan,
+.photoStage.isManipulating .photoZoom {
   transition: none;
 }
 
