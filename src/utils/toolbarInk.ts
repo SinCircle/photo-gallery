@@ -1,7 +1,9 @@
+import { captureGlassScene } from './glassScene'
+
 export const linear = (v: number) => v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4
 export const srgb = (v: number) => v <= .0031308 ? v * 12.92 : 1.055 * v ** (1 / 2.4) - .055
 export const contrast = (a: number, b: number) => (Math.max(a, b) + .05) / (Math.min(a, b) + .05)
-export const veiled = (y: number) => linear(.9 * srgb(y) + .1)
+export const veiled = (y: number, veil = .1) => linear((1 - veil) * srgb(y) + veil)
 const channels = Float64Array.from({ length: 256 }, (_, i) => linear(i / 255))
 const luminance = (data: Uint8ClampedArray, p: number) =>
   .2126 * channels[data[p]] + .7152 * channels[data[p + 1]] + .0722 * channels[data[p + 2]]
@@ -46,10 +48,10 @@ export function inkForBackdrop(y: number) {
   return 255 * (1 - t * t * (3 - 2 * t))
 }
 
-export function backdropAt(sampled: number[], fraction: number) {
+export function backdropAt(sampled: number[], fraction: number, veil = .1) {
   const t = Math.max(0, Math.min(sampled.length - 1, fraction * sampled.length - .5))
   const low = Math.floor(t), high = Math.min(sampled.length - 1, low + 1)
-  return veiled(sampled[low] + (sampled[high] - sampled[low]) * (t - low))
+  return veiled(sampled[low] + (sampled[high] - sampled[low]) * (t - low), veil)
 }
 
 export { luminance }
@@ -73,6 +75,7 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
     <feMerge><feMergeNode in="whiteRing"/><feMergeNode in="blackRing"/></feMerge>
   </filter></defs>`
   root.append(filters)
+  let fallback: HTMLCanvasElement | undefined
   const readInk = () => {
     const barBox = bar.getBoundingClientRect()
     if (!barBox.width) return
@@ -106,17 +109,34 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
     // Before the thumbnail loads the scene is empty, but the visible backdrop
     // is the page. Apply the same response to that colour, never to empty black.
     const ready = !!document.querySelector<HTMLImageElement>('.photoImgLow')?.naturalWidth
-    const strip = ready && scene?.width ? sampleInkBand(scene, band, 24) : undefined
+    const nativeReady = scene?.dataset.ready !== undefined
+    let source = nativeReady ? scene : undefined
+    // Thumbnail decoding can finish while the native renderer is still waiting
+    // for fonts. Its default 300x150 canvas is NOT a black photograph. Capture
+    // the visible photo/background locally until the native scene is painted.
+    if (ready && !nativeReady) {
+      if (!fallback) {
+        fallback = document.createElement('canvas')
+        fallback.style.cssText = 'position:absolute;opacity:0;pointer-events:none'
+        root.append(fallback)
+      }
+      const shell = root.closest<HTMLElement>('.photoShell')
+      if (shell) source = captureGlassScene(shell, root)?.draw(fallback)
+    }
+    const strip = ready && source?.width ? sampleInkBand(source, band, 24) : undefined
+    // CSS fallback has a .35 white surface plus the .1 veil; native glass only
+    // has the veil. Both use the same ink response, with their actual surface.
+    const veil = nativeReady && root.dataset.glass === 'webgl' ? .1 : .415
     const bg = getComputedStyle(document.body).backgroundColor.match(/[\d.]+/g)?.map(Number) || [244, 244, 244]
     const pageLuma = .2126 * linear(bg[0] / 255) + .7152 * linear(bg[1] / 255) + .0722 * linear(bg[2] / 255)
     const sampled = strip?.sampled || Array<number>(24).fill(pageLuma)
-    const values = Array.from({ length: 48 }, (_, i) => inkForBackdrop(backdropAt(sampled, i / 47)))
+    const values = Array.from({ length: 48 }, (_, i) => inkForBackdrop(backdropAt(sampled, i / 47, veil)))
     const stops = values.map((v, i) => `rgb(${v.toFixed(3)},${v.toFixed(3)},${v.toFixed(3)}) ${(i / 47 * 100).toFixed(4)}%`)
     bar.style.setProperty('--dock-ink-gradient', `linear-gradient(90deg, ${stops.join(', ')})`)
     bar.style.setProperty('--dock-ink-size', `${barBox.width}px 100%`)
-    bar.dataset.tone = backdropAt(sampled, .5) < .18 ? 'dark' : 'light'
+    bar.dataset.tone = backdropAt(sampled, .5, veil) < .18 ? 'dark' : 'light'
     bar.dataset.ink = 'gradient'
-    const dotInk = inkForBackdrop(backdropAt(sampled, .5)).toFixed(3)
+    const dotInk = inkForBackdrop(backdropAt(sampled, .5, veil)).toFixed(3)
     bar.style.setProperty('--dock-dot-ink', `rgb(${dotInk},${dotInk},${dotInk})`)
     const labels = []
     for (const [index, target] of targets.entries()) {
@@ -137,7 +157,7 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
             const t = Math.max(0, Math.min(47, (px - barBox.left) / barBox.width * 47))
             const low = Math.floor(t), high = Math.min(47, low + 1)
             const ink = linear((values[low] + (values[high] - values[low]) * (t - low)) / 255)
-            const backdrop = veiled(luminance(strip.data, (row * strip.width + col) * 4))
+            const backdrop = veiled(luminance(strip.data, (row * strip.width + col) * 4), veil)
             minimum = Math.min(minimum, contrast(ink, backdrop))
           }
         }
@@ -147,7 +167,7 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
     }
     // The probe listens to this event to check the real sampler against an
     // independent pixel-area oracle, rather than duplicating our algorithm.
-    bar.dispatchEvent(new CustomEvent('dockink', { bubbles: true, detail: { sampled, values, band, labels, source: strip ? 'photo' : 'page' } }))
+    bar.dispatchEvent(new CustomEvent('dockink', { bubbles: true, detail: { sampled, values, band, labels, veil, source: strip ? nativeReady ? 'photo' : 'fallback-photo' : 'page' } }))
   }
   // Consume each new scene immediately; a 480ms polling window otherwise turns
   // even a continuous colour function into visible steps during a live drag.

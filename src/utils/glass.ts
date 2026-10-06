@@ -45,6 +45,7 @@ export async function attachGlass(root: HTMLElement, glass: HTMLElement, signal:
       }
       force = false
       scene.draw(renderer.scene)
+      renderer.scene.dataset.ready = ''
       glass.dispatchEvent(new Event('glassscene'))
       renderer.changed()
       previous = scene.key
@@ -92,6 +93,11 @@ export async function attachGlass(root: HTMLElement, glass: HTMLElement, signal:
     if (signal.aborted) return
     schedule(true)
     // The library's own next frame paints the now-dirty live source.
-    requestAnimationFrame(() => { if (!signal.aborted && renderer) glass.dataset.glass = 'webgl' })
+    requestAnimationFrame(() => {
+      if (!signal.aborted && renderer) {
+        glass.dataset.glass = 'webgl'
+        glass.dispatchEvent(new Event('glassscene'))
+      }
+    })
   } catch { glass.dataset.glass = 'css' }
 }

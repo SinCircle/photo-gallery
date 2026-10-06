@@ -12,6 +12,7 @@ try {
   await navigate(`${report.base}/?ink=${Date.now()}#/photo/${encodeURIComponent(photo)}`)
   await until(`document.querySelector('.photoStage')?.classList.contains('hiDone') && !document.querySelector('.dockMetaLoading') && document.querySelector('.dockInner')?.dataset.glass==='webgl'`)
   await evaluate('document.fonts.ready')
+  if(!report.resampler)report.resampler=await evaluate(`(()=>{const source=document.createElement('canvas');source.width=936;source.height=26;const s=source.getContext('2d');const dest=document.createElement('canvas');dest.width=24;dest.height=1;const d=dest.getContext('2d');return Array.from({length:26},(_,y)=>{s.fillStyle='black';s.fillRect(0,0,936,26);s.fillStyle='white';s.fillRect(0,y,936,1);d.drawImage(source,0,0,936,26,0,0,24,1);return {row:y,red:d.getImageData(12,0,1,1).data[0],areaLuminance:1/26}})})()`)
   for(let i=0;i<4;i++){await send('Input.dispatchMouseEvent',{type:'mouseWheel',x:720,y:500,deltaX:0,deltaY:-120});await sleep(220)}
   await send('Input.dispatchMouseEvent',{type:'mouseMoved',x:720,y:965})
   await until(`document.querySelector('.dockInner').dataset.toolbar==='expanded' && !document.querySelector('.dockInner').dataset.moving`)
@@ -29,7 +30,7 @@ try {
   assert.ok(Math.max(...deltas)<=8,'0.25px movement must not jump the ink')
   await evaluate(`document.querySelector('.photoPan').style.translate='0px 0';document.querySelector('.dockInner').dispatchEvent(new Event('glassrefresh'))`)
   await sleep(200)
-  const geometry=await evaluate(`(()=>{const bar=document.querySelector('.dockBar');return {bar:bar.getBoundingClientRect().toJSON(),diagnostic:bar.__inkDiagnostic,labels:[...bar.querySelectorAll('.dockAction,.dockMetaItem')].map(e=>({text:e.textContent,halo:e.hasAttribute('data-halo'),rect:e.querySelector('.dockFill').getBoundingClientRect().toJSON()}))}})()`)
+  const geometry=await evaluate(`(()=>{const bar=document.querySelector('.dockBar');return {bar:bar.getBoundingClientRect().toJSON(),diagnostic:bar.__inkDiagnostic,labels:[...bar.querySelectorAll('.dockAction,.dockMetaItem')].map(e=>{const r=e.querySelector('.dockFill').getBoundingClientRect().toJSON(),clip=e.closest('.dockMeta')?.getBoundingClientRect();if(clip){r.left=Math.max(r.left,clip.left);r.right=Math.min(r.right,clip.right);r.top=Math.max(r.top,clip.top);r.bottom=Math.min(r.bottom,clip.bottom)}return {text:e.textContent,halo:e.hasAttribute('data-halo'),rect:r}})}})()`)
   const clip={x:geometry.bar.x-2,y:geometry.bar.y-2,width:geometry.bar.width+4,height:geometry.bar.height+4,scale:6}
   const shots={},states={}
   for(const [mode,css] of Object.entries({on:'',off:'.dockOutline{display:none!important}',mask:'.dockOutline{display:none!important}.dockFill{background-image:linear-gradient(red,red)!important}',backdrop:'.dockFill,.dockOutline{visibility:hidden!important}'})) {
@@ -61,6 +62,7 @@ try {
   const result={photo,series,maxStep:Math.max(...deltas),geometry,pixels,states};report.photos.push(result)
   await writeFile(`${b.out}/report.json`,JSON.stringify(report,null,2))
   console.log(photo,JSON.stringify(pixels.map(p=>({text:p.text,halo:p.halo,core:p.maxCoreChange,min:p.minimum,failing:p.failing,outline:p.outlinePixels}))))
+  assert.deepEqual(states.on.ink.values,states.off.ink.values,'Outline comparison requires identical computed ink')
   for(const label of pixels.filter(l=>l.count>0)) {
    assert.equal(label.maxCoreChange,0,`${label.text}: outline must preserve opaque glyph cores`)
    if(label.failing)assert.ok(label.halo&&label.outlinePixels>0,`${label.text}: rendered contrast below 5 must receive a visible outline`)
