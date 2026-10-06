@@ -499,6 +499,13 @@ button:focus-visible {
 }
 
 /* The photo controls are one native glass bar, laid out in a single row. */
+/* Drives the hover lift as a plain number so the background layer that carries
+   it can be animated; an unregistered custom property would snap instead. */
+@property --dock-lift {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
 .capsuleDock {
   position: relative;
   width: 100%;
@@ -519,13 +526,13 @@ button:focus-visible {
   height: 44px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   box-sizing: border-box;
-  padding: 0 14px;
+  padding: 0 16px;
   border: 0;
   border-radius: 999px;
   background: rgba(255, 255, 255, .35);
-  box-shadow: var(--shadow);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, .1), 0 1px 2px rgba(0, 0, 0, .05);
   backdrop-filter: blur(var(--capsule-blur));
   -webkit-backdrop-filter: blur(var(--capsule-blur));
   overflow: hidden;
@@ -568,15 +575,26 @@ button:focus-visible {
   /* The run of labels is wide, so it is filled by the computed gradient that
      matches the photo slice by slice instead of a single flat colour. */
 }
-.capsuleDock > .dockBar[data-ink='gradient'] .dockMeta,
-.capsuleDock > .dockBar[data-ink='gradient'] .dockAction {
-  /* Every label is a window onto one bar-wide gradient, so the run reads as a
-     single continuous colour that follows the photo behind it. */
+.capsuleDock > .dockBar[data-ink='gradient'] .dockMeta {
+  /* The run of labels is a window onto one bar-wide gradient, so it reads as a
+     single continuous colour rather than each label picking its own. */
   background-image: var(--dock-ink-gradient);
   background-size: var(--dock-ink-size);
   background-repeat: no-repeat;
   -webkit-background-clip: text;
   background-clip: text;
+  color: transparent;
+}
+.capsuleDock > .dockBar[data-ink='gradient'] .dockAction {
+  /* Two layers: the same ink gradient on the glyphs, and beneath it the lift
+     that fills the whole capsule-shaped hit zone. Clipping each layer to its
+     own box is what keeps the lightening off the label itself. */
+  background-image: var(--dock-ink-gradient),
+    linear-gradient(rgb(255 255 255 / var(--dock-lift, 0)), rgb(255 255 255 / var(--dock-lift, 0)));
+  background-size: var(--dock-ink-size), auto;
+  background-repeat: no-repeat, no-repeat;
+  -webkit-background-clip: text, padding-box;
+  background-clip: text, padding-box;
   color: transparent;
 }
 .capsuleDock > .dockBar > .dockBack,
@@ -588,11 +606,13 @@ button:focus-visible {
 .capsuleDock > .dockBar[data-tone='dark'] .dockAction,
 .capsuleDock > .dockBar[data-tone='dark'] .dockMetaItem { text-shadow: 0 1px 3px rgba(0, 0, 0, .45); }
 /* Clickable items carry no chrome of their own. The padding is only a hit area,
-   so hovering brightens and lifts that whole capsule-shaped zone, not the text. */
+   so hovering lightens and lifts that whole capsule-shaped zone, not the text. */
 .capsuleDock .dockAction {
   appearance: none;
   border: 0;
-  background: none;
+  background-color: transparent;
+  background-image: linear-gradient(rgb(255 255 255 / var(--dock-lift, 0)), rgb(255 255 255 / var(--dock-lift, 0)));
+  background-clip: padding-box;
   color: var(--dock-ink);
   font: inherit;
   font-weight: 600;
@@ -601,10 +621,10 @@ button:focus-visible {
   padding: 6px 12px;
   border-radius: 999px;
   transform-origin: 50% 50%;
-  transition: filter 260ms cubic-bezier(.2,.8,.2,1), transform 260ms cubic-bezier(.2,.8,.2,1);
+  transition: --dock-lift 260ms cubic-bezier(.2,.8,.2,1), transform 260ms cubic-bezier(.2,.8,.2,1);
 }
-.capsuleDock .dockAction:hover { filter: brightness(1.3); transform: scale(1.08); }
-.capsuleDock .dockAction:active { transform: scale(1.03); }
+.capsuleDock .dockAction:hover { --dock-lift: .22; transform: scale(1.08); }
+.capsuleDock .dockAction:active { --dock-lift: .3; transform: scale(1.03); }
 .capsuleDock .capsuleLabel, .capsuleDock .dockMetaItem {
   background: none;
   border-radius: 0;
@@ -659,7 +679,7 @@ button:focus-visible {
   95%, 100% { transform: translateX(27px) scale(.5); opacity: 0; }
 }
 @media (max-width: 560px) {
-  .capsuleDock > .dockBar { gap: 8px; padding: 0 11px; }
+  .capsuleDock > .dockBar { gap: 10px; padding: 0 13px; }
 }
 
 .empty {
