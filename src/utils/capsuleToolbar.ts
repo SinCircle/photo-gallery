@@ -73,31 +73,22 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
     // against the bare photo therefore overstates the contrast it will have,
     // which is what let mid-tone photos wash the labels out.
     const veiled = (y: number) => toLinear(0.9 * toSrgb01(y) + 0.1)
-    const contrast = (a: number, b: number) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
-    // Continuity beats maximum contrast: the row commits to one direction and
-    // pushes the ink as far as that direction allows (brighter, or darker)
-    // before it will turn around. Only a patch where that direction simply
-    // cannot deliver a legible ratio gets the opposite one.
     const TARGET_RATIO = 9.5
-    const FLOOR_RATIO = 5
     const inkValue = (y: number, light: boolean) =>
       light ? TARGET_RATIO * (y + 0.05) - 0.05 : (y + 0.05) / TARGET_RATIO - 0.05
     const sorted = sampled.map(veiled).sort((a, b) => a - b)
     const median = sorted[Math.floor(SAMPLES / 2)]
+    // Light and dark ink reach equal contrast on a backdrop of this luminance,
+    // so it is the honest place to turn around — and the row turns around here,
+    // once, rather than inverting again for every bright patch it crosses.
     const preferLight = median < 0.18
-    const choose = (y: number) => {
-      const preferred = Math.min(1, Math.max(0, inkValue(y, preferLight)))
-      if (contrast(y, preferred) >= FLOOR_RATIO) return preferred
-      const other = Math.min(1, Math.max(0, inkValue(y, !preferLight)))
-      return contrast(y, other) > contrast(y, preferred) ? other : preferred
-    }
     const inkAt = (i: number) => {
-      // Smooth the backdrop, never the ink: averaging stays in the direction the
-      // run already committed to, whereas averaging the ink itself would blend
-      // black and white into the grey middle this row is trying to avoid.
+      // Smooth the backdrop, never the ink: averaging stays inside the direction
+      // the row already committed to, whereas averaging the ink itself would
+      // blend black and white into the grey middle this row is trying to avoid.
       let sum = 0
       for (let k = -1; k <= 1; k++) sum += veiled(lumaAt(i + k))
-      return choose(sum / 3)
+      return Math.min(1, Math.max(0, inkValue(sum / 3, preferLight)))
     }
     const STOPS = 48
     const stops: string[] = []
@@ -114,7 +105,7 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
     const barBoxNow = bar.getBoundingClientRect()
     bar.style.setProperty('--dock-ink-gradient', `linear-gradient(90deg, ${stops.join(', ')})`)
     bar.style.setProperty('--dock-ink-size', `${barBoxNow.width}px 100%`)
-    const centre = lumaAt(Math.round((SAMPLES - 1) / 2))
+    const centre = veiled(lumaAt(Math.round((SAMPLES - 1) / 2)))
     bar.dataset.tone = centre < 0.18 ? 'dark' : 'light'
     bar.dataset.ink = 'gradient'
     // Every label is a window onto that one gradient, so they line up as a
