@@ -1,4 +1,5 @@
 import { captureGlassScene } from './glassScene'
+import { EASE_IN_OUT, EASE_OUT } from './motion'
 
 export const linear = (v: number) => v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4
 export const srgb = (v: number) => v <= .0031308 ? v * 12.92 : 1.055 * v ** (1 / 2.4) - .055
@@ -38,14 +39,12 @@ export function sampleInkBand(scene: HTMLCanvasElement, band: { left: number, to
   return { sampled, data, x, y, width, height, sx, sy, box }
 }
 
-// A continuous, per-position response. A hard light/dark threshold necessarily
-// jumps even with perfect sampling. The transition needs outline support where
-// the fill alone cannot reach the contrast floor; never average neighbouring inks.
-export function inkForBackdrop(y: number) {
-  if (y <= .1) return 255 * srgb(Math.min(1, 9.5 * (y + .05) - .05))
-  if (y >= .3) return 255 * srgb(Math.max(0, (y + .05) / 9.5 - .05))
-  const t = (y - .1) / .2
-  return 255 * (1 - t * t * (3 - 2 * t))
+// Keep the fill crisp. Mid-tone glass favours white, with local dark support;
+// bright glass uses black. Hysteresis avoids toggling around a single threshold.
+// Blending these two choices would produce grey with almost no contrast.
+export function inkForBackdrop(y: number, previous?: number) {
+  const threshold = previous === 255 ? .30 : previous === 0 ? .24 : .27
+  return y <= threshold ? 255 : 0
 }
 
 export function backdropAt(sampled: number[], fraction: number, veil = .1) {
@@ -56,141 +55,241 @@ export function backdropAt(sampled: number[], fraction: number, veil = .1) {
 
 export { luminance }
 
+// Veil conversion is a lookup during the pixel scan, not two powers per pixel.
+const veilTables = new Map<number, Float64Array>()
+const clamp = (v: number) => Math.max(0, Math.min(1, v))
+const smooth = (v: number) => { const t = clamp(v); return t * t * (3 - 2 * t) }
+type MaskState = { from: [number[], number[]]; to: [number[], number[]]; fade?: Animation }
+
 export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: AbortSignal) {
-  const filters = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-  filters.setAttribute('width', '0')
-  filters.setAttribute('height', '0')
-  filters.setAttribute('aria-hidden', 'true')
-  filters.style.position = 'absolute'
-  // Subtract the original alpha, so this layer contains ONLY the outline.
-  // Painting a complete stroked clone behind background-clip:text can still
-  // tint nearly opaque antialiased core pixels by one channel value.
-  filters.innerHTML = `<defs><filter id="dock-outline-ring" x="-10%" y="-50%" width="120%" height="200%" color-interpolation-filters="sRGB">
-    <feMorphology in="SourceAlpha" operator="dilate" radius="1" result="outer"/>
-    <feMorphology in="SourceAlpha" operator="dilate" radius=".5" result="inner"/>
-    <feComposite in="outer" in2="inner" operator="out" result="outerRing"/>
-    <feComposite in="inner" in2="SourceAlpha" operator="out" result="innerRing"/>
-    <feFlood flood-color="white"/><feComposite in2="outerRing" operator="in" result="whiteRing"/>
-    <feFlood flood-color="black"/><feComposite in2="innerRing" operator="in" result="blackRing"/>
-    <feMerge><feMergeNode in="whiteRing"/><feMergeNode in="blackRing"/></feMerge>
-  </filter></defs>`
-  root.append(filters)
   let fallback: HTMLCanvasElement | undefined
-  const inkRaster = document.createElement('canvas')
-  inkRaster.height = 1
-  const raster = inkRaster.getContext('2d')!
-  let rasterKey = ''
+  let pending = 0
+  let lastMotionSample = -Infinity
+  const tones = new WeakMap<HTMLElement, number>()
+  const paintedTones = new WeakMap<HTMLElement, number>()
+  const fades = new Map<HTMLElement, Animation>()
+  const masks: MaskState[] = []
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)')
+  const cancelFades = () => {
+    for (const fade of fades.values()) fade.cancel()
+    fades.clear()
+    for (const mask of masks) { mask.fade?.cancel(); mask.fade = undefined }
+  }
+  reduced.addEventListener('change', () => { if (reduced.matches) cancelFades() }, { signal })
+  const set = (element: HTMLElement, name: string, value: string) => {
+    if (element.style.getPropertyValue(name) !== value) element.style.setProperty(name, value)
+  }
   const readInk = () => {
+    cancelAnimationFrame(pending)
+    pending = 0
+    if (signal.aborted || !root.isConnected || root.closest('.photoShell[data-entering]')) return
+    // The geometry and glass keep their full-rate animation. Colour/support
+    // already interpolate for 280–420ms, so resampling them every geometry
+    // frame only invalidates the same styles again before that fade can move.
+    const now = performance.now()
+    if (root.dataset.moving !== undefined && bar.dataset.ink && now - lastMotionSample < 80) return
+    lastMotionSample = now
+    const expanded = root.dataset.toolbar === 'expanded'
+    // Prepare glyph nodes while the loading capsule is still closed, rather
+    // than adding every shadow/fill at the first visible expansion frame.
+    const allTargets = [...bar.querySelectorAll<HTMLElement>('.dockAction, .dockMetaItem')]
+    const allFills = allTargets.map(target => {
+      const glyph = target.querySelector<HTMLElement>('.capsuleLabel') || target
+      let fill = glyph.querySelector<HTMLElement>('.dockFill')
+      if (!fill) {
+        const text = glyph.textContent || ''
+        fill = document.createElement('span')
+        fill.className = 'dockFill'
+        fill.textContent = text
+        const shadow = document.createElement('span')
+        shadow.className = 'dockShadow'
+        shadow.dataset.label = text
+        shadow.setAttribute('aria-hidden', 'true')
+        glyph.classList.add('dockGlyph')
+        glyph.replaceChildren(shadow, fill)
+      }
+      return fill
+    })
+    const targets = expanded ? allTargets : []
+    const fills = expanded ? allFills : []
+    // Finish DOM writes before taking all geometry reads together.
     const barBox = bar.getBoundingClientRect()
     if (!barBox.width) return
-    const targets = [...bar.querySelectorAll<HTMLElement>('.dockAction, .dockMetaItem')]
-    for (const target of targets) {
-      const glyph = target.querySelector<HTMLElement>('.capsuleLabel') || target
-      if (glyph.querySelector('.dockFill')) continue
-      const text = glyph.textContent || ''
-      const fill = document.createElement('span')
-      fill.className = 'dockFill'
-      fill.textContent = text
-      const outline = document.createElement('span')
-      outline.className = 'dockOutline'
-      outline.dataset.label = text
-      outline.setAttribute('aria-hidden', 'true')
-      glyph.classList.add('dockGlyph')
-      glyph.replaceChildren(outline, fill)
-    }
-    const textBoxes = targets.map(target => {
-      const range = document.createRange()
-      range.selectNodeContents(target.querySelector('.dockFill')!)
-      return range.getBoundingClientRect()
-    }).filter(box => box.width && box.height)
-    const expanded = root.dataset.toolbar === 'expanded'
-    const band = {
+    const boxes = fills.map(fill => fill.getBoundingClientRect())
+    const visible = boxes.filter(box => box.width && box.height)
+    const bandFor = (visible: DOMRect[]) => ({
       left: barBox.left, right: barBox.right,
-      top: expanded && textBoxes.length ? Math.max(barBox.top, Math.min(...textBoxes.map(b => b.top))) : barBox.top + barBox.height / 2 - 3,
-      bottom: expanded && textBoxes.length ? Math.min(barBox.bottom, Math.max(...textBoxes.map(b => b.bottom))) : barBox.top + barBox.height / 2 + 3,
-    }
+      top: expanded && visible.length ? Math.max(barBox.top, Math.min(...visible.map(b => b.top))) : barBox.top + barBox.height / 2 - 3,
+      bottom: expanded && visible.length ? Math.min(barBox.bottom, Math.max(...visible.map(b => b.bottom))) : barBox.top + barBox.height / 2 + 3,
+    })
+    const band = bandFor(visible)
+    const twoRows = expanded && matchMedia('(max-width: 560px)').matches
+    const rowFor = (i: number) => twoRows && targets[i].matches('.dockMetaItem') ? 1 : 0
+    const bands = twoRows ? [0, 1].map(row => bandFor(boxes.filter((box, i) => rowFor(i) === row && box.width && box.height))) : [band]
     const scene = root.querySelector<HTMLCanvasElement>('canvas[data-glass-scene]')
-    // Before the thumbnail loads the scene is empty, but the visible backdrop
-    // is the page. Apply the same response to that colour, never to empty black.
-    const ready = !!document.querySelector<HTMLImageElement>('.photoImgLow')?.naturalWidth
     const nativeReady = scene?.dataset.ready !== undefined
+    // A temporary CSS source must not remain a second native scene contributor.
+    if (nativeReady && fallback) { fallback.remove(); fallback = undefined }
+    const ready = !!root.closest('.photoShell')?.querySelector<HTMLImageElement>('.photoImgLow')?.naturalWidth
     let source = nativeReady ? scene : undefined
-    // Thumbnail decoding can finish while the native renderer is still waiting
-    // for fonts. Its default 300x150 canvas is NOT a black photograph. Capture
-    // the visible photo/background locally until the native scene is painted.
     if (ready && !nativeReady) {
       if (!fallback) {
         fallback = document.createElement('canvas')
+        fallback.getContext('2d', { willReadFrequently: true })
         fallback.style.cssText = 'position:absolute;opacity:0;pointer-events:none'
         root.append(fallback)
       }
       const shell = root.closest<HTMLElement>('.photoShell')
       if (shell) source = captureGlassScene(shell, root)?.draw(fallback)
     }
-    const strip = ready && source?.width ? sampleInkBand(source, band, 24) : undefined
-    // CSS fallback has a .35 white surface plus the .1 veil; native glass only
-    // has the veil. Both use the same ink response, with their actual surface.
+    const strips = bands.map(band => ready && source?.width ? sampleInkBand(source, band, expanded ? 24 : 1) : undefined)
+    const strip = strips[0]
     const veil = nativeReady && root.dataset.glass === 'webgl' ? .1 : .415
     const bg = getComputedStyle(document.body).backgroundColor.match(/[\d.]+/g)?.map(Number) || [244, 244, 244]
     const pageLuma = .2126 * linear(bg[0] / 255) + .7152 * linear(bg[1] / 255) + .0722 * linear(bg[2] / 255)
-    const sampled = strip?.sampled || Array<number>(24).fill(pageLuma)
-    const values = Array.from({ length: 48 }, (_, i) => inkForBackdrop(backdropAt(sampled, i / 47, veil)))
-    const stops = values.map((v, i) => `rgb(${v.toFixed(3)},${v.toFixed(3)},${v.toFixed(3)}) ${(i / 47 * 100).toFixed(4)}%`)
-    bar.style.setProperty('--dock-ink-gradient', `linear-gradient(90deg, ${stops.join(', ')})`)
-    // Store the computed ramp in a tiny, explicitly quantised texture. Reusing
-    // identical pixels avoids CSS gradient raster/dither differences between
-    // outline-on/off paints, even on labels whose outline was never enabled.
-    const key = `${barBox.width}:${stops.join()}`
-    if (key !== rasterKey) {
-      inkRaster.width = Math.max(1, Math.ceil(barBox.width * 2))
-      const pixels = raster.createImageData(inkRaster.width, 1)
-      for (let x = 0; x < inkRaster.width; x++) {
-        const t = (x + .5) / inkRaster.width * 47, low = Math.floor(t), high = Math.min(47, low + 1)
-        const v = Math.round(values[low] + (values[high] - values[low]) * (t - low))
-        pixels.data.set([v, v, v, 255], x * 4)
-      }
-      raster.putImageData(pixels, 0, 0)
-      bar.style.setProperty('--dock-ink-texture', `url("${inkRaster.toDataURL()}")`)
-      rasterKey = key
+    const samples = strips.map(strip => strip?.sampled || Array<number>(expanded ? 24 : 1).fill(pageLuma))
+    const sampled = samples[0]
+    const choose = (element: HTMLElement, left: number, right: number, row = 0) => {
+      // A small bright/dark patch must not flip an entire label. The median
+      // chooses its main fill; per-cell contrast below handles the exceptions.
+      const region = Array.from({ length: 11 }, (_, i) => backdropAt(samples[row],
+        ((left + (right - left) * (i + .5) / 11) - barBox.left) / barBox.width, veil)).sort((a, b) => a - b)
+      const ink = inkForBackdrop(region[5], tones.get(element))
+      tones.set(element, ink)
+      return ink
     }
-    bar.style.setProperty('--dock-ink-size', `${barBox.width}px 100%`)
-    bar.dataset.tone = backdropAt(sampled, .5, veil) < .18 ? 'dark' : 'light'
-    bar.dataset.ink = 'gradient'
-    const dotInk = inkForBackdrop(backdropAt(sampled, .5, veil)).toFixed(3)
-    bar.style.setProperty('--dock-dot-ink', `rgb(${dotInk},${dotInk},${dotInk})`)
-    const labels = []
-    for (const [index, target] of targets.entries()) {
-      const fill = target.querySelector<HTMLElement>('.dockFill')!
-      const box = fill.getBoundingClientRect()
-      fill.style.backgroundPosition = `${-(box.left - barBox.left)}px 0`
-      // Test local pixels, not the average of a label (which hides failing
-      // strokes on a hard edge). Keep each label's own vertical text range.
-      let minimum = Infinity
-      if (strip && expanded) {
-        const text = textBoxes[index]
-        if (text) for (let row = 0; row < strip.height; row++) {
-          const py = strip.box.top + (strip.y + row + .5) / strip.sy
-          if (py < text.top || py > text.bottom) continue
+    const dotInk = choose(bar, barBox.left, barBox.right)
+    const rgb = (ink: number) => `rgb(${ink},${ink},${ink})`
+    set(bar, '--dock-dot-ink', rgb(dotInk))
+    const tone = dotInk === 255 ? 'dark' : 'light'
+    if (bar.dataset.tone !== tone) bar.dataset.tone = tone
+    const values = fills.map((fill, i) => choose(fill, boxes[i].left, boxes[i].right, rowFor(i)))
+    const labels: { text: string | null; halo: boolean; ink: number }[] = []
+    if (expanded) {
+      if (bar.dataset.ink !== 'binary') bar.dataset.ink = 'binary'
+      // Scan each local pixel ONCE for the whole bar, in small spatial cells.
+      // A failing patch enables only that patch's opposite-colour soft shadow.
+      // No label-wide outline and no per-frame PNG encoding are needed.
+      const count = Math.max(1, Math.ceil(barBox.width / 6))
+      const fields = strips.map((strip, rowIndex) => {
+        const whiteMinima = new Float64Array(count).fill(Infinity)
+        const blackMinima = new Float64Array(count).fill(Infinity)
+        if (strip) {
+          let lookup = veilTables.get(veil)
+          if (!lookup) { lookup = Float64Array.from({ length: 4097 }, (_, i) => veiled(i / 4096, veil)); veilTables.set(veil, lookup) }
           for (let col = 0; col < strip.width; col++) {
             const px = strip.box.left + (strip.x + col + .5) / strip.sx
-            if (px < Math.max(box.left, barBox.left) || px > Math.min(box.right, barBox.right)) continue
-            const t = Math.max(0, Math.min(47, (px - barBox.left) / barBox.width * 47))
-            const low = Math.floor(t), high = Math.min(47, low + 1)
-            const ink = linear((values[low] + (values[high] - values[low]) * (t - low)) / 255)
-            const backdrop = veiled(luminance(strip.data, (row * strip.width + col) * 4), veil)
-            minimum = Math.min(minimum, contrast(ink, backdrop))
+            const fraction = clamp((px - barBox.left) / barBox.width)
+            const cell = Math.min(count - 1, Math.floor(fraction * count))
+            for (let row = 0; row < strip.height; row++) {
+              const y = luminance(strip.data, (row * strip.width + col) * 4)
+              const backdrop = lookup[Math.round(y * 4096)]
+              whiteMinima[cell] = Math.min(whiteMinima[cell], contrast(1, backdrop))
+              blackMinima[cell] = Math.min(blackMinima[cell], contrast(0, backdrop))
+            }
           }
         }
+        const dark: number[] = [], light: number[] = []
+        for (let i = 0; i < count; i++) {
+          dark.push(smooth((5 - whiteMinima[i]) / 2))
+          light.push(smooth((5 - blackMinima[i]) / 2))
+        }
+        // Two continuous axes: scene changes interpolate the local support field;
+        // ink changes interpolate polarity using exactly the letters' tone. A
+        // single inherited progress animation replaces hundreds of cell timers.
+        const resample = (field: number[], i: number) => {
+          const x = clamp((i + .5) / count) * field.length - .5
+          const a = Math.max(0, Math.min(field.length - 1, Math.floor(x)))
+          const b = Math.max(0, Math.min(field.length - 1, Math.ceil(x)))
+          return field[a] + (field[b] - field[a]) * (x - Math.floor(x))
+        }
+        const state = masks[rowIndex]
+        const progressProperty = rowIndex === 0 ? '--dock-shadow-progress' : '--dock-meta-shadow-progress'
+        const maskTo = state?.to
+        const changed = !maskTo || maskTo[0].length !== count || dark.some((v, i) => Math.abs(v - maskTo[0][i]) > .005) ||
+          light.some((v, i) => Math.abs(v - maskTo[1][i]) > .005)
+        if (changed) {
+          const progress = state?.fade ? clamp(Number(getComputedStyle(bar).getPropertyValue(progressProperty))) : 1
+          const previous = maskTo
+          const current = previous && state ? state.from.map((field, j) => Array.from({ length: count }, (_, i) =>
+            resample(field, i) * (1 - progress) + resample(previous[j], i) * progress)) as [number[], number[]] : [dark, light] as [number[], number[]]
+          state?.fade?.cancel()
+          const next: MaskState = masks[rowIndex] = { from: current, to: [dark, light] }
+          const differs = current.some((field, row) => field.some((v, i) => Math.abs(v - next.to[row][i]) > .005))
+          if (previous && differs && !reduced.matches) {
+            next.fade = bar.animate([{ [progressProperty]: 0 }, { [progressProperty]: 1 }],
+              { duration: 280, easing: EASE_OUT })
+          }
+        }
+        return { whiteMinima, blackMinima, mask: masks[rowIndex], progressProperty }
+      })
+      for (const [i, fill] of fills.entries()) {
+        const box = boxes[i]
+        const white = values[i] === 255
+        const glyph = fill.parentElement!
+        const previous = glyph.style.getPropertyValue('--dock-tone')
+        // Compare the numeric target, not CSSOM colour serialization (which
+        // may insert spaces and otherwise restart a fade on every sample).
+        if (paintedTones.get(fill) !== values[i]) {
+          paintedTones.set(fill, values[i])
+          // Initial labels use the correct ink immediately; subsequent switches
+          // start from the displayed colour, including an interrupted fade.
+          const current = previous ? getComputedStyle(glyph).getPropertyValue('--dock-tone') : String(values[i])
+          fades.get(fill)?.cancel()
+          set(glyph, '--dock-tone', String(values[i]))
+          if (previous && !reduced.matches) {
+            const fade = glyph.animate([{ '--dock-tone': current }, { '--dock-tone': String(values[i]) }],
+              { duration: 420, easing: EASE_IN_OUT, fill: 'backwards' })
+            fades.set(fill, fade)
+            void fade.finished.catch(() => {}).then(() => {
+              if (fades.get(fill) === fade) { fades.delete(fill); schedule() }
+            })
+          }
+        }
+        const { whiteMinima, blackMinima, mask, progressProperty } = fields[rowFor(i)]
+        // Each label needs only the cells touching its own ink. Duplicating the
+        // whole bar's calc-heavy gradient on every label caused style/layout
+        // stalls during the first expansion (especially on narrow screens).
+        const first = Math.max(0, Math.floor((box.left - 3 - barBox.left) / barBox.width * count) - 1)
+        const last = Math.min(count, Math.ceil((box.right + 3 - barBox.left) / barBox.width * count) + 1)
+        const stops: { color: string; position: number }[] = []
+        const mix = (a: number, b: number) => Math.abs(a - b) < .0001 ? a.toFixed(4)
+          : `(${a.toFixed(4)} + (${(b - a).toFixed(4)}) * var(${progressProperty}))`
+        for (let cell = first; cell < last; cell++) {
+          const black = mix(mask.from[1][cell], mask.to[1][cell]), inverse = mix(mask.from[0][cell], mask.to[0][cell])
+          const alpha = black === inverse ? black
+            : black === '0.0000' ? `(${inverse} * var(--dock-tone) / 255)`
+            : inverse === '0.0000' ? `(${black} * (1 - var(--dock-tone) / 255))`
+            : `(${black} * (1 - var(--dock-tone) / 255) + ${inverse} * var(--dock-tone) / 255)`
+          const color = `rgb(0 0 0 / calc(${alpha}))`
+          const position = ((cell + .5) / count * barBox.width - (box.left - 3 - barBox.left)) / (box.width + 6) * 100
+          stops.push({ color, position })
+        }
+        const compact = stops.filter((stop, i) => !i || i === stops.length - 1 ||
+          stop.color !== stops[i - 1].color || stop.color !== stops[i + 1].color)
+        set(glyph, '--dock-shadow-mask', compact.length > 1 ?
+          `linear-gradient(90deg,${compact.map(stop => `${stop.color} ${stop.position.toFixed(3)}%`).join(',')})` : 'linear-gradient(transparent,transparent)')
+        const a = Math.max(0, Math.floor((box.left - barBox.left) / barBox.width * count))
+        const z = Math.min(count, Math.ceil((box.right - barBox.left) / barBox.width * count))
+        const halo = fades.has(fill) || (white ? whiteMinima : blackMinima).slice(a, z).some(v => v < 5)
+        if (targets[i].hasAttribute('data-halo') !== halo) targets[i].toggleAttribute('data-halo', halo)
+        for (const shadow of glyph.querySelectorAll<HTMLElement>('.dockShadow')) {
+          if (shadow.dataset.label !== fill.textContent) shadow.dataset.label = fill.textContent || ''
+        }
+        labels.push({ text: fill.textContent, halo, ink: values[i] })
       }
-      target.toggleAttribute('data-halo', minimum < 5)
-      labels.push({ text: fill.textContent, minimum, halo: minimum < 5 })
     }
-    // The probe listens to this event to check the real sampler against an
-    // independent pixel-area oracle, rather than duplicating our algorithm.
     bar.dispatchEvent(new CustomEvent('dockink', { bubbles: true, detail: { sampled, values, band, labels, veil, source: strip ? nativeReady ? 'photo' : 'fallback-photo' : 'page' } }))
   }
-  // Consume each new scene immediately; a 480ms polling window otherwise turns
-  // even a continuous colour function into visible steps during a live drag.
+  const schedule = () => { if (!pending && !signal.aborted) pending = requestAnimationFrame(readInk) }
+  // Scene changes drive sampling. Text, font and scroll changes need their own
+  // invalidation; an unchanged, idle toolbar needs no polling at all.
   root.addEventListener('glassscene', readInk, { signal })
+  bar.addEventListener('scroll', schedule, { capture: true, passive: true, signal })
+  window.addEventListener('resize', schedule, { passive: true, signal })
+  document.fonts.addEventListener('loadingdone', schedule, { signal })
+  const content = new MutationObserver(schedule)
+  content.observe(bar, { childList: true, subtree: true, characterData: true })
+  signal.addEventListener('abort', () => { content.disconnect(); cancelAnimationFrame(pending); fallback?.remove(); cancelFades() }, { once: true })
   return readInk
 }

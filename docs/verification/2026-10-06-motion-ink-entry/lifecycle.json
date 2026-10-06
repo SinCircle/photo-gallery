@@ -1,0 +1,48 @@
+{
+  "errors": [],
+  "initial": {
+    "src": "http://127.0.0.1:5187/media/web/IMG_20260815_153938.jpg",
+    "width": 1920,
+    "loading": true,
+    "downloadBusy": true,
+    "originals": 0,
+    "fboAllocations": 6
+  },
+  "zoom": {
+    "width": 3973,
+    "src": "http://127.0.0.1:5187/media/originals/IMG_20260815_153938.jpg"
+  },
+  "derivativeFallback": "http://127.0.0.1:5187/media/originals/IMG_20260815_153938.jpg",
+  "failed": {
+    "preview": 720,
+    "previewVisible": "visible",
+    "high": "",
+    "notice": "清晰图片加载失败，当前保留预览。重试"
+  },
+  "retry": true,
+  "idle": {
+    "raf": 0,
+    "draws": 0
+  },
+  "afterInteraction": {
+    "raf": 0,
+    "draws": 0,
+    "inkUpdates": 3
+  },
+  "beforeCycles": {
+    "documents": 3,
+    "nodes": 502,
+    "jsEventListeners": 210
+  },
+  "afterCycles": {
+    "documents": 3,
+    "nodes": 502,
+    "jsEventListeners": 210
+  },
+  "cleanup": {
+    "canvases": 0,
+    "animations": 0,
+    "raf": 0
+  },
+  "status": "passed"
+}

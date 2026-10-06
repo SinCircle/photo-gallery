@@ -5,15 +5,21 @@ import { regularGlassConfig } from './glassConfig'
 // controls outside it avoids rasterising changing EXIF/buttons into the glass.
 // The scene canvas is a live pixel source, not a PNG or CSS background snapshot.
 export async function createGlassRenderer(glass: HTMLElement, signal: AbortSignal) {
+  glass.dataset.glassOnDemand = ''
   const capsules = [...glass.querySelectorAll<HTMLElement>(':scope > [data-glass-capsule]')]
   if (capsules.length) {
+    glass.dataset.glassStableBounds = ''
     // These are the actual EXIF/button elements, not proxy glass surfaces.
     // The native instance owns their canvas output and stacking composition.
     const scene = document.createElement('canvas')
+    // This canvas is sampled for text contrast on every changed scene. Choose
+    // its backing before the first draw, avoiding a GPU-to-CPU migration during
+    // the first drag (asking for this later in getImageData is too late).
+    scene.getContext('2d', { willReadFrequently: true })
     scene.dataset.glassScene = ''
     scene.style.cssText = 'position:absolute;opacity:0;pointer-events:none;z-index:0;'
     glass.prepend(scene)
-    for (const capsule of capsules) capsule.dataset.config = regularGlassConfig()
+    for (const capsule of capsules) capsule.dataset.config ||= regularGlassConfig()
     let instance: LiquidGlass | undefined
     const cleanup = () => { instance?.destroy(); scene.remove() }
     signal.addEventListener('abort', cleanup, { once: true })
@@ -30,6 +36,7 @@ export async function createGlassRenderer(glass: HTMLElement, signal: AbortSigna
   }
   const root = document.createElement('div')
   root.className = 'glassRoot'
+  root.dataset.glassOnDemand = ''
   root.setAttribute('aria-hidden', 'true')
   const scene = document.createElement('canvas')
   scene.dataset.glassScene = ''

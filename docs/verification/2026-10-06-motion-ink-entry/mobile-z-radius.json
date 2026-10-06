@@ -1,0 +1,71 @@
+{
+  "result": [
+    {
+      "viewport": 390,
+      "toolbar": "expanded",
+      "config": {
+        "floating": false,
+        "blurAmount": 0.4,
+        "refraction": 0.95,
+        "chromAberration": 0.055,
+        "edgeHighlight": 0.3,
+        "specular": 0,
+        "fresnel": 1,
+        "distortion": 0,
+        "cornerRadius": 22,
+        "zRadius": 18,
+        "opacity": 1,
+        "saturation": 0,
+        "brightness": 0,
+        "shadowOpacity": 0.3,
+        "shadowSpread": 10,
+        "bevelMode": 0
+      }
+    },
+    {
+      "viewport": 390,
+      "toolbar": "collapsed",
+      "config": {
+        "floating": false,
+        "blurAmount": 0.15,
+        "refraction": 0.95,
+        "chromAberration": 0.055,
+        "edgeHighlight": 0.3,
+        "specular": 0,
+        "fresnel": 1,
+        "distortion": 0,
+        "cornerRadius": 22,
+        "zRadius": 14,
+        "opacity": 1,
+        "saturation": 0,
+        "brightness": 0,
+        "shadowOpacity": 0.3,
+        "shadowSpread": 10,
+        "bevelMode": 0
+      }
+    },
+    {
+      "viewport": 1440,
+      "toolbar": "expanded",
+      "config": {
+        "floating": false,
+        "blurAmount": 0.15,
+        "refraction": 0.95,
+        "chromAberration": 0.055,
+        "edgeHighlight": 0.3,
+        "specular": 0,
+        "fresnel": 1,
+        "distortion": 0,
+        "cornerRadius": 22,
+        "zRadius": 14,
+        "opacity": 1,
+        "saturation": 0,
+        "brightness": 0,
+        "shadowOpacity": 0.3,
+        "shadowSpread": 10,
+        "bevelMode": 0
+      }
+    }
+  ],
+  "errors": []
+}

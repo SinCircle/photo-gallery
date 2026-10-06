@@ -1,0 +1,1654 @@
+{
+  "browser": "Chrome/154.0.8037.98",
+  "graphics": {
+    "available": true,
+    "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x000013C0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "runs": [
+    {
+      "base": "http://127.0.0.1:5192",
+      "repeat": 0,
+      "mobile": false,
+      "cpuThrottle": 1,
+      "open": {
+        "motion": {
+          "frames": 14,
+          "p95": 204.60000000000014,
+          "max": 204.60000000000014,
+          "over33": 8
+        },
+        "elapsed": 2606.800000011921,
+        "first1100ms": {
+          "frames": 13,
+          "p95": 495.5,
+          "max": 495.5,
+          "over33": 6
+        },
+        "events": [
+          {
+            "name": "transition-ready",
+            "at": 501.5,
+            "duration": 499.60000002384186
+          },
+          {
+            "name": "high-load",
+            "at": 686.5
+          },
+          {
+            "name": "transition-finished",
+            "at": 1331.8999999761581,
+            "duration": 1330
+          }
+        ],
+        "animations": [
+          {
+            "ms": 2.399999976158142,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 1.7000000476837158,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 1.699999988079071,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 1.5999999642372131,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 2.199999988079071,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 1.5,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 1.9000000357627869,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 1.399999976158142,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 0,
+            "frames": 4,
+            "class": "dockBar"
+          },
+          {
+            "ms": 0.10000002384185791,
+            "frames": 2,
+            "class": "dockAction dockBack"
+          },
+          {
+            "ms": 0.09999996423721313,
+            "frames": 2,
+            "class": "dockAction dockFit"
+          },
+          {
+            "ms": 0.10000002384185791,
+            "frames": 2,
+            "class": "dockMeta"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockAction dockDownload"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockMeta"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "capsuleDot"
+          }
+        ],
+        "longTasks": [
+          {
+            "start": 1047.2000000476837,
+            "duration": 486
+          },
+          {
+            "start": 1576.1000000238419,
+            "duration": 139
+          },
+          {
+            "start": 1989.300000011921,
+            "duration": 205
+          },
+          {
+            "start": 2236.7000000476837,
+            "duration": 93
+          },
+          {
+            "start": 2401.600000023842,
+            "duration": 71
+          },
+          {
+            "start": 2473.5,
+            "duration": 54
+          }
+        ],
+        "image": "http://127.0.0.1:5192/media/originals/IMG_20260815_153938.jpg",
+        "imageWidth": 3973,
+        "resources": [
+          {
+            "url": "http://127.0.0.1:5192/media/originals/IMG_20260815_153938.jpg",
+            "bytes": 3150133,
+            "ms": 168
+          }
+        ],
+        "cpu": {
+          "TaskDuration": 2511.139,
+          "ScriptDuration": 1838.684,
+          "LayoutDuration": 67.569,
+          "RecalcStyleDuration": 394.423
+        }
+      },
+      "idle": {
+        "raf": 245,
+        "draws": 0,
+        "cpu": 40.33200000000026
+      },
+      "close": {
+        "elapsed": 785.3000000119209,
+        "events": [
+          {
+            "name": "transition-ready",
+            "at": 14.5,
+            "duration": 13.800000011920929
+          },
+          {
+            "name": "transition-finished",
+            "at": 712,
+            "duration": 711.3000000119209
+          }
+        ],
+        "longTasks": []
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5192",
+      "repeat": 0,
+      "mobile": true,
+      "cpuThrottle": 4,
+      "open": {
+        "motion": {
+          "frames": 17,
+          "p95": 91.80000000000018,
+          "max": 91.80000000000018,
+          "over33": 12
+        },
+        "elapsed": 2416.099999964237,
+        "first1100ms": {
+          "frames": 20,
+          "p95": 258.79999999999995,
+          "max": 258.79999999999995,
+          "over33": 13
+        },
+        "events": [
+          {
+            "name": "transition-ready",
+            "at": 259.5,
+            "duration": 252.5
+          },
+          {
+            "name": "high-load",
+            "at": 396.69999998807907
+          },
+          {
+            "name": "transition-finished",
+            "at": 1070.800000011921,
+            "duration": 1063.8999999761581
+          }
+        ],
+        "animations": [
+          {
+            "ms": 8.400000035762787,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 6.699999988079071,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 7.600000023841858,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 5.800000011920929,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 6.600000023841858,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 6,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 5.899999976158142,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 5.300000011920929,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 0.6000000238418579,
+            "frames": 4,
+            "class": "dockBar"
+          },
+          {
+            "ms": 0.19999998807907104,
+            "frames": 2,
+            "class": "dockAction dockBack"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockAction dockFit"
+          },
+          {
+            "ms": 0.19999998807907104,
+            "frames": 2,
+            "class": "dockMeta"
+          },
+          {
+            "ms": 0.3999999761581421,
+            "frames": 2,
+            "class": "dockAction dockDownload"
+          },
+          {
+            "ms": 0.30000001192092896,
+            "frames": 2,
+            "class": "dockMeta"
+          },
+          {
+            "ms": 0.19999998807907104,
+            "frames": 2,
+            "class": "capsuleDot"
+          }
+        ],
+        "longTasks": [
+          {
+            "start": 1588.699999988079,
+            "duration": 220
+          },
+          {
+            "start": 1957.699999988079,
+            "duration": 50
+          },
+          {
+            "start": 2444.599999964237,
+            "duration": 59
+          },
+          {
+            "start": 2741.7999999523163,
+            "duration": 60
+          }
+        ],
+        "image": "http://127.0.0.1:5192/media/originals/IMG_20260815_153938.jpg",
+        "imageWidth": 3973,
+        "resources": [
+          {
+            "url": "http://127.0.0.1:5192/media/originals/IMG_20260815_153938.jpg",
+            "bytes": 3150133,
+            "ms": 43.59999996423721
+          }
+        ],
+        "cpu": {
+          "TaskDuration": 2316.5550000000003,
+          "ScriptDuration": 1049.973,
+          "LayoutDuration": 89.1,
+          "RecalcStyleDuration": 641.4920000000001
+        }
+      },
+      "idle": {
+        "raf": 243,
+        "draws": 0,
+        "cpu": 283.6460000000001
+      },
+      "close": {
+        "elapsed": 877.1999999880791,
+        "events": [
+          {
+            "name": "transition-ready",
+            "at": 131.19999998807907,
+            "duration": 123.69999998807907
+          },
+          {
+            "name": "transition-finished",
+            "at": 854.5,
+            "duration": 847.3000000119209
+          }
+        ],
+        "longTasks": [
+          {
+            "start": 7720.799999952316,
+            "duration": 63
+          }
+        ]
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 0,
+      "mobile": false,
+      "cpuThrottle": 1,
+      "open": {
+        "motion": {
+          "frames": 154,
+          "p95": 4.2999999999999545,
+          "max": 29.100000000000023,
+          "over33": 0
+        },
+        "elapsed": 2849.100000023842,
+        "first1100ms": {
+          "frames": 208,
+          "p95": 8.300000000000182,
+          "max": 79.40000000000009,
+          "over33": 2
+        },
+        "events": [
+          {
+            "name": "transition-ready",
+            "at": 28.399999976158142,
+            "duration": 26.099999964237213
+          },
+          {
+            "name": "transition-finished",
+            "at": 716.1000000238419,
+            "duration": 713.8000000119209
+          },
+          {
+            "name": "high-load",
+            "at": 913.6000000238419
+          }
+        ],
+        "animations": [
+          {
+            "ms": 1.300000011920929,
+            "frames": 135,
+            "class": ""
+          },
+          {
+            "ms": 0.19999998807907104,
+            "frames": 19,
+            "class": ""
+          },
+          {
+            "ms": 0.8999999761581421,
+            "frames": 135,
+            "class": ""
+          },
+          {
+            "ms": 0.19999998807907104,
+            "frames": 19,
+            "class": ""
+          },
+          {
+            "ms": 0.800000011920929,
+            "frames": 135,
+            "class": ""
+          },
+          {
+            "ms": 0,
+            "frames": 19,
+            "class": ""
+          },
+          {
+            "ms": 0.699999988079071,
+            "frames": 135,
+            "class": ""
+          },
+          {
+            "ms": 0.20000004768371582,
+            "frames": 19,
+            "class": ""
+          },
+          {
+            "ms": 0.09999996423721313,
+            "frames": 4,
+            "class": "dockBar"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockAction dockBack"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockAction dockFit"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockMeta"
+          },
+          {
+            "ms": 0.09999996423721313,
+            "frames": 2,
+            "class": "dockAction dockDownload"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockMeta"
+          },
+          {
+            "ms": 0.10000002384185791,
+            "frames": 2,
+            "class": "capsuleDot"
+          }
+        ],
+        "longTasks": [
+          {
+            "start": 1538.5999999642372,
+            "duration": 68
+          }
+        ],
+        "image": "http://127.0.0.1:5187/media/web/IMG_20260815_153938.jpg",
+        "imageWidth": 1920,
+        "resources": [
+          {
+            "url": "http://127.0.0.1:5187/media/web/IMG_20260815_153938.jpg",
+            "bytes": 168780,
+            "ms": 24.80000001192093
+          }
+        ],
+        "cpu": {
+          "TaskDuration": 1774.6180000000002,
+          "ScriptDuration": 455.30699999999996,
+          "LayoutDuration": 71.75999999999999,
+          "RecalcStyleDuration": 663.738
+        }
+      },
+      "idle": {
+        "raf": 0,
+        "draws": 0,
+        "cpu": 0.5990000000002382
+      },
+      "close": {
+        "elapsed": 788.6000000238419,
+        "events": [
+          {
+            "name": "transition-ready",
+            "at": 19.30000001192093,
+            "duration": 17.80000001192093
+          },
+          {
+            "name": "transition-finished",
+            "at": 737,
+            "duration": 735.6000000238419
+          }
+        ],
+        "longTasks": []
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 0,
+      "mobile": true,
+      "cpuThrottle": 4,
+      "open": {
+        "motion": {
+          "frames": 40,
+          "p95": 29.199999999999818,
+          "max": 58.399999999999864,
+          "over33": 1
+        },
+        "elapsed": 3409.399999976158,
+        "first1100ms": {
+          "frames": 44,
+          "p95": 29.199999999999818,
+          "max": 179.5,
+          "over33": 2
+        },
+        "events": [
+          {
+            "name": "transition-ready",
+            "at": 185.30000001192093,
+            "duration": 171.80000001192093
+          },
+          {
+            "name": "transition-finished",
+            "at": 918.8000000119209,
+            "duration": 905.1000000238419
+          },
+          {
+            "name": "high-load",
+            "at": 1499.3999999761581
+          }
+        ],
+        "animations": [
+          {
+            "ms": 8.599999964237213,
+            "frames": 135,
+            "class": ""
+          },
+          {
+            "ms": 1.5999999642372131,
+            "frames": 19,
+            "class": ""
+          },
+          {
+            "ms": 7.5,
+            "frames": 135,
+            "class": ""
+          },
+          {
+            "ms": 1.699999988079071,
+            "frames": 19,
+            "class": ""
+          },
+          {
+            "ms": 6.5,
+            "frames": 135,
+            "class": ""
+          },
+          {
+            "ms": 1.9000000357627869,
+            "frames": 19,
+            "class": ""
+          },
+          {
+            "ms": 6.699999988079071,
+            "frames": 135,
+            "class": ""
+          },
+          {
+            "ms": 1.5,
+            "frames": 19,
+            "class": ""
+          },
+          {
+            "ms": 1.699999988079071,
+            "frames": 4,
+            "class": "dockBar"
+          },
+          {
+            "ms": 0.5,
+            "frames": 2,
+            "class": "dockAction dockBack"
+          },
+          {
+            "ms": 0.5,
+            "frames": 2,
+            "class": "dockAction dockFit"
+          },
+          {
+            "ms": 0.5999999642372131,
+            "frames": 2,
+            "class": "dockMeta"
+          },
+          {
+            "ms": 0.40000003576278687,
+            "frames": 2,
+            "class": "dockAction dockDownload"
+          },
+          {
+            "ms": 0.3999999761581421,
+            "frames": 2,
+            "class": "dockMeta"
+          },
+          {
+            "ms": 0.30000001192092896,
+            "frames": 2,
+            "class": "capsuleDot"
+          }
+        ],
+        "longTasks": [
+          {
+            "start": 1433.6000000238419,
+            "duration": 94
+          },
+          {
+            "start": 1663.1000000238419,
+            "duration": 51
+          },
+          {
+            "start": 2306.199999988079,
+            "duration": 289
+          },
+          {
+            "start": 2597,
+            "duration": 62
+          },
+          {
+            "start": 2760.800000011921,
+            "duration": 111
+          },
+          {
+            "start": 2898.5,
+            "duration": 69
+          },
+          {
+            "start": 2969.899999976158,
+            "duration": 72
+          },
+          {
+            "start": 3045.600000023842,
+            "duration": 55
+          },
+          {
+            "start": 3103.100000023842,
+            "duration": 61
+          },
+          {
+            "start": 3167.600000023842,
+            "duration": 59
+          },
+          {
+            "start": 3228.600000023842,
+            "duration": 65
+          },
+          {
+            "start": 3297.800000011921,
+            "duration": 65
+          },
+          {
+            "start": 3363.899999976158,
+            "duration": 94
+          },
+          {
+            "start": 3462.5,
+            "duration": 72
+          },
+          {
+            "start": 3536.600000023842,
+            "duration": 57
+          },
+          {
+            "start": 3597.5,
+            "duration": 57
+          },
+          {
+            "start": 3656.5,
+            "duration": 62
+          },
+          {
+            "start": 3723.199999988079,
+            "duration": 61
+          },
+          {
+            "start": 3786,
+            "duration": 64
+          },
+          {
+            "start": 3854.399999976158,
+            "duration": 74
+          },
+          {
+            "start": 3930.5,
+            "duration": 56
+          },
+          {
+            "start": 3990.100000023842,
+            "duration": 59
+          },
+          {
+            "start": 4051.5,
+            "duration": 76
+          },
+          {
+            "start": 4133.100000023842,
+            "duration": 66
+          },
+          {
+            "start": 4200.199999988079,
+            "duration": 57
+          },
+          {
+            "start": 4260.800000011921,
+            "duration": 61
+          },
+          {
+            "start": 4323.899999976158,
+            "duration": 70
+          },
+          {
+            "start": 4398.300000011921,
+            "duration": 62
+          },
+          {
+            "start": 4461.300000011921,
+            "duration": 78
+          },
+          {
+            "start": 4542.800000011921,
+            "duration": 59
+          },
+          {
+            "start": 4690.5,
+            "duration": 76
+          }
+        ],
+        "image": "http://127.0.0.1:5187/media/web/IMG_20260815_153938.jpg",
+        "imageWidth": 1920,
+        "resources": [
+          {
+            "url": "http://127.0.0.1:5187/media/web/IMG_20260815_153938.jpg",
+            "bytes": 168780,
+            "ms": 9.100000023841858
+          }
+        ],
+        "cpu": {
+          "TaskDuration": 3374.2129999999997,
+          "ScriptDuration": 944.8330000000001,
+          "LayoutDuration": 156.501,
+          "RecalcStyleDuration": 1177.711
+        }
+      },
+      "idle": {
+        "raf": 0,
+        "draws": 0,
+        "cpu": 1.882999999999413
+      },
+      "close": {
+        "elapsed": 950.5,
+        "events": [
+          {
+            "name": "transition-ready",
+            "at": 178,
+            "duration": 167
+          },
+          {
+            "name": "transition-finished",
+            "at": 927.8999999761581,
+            "duration": 916.8000000119209
+          }
+        ],
+        "longTasks": [
+          {
+            "start": 8485.800000011921,
+            "duration": 81
+          }
+        ]
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 1,
+      "mobile": false,
+      "cpuThrottle": 1,
+      "open": {
+        "motion": {
+          "frames": 94,
+          "p95": 16.799999999999955,
+          "max": 33.5,
+          "over33": 1
+        },
+        "elapsed": 2785.899999976158,
+        "first1100ms": {
+          "frames": 158,
+          "p95": 16.799999999999955,
+          "max": 54.200000000000045,
+          "over33": 3
+        },
+        "events": [
+          {
+            "name": "transition-ready",
+            "at": 20.80000001192093,
+            "duration": 19.400000035762787
+          },
+          {
+            "name": "transition-finished",
+            "at": 711.8999999761581,
+            "duration": 710.5
+          },
+          {
+            "name": "high-load",
+            "at": 891.8000000119209
+          }
+        ],
+        "animations": [
+          {
+            "ms": 1.5,
+            "frames": 135,
+            "class": ""
+          },
+          {
+            "ms": 0.30000001192092896,
+            "frames": 19,
+            "class": ""
+          },
+          {
+            "ms": 1,
+            "frames": 135,
+            "class": ""
+          },
+          {
+            "ms": 0.19999998807907104,
+            "frames": 19,
+            "class": ""
+          },
+          {
+            "ms": 1,
+            "frames": 135,
+            "class": ""
+          },
+          {
+            "ms": 0.19999998807907104,
+            "frames": 19,
+            "class": ""
+          },
+          {
+            "ms": 0.5999999642372131,
+            "frames": 135,
+            "class": ""
+          },
+          {
+            "ms": 0.10000002384185791,
+            "frames": 19,
+            "class": ""
+          },
+          {
+            "ms": 0.20000004768371582,
+            "frames": 4,
+            "class": "dockBar"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockAction dockBack"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockAction dockFit"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockMeta"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockAction dockDownload"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockMeta"
+          },
+          {
+            "ms": 0.09999996423721313,
+            "frames": 2,
+            "class": "capsuleDot"
+          }
+        ],
+        "longTasks": [
+          {
+            "start": 1586.699999988079,
+            "duration": 51
+          }
+        ],
+        "image": "http://127.0.0.1:5187/media/web/IMG_20260815_153938.jpg",
+        "imageWidth": 1920,
+        "resources": [
+          {
+            "url": "http://127.0.0.1:5187/media/web/IMG_20260815_153938.jpg",
+            "bytes": 168780,
+            "ms": 19.19999998807907
+          }
+        ],
+        "cpu": {
+          "TaskDuration": 1589.7060000000001,
+          "ScriptDuration": 407.807,
+          "LayoutDuration": 76.501,
+          "RecalcStyleDuration": 550.5790000000001
+        }
+      },
+      "idle": {
+        "raf": 0,
+        "draws": 0,
+        "cpu": 0.4979999999998874
+      },
+      "close": {
+        "elapsed": 788.9000000357628,
+        "events": [
+          {
+            "name": "transition-ready",
+            "at": 11.800000011920929,
+            "duration": 10.899999976158142
+          },
+          {
+            "name": "transition-finished",
+            "at": 713.8000000119209,
+            "duration": 712.8999999761581
+          }
+        ],
+        "longTasks": []
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 1,
+      "mobile": true,
+      "cpuThrottle": 4,
+      "open": {
+        "motion": {
+          "frames": 39,
+          "p95": 45.90000000000009,
+          "max": 54.19999999999982,
+          "over33": 2
+        },
+        "elapsed": 3577.400000035763,
+        "first1100ms": {
+          "frames": 43,
+          "p95": 45.90000000000009,
+          "max": 171.20000000000005,
+          "over33": 3
+        },
+        "events": [
+          {
+            "name": "transition-ready",
+            "at": 177.80000001192093,
+            "duration": 165.5999999642372
+          },
+          {
+            "name": "transition-finished",
+            "at": 907.7000000476837,
+            "duration": 895.3000000119209
+          },
+          {
+            "name": "high-load",
+            "at": 1596.7000000476837
+          }
+        ],
+        "animations": [
+          {
+            "ms": 9.400000035762787,
+            "frames": 135,
+            "class": ""
+          },
+          {
+            "ms": 1.699999988079071,
+            "frames": 19,
+            "class": ""
+          },
+          {
+            "ms": 8.300000011920929,
+            "frames": 135,
+            "class": ""
+          },
+          {
+            "ms": 1.399999976158142,
+            "frames": 19,
+            "class": ""
+          },
+          {
+            "ms": 7.900000035762787,
+            "frames": 135,
+            "class": ""
+          },
+          {
+            "ms": 1.399999976158142,
+            "frames": 19,
+            "class": ""
+          },
+          {
+            "ms": 9.5,
+            "frames": 135,
+            "class": ""
+          },
+          {
+            "ms": 1.199999988079071,
+            "frames": 19,
+            "class": ""
+          },
+          {
+            "ms": 1,
+            "frames": 4,
+            "class": "dockBar"
+          },
+          {
+            "ms": 0.40000003576278687,
+            "frames": 2,
+            "class": "dockAction dockBack"
+          },
+          {
+            "ms": 0.19999998807907104,
+            "frames": 2,
+            "class": "dockAction dockFit"
+          },
+          {
+            "ms": 0.10000002384185791,
+            "frames": 2,
+            "class": "dockMeta"
+          },
+          {
+            "ms": 0.10000002384185791,
+            "frames": 2,
+            "class": "dockAction dockDownload"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockMeta"
+          },
+          {
+            "ms": 0.699999988079071,
+            "frames": 2,
+            "class": "capsuleDot"
+          }
+        ],
+        "longTasks": [
+          {
+            "start": 1382,
+            "duration": 94
+          },
+          {
+            "start": 2250.7000000476837,
+            "duration": 285
+          },
+          {
+            "start": 2536.5,
+            "duration": 55
+          },
+          {
+            "start": 2665.7000000476837,
+            "duration": 50
+          },
+          {
+            "start": 2716.5,
+            "duration": 208
+          },
+          {
+            "start": 2931.900000035763,
+            "duration": 50
+          },
+          {
+            "start": 2984.800000011921,
+            "duration": 82
+          },
+          {
+            "start": 3071.300000011921,
+            "duration": 77
+          },
+          {
+            "start": 3156.800000011921,
+            "duration": 66
+          },
+          {
+            "start": 3232.2000000476837,
+            "duration": 63
+          },
+          {
+            "start": 3299.300000011921,
+            "duration": 65
+          },
+          {
+            "start": 3367.900000035763,
+            "duration": 56
+          },
+          {
+            "start": 3425.900000035763,
+            "duration": 64
+          },
+          {
+            "start": 3493,
+            "duration": 61
+          },
+          {
+            "start": 3556.100000023842,
+            "duration": 65
+          },
+          {
+            "start": 3625.300000011921,
+            "duration": 61
+          },
+          {
+            "start": 3687.7000000476837,
+            "duration": 60
+          },
+          {
+            "start": 3751.900000035763,
+            "duration": 58
+          },
+          {
+            "start": 3812.800000011921,
+            "duration": 57
+          },
+          {
+            "start": 3874,
+            "duration": 57
+          },
+          {
+            "start": 3933.100000023842,
+            "duration": 63
+          },
+          {
+            "start": 3998.7000000476837,
+            "duration": 62
+          },
+          {
+            "start": 4063.2000000476837,
+            "duration": 54
+          },
+          {
+            "start": 4119.900000035763,
+            "duration": 63
+          },
+          {
+            "start": 4185.600000023842,
+            "duration": 58
+          },
+          {
+            "start": 4247.5,
+            "duration": 58
+          },
+          {
+            "start": 4309.100000023842,
+            "duration": 57
+          },
+          {
+            "start": 4368.900000035763,
+            "duration": 58
+          },
+          {
+            "start": 4429.400000035763,
+            "duration": 54
+          },
+          {
+            "start": 4486,
+            "duration": 54
+          },
+          {
+            "start": 4541.600000023842,
+            "duration": 57
+          },
+          {
+            "start": 4601,
+            "duration": 86
+          },
+          {
+            "start": 4730.5,
+            "duration": 79
+          },
+          {
+            "start": 4811.300000011921,
+            "duration": 61
+          }
+        ],
+        "image": "http://127.0.0.1:5187/media/web/IMG_20260815_153938.jpg",
+        "imageWidth": 1920,
+        "resources": [
+          {
+            "url": "http://127.0.0.1:5187/media/web/IMG_20260815_153938.jpg",
+            "bytes": 168780,
+            "ms": 9.099999964237213
+          }
+        ],
+        "cpu": {
+          "TaskDuration": 3519.139,
+          "ScriptDuration": 1062.749,
+          "LayoutDuration": 155.28,
+          "RecalcStyleDuration": 1153.357
+        }
+      },
+      "idle": {
+        "raf": 0,
+        "draws": 0,
+        "cpu": 1.6580000000008255
+      },
+      "close": {
+        "elapsed": 945.7999999523163,
+        "events": [
+          {
+            "name": "transition-ready",
+            "at": 168,
+            "duration": 156.5
+          },
+          {
+            "name": "transition-finished",
+            "at": 899.1999999880791,
+            "duration": 887.5
+          }
+        ],
+        "longTasks": [
+          {
+            "start": 8512.900000035763,
+            "duration": 81
+          }
+        ]
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5192",
+      "repeat": 1,
+      "mobile": false,
+      "cpuThrottle": 1,
+      "open": {
+        "motion": {
+          "frames": 68,
+          "p95": 24.899999999999864,
+          "max": 192,
+          "over33": 3
+        },
+        "elapsed": 2225.699999988079,
+        "first1100ms": {
+          "frames": 96,
+          "p95": 29.299999999999955,
+          "max": 192,
+          "over33": 4
+        },
+        "events": [
+          {
+            "name": "transition-ready",
+            "at": 100.69999998807907,
+            "duration": 99.69999998807907
+          },
+          {
+            "name": "high-load",
+            "at": 367.2999999523163
+          },
+          {
+            "name": "transition-finished",
+            "at": 817.6999999880791,
+            "duration": 816.6999999880791
+          }
+        ],
+        "animations": [
+          {
+            "ms": 1.800000011920929,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 1.699999988079071,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 1.800000011920929,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 1.899999976158142,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 1.7000000476837158,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 2,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 2.299999952316284,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 1.9000000357627869,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 0.09999996423721313,
+            "frames": 4,
+            "class": "dockBar"
+          },
+          {
+            "ms": 0.10000002384185791,
+            "frames": 2,
+            "class": "dockAction dockBack"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockAction dockFit"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockMeta"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockAction dockDownload"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockMeta"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "capsuleDot"
+          }
+        ],
+        "longTasks": [
+          {
+            "start": 837.3999999761581,
+            "duration": 86
+          },
+          {
+            "start": 1355,
+            "duration": 65
+          },
+          {
+            "start": 1421.699999988079,
+            "duration": 193
+          }
+        ],
+        "image": "http://127.0.0.1:5192/media/originals/IMG_20260815_153938.jpg",
+        "imageWidth": 3973,
+        "resources": [
+          {
+            "url": "http://127.0.0.1:5192/media/originals/IMG_20260815_153938.jpg",
+            "bytes": 3150133,
+            "ms": 91.5
+          }
+        ],
+        "cpu": {
+          "TaskDuration": 2111.373,
+          "ScriptDuration": 1278.9819999999997,
+          "LayoutDuration": 41.901999999999994,
+          "RecalcStyleDuration": 442.32899999999995
+        }
+      },
+      "idle": {
+        "raf": 244,
+        "draws": 0,
+        "cpu": 43.979999999999464
+      },
+      "close": {
+        "elapsed": 773.7000000476837,
+        "events": [
+          {
+            "name": "transition-ready",
+            "at": 20.700000047683716,
+            "duration": 20
+          },
+          {
+            "name": "transition-finished",
+            "at": 739.5,
+            "duration": 738.8999999761581
+          }
+        ],
+        "longTasks": []
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5192",
+      "repeat": 1,
+      "mobile": true,
+      "cpuThrottle": 4,
+      "open": {
+        "motion": {
+          "frames": 8,
+          "p95": 263.0999999999999,
+          "max": 263.0999999999999,
+          "over33": 8
+        },
+        "elapsed": 3016.800000011921,
+        "first1100ms": {
+          "frames": 7,
+          "p95": 563.5999999999999,
+          "max": 563.5999999999999,
+          "over33": 5
+        },
+        "events": [
+          {
+            "name": "transition-ready",
+            "at": 565,
+            "duration": 554.8000000119209
+          },
+          {
+            "name": "high-load",
+            "at": 799.1999999880791
+          },
+          {
+            "name": "transition-finished",
+            "at": 1671.4000000357628,
+            "duration": 1660.9000000357628
+          }
+        ],
+        "animations": [
+          {
+            "ms": 23.900000035762787,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 17.80000001192093,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 22.799999952316284,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 21.200000047683716,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 21.600000023841858,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 19.400000035762787,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 21.900000035762787,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 16.69999998807907,
+            "frames": 401,
+            "class": ""
+          },
+          {
+            "ms": 1.199999988079071,
+            "frames": 4,
+            "class": "dockBar"
+          },
+          {
+            "ms": 0.40000003576278687,
+            "frames": 2,
+            "class": "dockAction dockBack"
+          },
+          {
+            "ms": 0.09999996423721313,
+            "frames": 2,
+            "class": "dockAction dockFit"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockMeta"
+          },
+          {
+            "ms": 0,
+            "frames": 2,
+            "class": "dockAction dockDownload"
+          },
+          {
+            "ms": 0.7000000476837158,
+            "frames": 2,
+            "class": "dockMeta"
+          },
+          {
+            "ms": 0.5,
+            "frames": 2,
+            "class": "capsuleDot"
+          }
+        ],
+        "longTasks": [
+          {
+            "start": 1583.4000000357628,
+            "duration": 445
+          },
+          {
+            "start": 2035.1000000238419,
+            "duration": 51
+          },
+          {
+            "start": 2103.900000035763,
+            "duration": 51
+          },
+          {
+            "start": 2320.699999988079,
+            "duration": 93
+          },
+          {
+            "start": 2428.199999988079,
+            "duration": 155
+          },
+          {
+            "start": 2667.5,
+            "duration": 106
+          },
+          {
+            "start": 2775.5,
+            "duration": 52
+          },
+          {
+            "start": 2843.400000035763,
+            "duration": 105
+          },
+          {
+            "start": 3031.699999988079,
+            "duration": 107
+          },
+          {
+            "start": 3219.100000023842,
+            "duration": 108
+          },
+          {
+            "start": 3345.600000023842,
+            "duration": 62
+          },
+          {
+            "start": 3446.900000035763,
+            "duration": 86
+          },
+          {
+            "start": 3552.699999988079,
+            "duration": 69
+          },
+          {
+            "start": 3667.800000011921,
+            "duration": 55
+          },
+          {
+            "start": 3724.600000023842,
+            "duration": 141
+          },
+          {
+            "start": 3882.100000023842,
+            "duration": 79
+          },
+          {
+            "start": 3970.600000023842,
+            "duration": 77
+          },
+          {
+            "start": 4058.400000035763,
+            "duration": 74
+          },
+          {
+            "start": 4142.400000035763,
+            "duration": 66
+          },
+          {
+            "start": 4212.400000035763,
+            "duration": 56
+          },
+          {
+            "start": 4276.400000035763,
+            "duration": 70
+          },
+          {
+            "start": 4430.300000011921,
+            "duration": 92
+          }
+        ],
+        "image": "http://127.0.0.1:5192/media/originals/IMG_20260815_153938.jpg",
+        "imageWidth": 3973,
+        "resources": [
+          {
+            "url": "http://127.0.0.1:5192/media/originals/IMG_20260815_153938.jpg",
+            "bytes": 3150133,
+            "ms": 99.5
+          }
+        ],
+        "cpu": {
+          "TaskDuration": 2946.803,
+          "ScriptDuration": 1344.6670000000001,
+          "LayoutDuration": 110.2,
+          "RecalcStyleDuration": 682.5120000000001
+        }
+      },
+      "idle": {
+        "raf": 243,
+        "draws": 0,
+        "cpu": 303.16900000000044
+      },
+      "close": {
+        "elapsed": 932.3999999761581,
+        "events": [
+          {
+            "name": "transition-ready",
+            "at": 153.30000001192093,
+            "duration": 147.60000002384186
+          },
+          {
+            "name": "transition-finished",
+            "at": 896.5999999642372,
+            "duration": 890.6999999880791
+          }
+        ],
+        "longTasks": [
+          {
+            "start": 8168.300000011921,
+            "duration": 81
+          }
+        ]
+      }
+    }
+  ],
+  "errors": []
+}

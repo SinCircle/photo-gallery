@@ -54,31 +54,32 @@ export function captureGlassScene(root: HTMLElement, glass: HTMLElement) {
     const scale = Math.max(rect.width / low.naturalWidth, rect.height / low.naturalHeight)
     const w = low.naturalWidth * scale, h = low.naturalHeight * scale
     const left = rect.x + (rect.width - w) / 2, top = rect.y + (rect.height - h) / 2
-    const backgroundKey = JSON.stringify([low.currentSrc, left, top, w, h, innerWidth, innerHeight, dpr, color, css.filter, css.opacity, after.backgroundColor])
+    // Four blur radii around the local strip preserve the visible convolution
+    // while avoiding a viewport-sized blurred bitmap for a tiny toolbar.
+    const pad = Math.ceil(4 * (parseFloat(css.filter.match(/blur\(([^)]+)/)?.[1] || '0') || 0) + 4)
+    const backgroundKey = JSON.stringify([low.currentSrc, left, top, w, h, x, y, width, height, dpr, color, css.filter, css.opacity, after.backgroundColor])
     key.push(backgroundKey)
     paint.push(ctx => {
       let cached = backgrounds.get(root)
       if (cached?.key !== backgroundKey) {
         const bitmap = document.createElement('canvas')
-        bitmap.width = Math.ceil((innerWidth + 200) * dpr)
-        bitmap.height = Math.ceil((innerHeight + 200) * dpr)
-        const buffer = bitmap.getContext('2d')!
+        bitmap.width = Math.ceil((width + pad * 2) * dpr)
+        bitmap.height = Math.ceil((height + pad * 2) * dpr)
+        const buffer = bitmap.getContext('2d', { willReadFrequently: true })!
         buffer.scale(dpr, dpr)
         buffer.fillStyle = color
-        buffer.fillRect(0, 0, innerWidth + 200, innerHeight + 200)
+        buffer.fillRect(0, 0, width + pad * 2, height + pad * 2)
         buffer.globalAlpha = Number(css.opacity)
         buffer.filter = css.filter
-        buffer.drawImage(low, left + 100, top + 100, w, h)
+        buffer.drawImage(low, left - x + pad, top - y + pad, w, h)
         buffer.filter = 'none'
         buffer.fillStyle = after.backgroundColor
-        buffer.fillRect(0, 0, innerWidth + 200, innerHeight + 200)
+        buffer.fillRect(0, 0, width + pad * 2, height + pad * 2)
         cached = { key: backgroundKey, canvas: bitmap }
         backgrounds.set(root, cached)
       }
       ctx.save()
-      const sx = Math.max(0, x + 100), sy = Math.max(0, y + 100)
-      const sw = Math.min(width, innerWidth + 200 - sx), sh = Math.min(height, innerHeight + 200 - sy)
-      ctx.drawImage(cached.canvas, sx * dpr, sy * dpr, sw * dpr, sh * dpr, sx - x - 100, sy - y - 100, sw, sh)
+      ctx.drawImage(cached.canvas, pad * dpr, pad * dpr, width * dpr, height * dpr, 0, 0, width, height)
       ctx.restore()
     })
   }
@@ -135,7 +136,7 @@ export function captureGlassScene(root: HTMLElement, glass: HTMLElement) {
       if (raw.height !== canvas.height) raw.height = canvas.height
       target = raw
     }
-    const ctx = target.getContext('2d')!
+    const ctx = target.getContext('2d', { willReadFrequently: true })!
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx.globalAlpha = 1
     ctx.fillStyle = color

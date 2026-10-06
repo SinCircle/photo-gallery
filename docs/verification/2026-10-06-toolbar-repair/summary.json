@@ -1,0 +1,290 @@
+{
+  "method": "1440x1000, DPR 1, hardware-accelerated headless Chrome; interleaved fresh documents. Each input scenario sends 120 trusted CDP events at 60Hz targets (overloaded runs may take longer). FPS is measured from actual rAF intervals; CPU is total main-document time across the full input sequence. No concurrent browser benchmarks.",
+  "graphics": {
+    "available": true,
+    "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x000013C0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "browser": "Chrome/154.0.8037.98",
+  "scenarios": {
+    "idle-expanded": {
+      "before": {
+        "fps": [
+          228.51415685291906,
+          232.99208230369666
+        ],
+        "p95Ms": [
+          4.300000000000182,
+          4.300000000000182
+        ],
+        "longTasks": 0,
+        "counts": [
+          {
+            "ink": 4,
+            "scene": 0,
+            "reads": 4,
+            "png": 0,
+            "draws": 0
+          },
+          {
+            "ink": 4,
+            "scene": 0,
+            "reads": 4,
+            "png": 0,
+            "draws": 0
+          }
+        ]
+      },
+      "after": {
+        "fps": [
+          236.52890071812382,
+          235.53635998392926
+        ],
+        "p95Ms": [
+          4.300000000000182,
+          4.300000000000182
+        ],
+        "longTasks": 0,
+        "counts": [
+          {
+            "ink": 0,
+            "scene": 0,
+            "reads": 0,
+            "png": 0,
+            "draws": 0
+          },
+          {
+            "ink": 0,
+            "scene": 0,
+            "reads": 0,
+            "png": 0,
+            "draws": 0
+          }
+        ]
+      }
+    },
+    "hover": {
+      "before": {
+        "fps": [
+          70.38868819671623,
+          74.57593261531801
+        ],
+        "p95Ms": [
+          50.100000000000364,
+          41.80000000000018
+        ],
+        "longTasks": 15,
+        "counts": [
+          {
+            "ink": 253,
+            "scene": 120,
+            "reads": 253,
+            "png": 1,
+            "draws": 1800
+          },
+          {
+            "ink": 252,
+            "scene": 120,
+            "reads": 252,
+            "png": 1,
+            "draws": 1800
+          }
+        ]
+      },
+      "after": {
+        "fps": [
+          238.5505787619527,
+          238.5265700483092
+        ],
+        "p95Ms": [
+          4.300000000000182,
+          4.300000000000182
+        ],
+        "longTasks": 0,
+        "counts": [
+          {
+            "ink": 0,
+            "scene": 0,
+            "reads": 0,
+            "png": 0,
+            "draws": 0
+          },
+          {
+            "ink": 0,
+            "scene": 0,
+            "reads": 0,
+            "png": 0,
+            "draws": 0
+          }
+        ]
+      }
+    },
+    "drag": {
+      "before": {
+        "fps": [
+          63.97497867500709,
+          65.1771326871738
+        ],
+        "p95Ms": [
+          33.5,
+          33.399999999999636
+        ],
+        "longTasks": 2,
+        "counts": [
+          {
+            "ink": 128,
+            "scene": 119,
+            "reads": 128,
+            "png": 119,
+            "draws": 1785
+          },
+          {
+            "ink": 128,
+            "scene": 119,
+            "reads": 128,
+            "png": 119,
+            "draws": 1785
+          }
+        ]
+      },
+      "after": {
+        "fps": [
+          226.55663915978994,
+          217.50025057632558
+        ],
+        "p95Ms": [
+          8.200000000000728,
+          8.300000000000182
+        ],
+        "longTasks": 0,
+        "counts": [
+          {
+            "ink": 119,
+            "scene": 119,
+            "reads": 119,
+            "png": 0,
+            "draws": 1785
+          },
+          {
+            "ink": 119,
+            "scene": 119,
+            "reads": 119,
+            "png": 0,
+            "draws": 1785
+          }
+        ]
+      }
+    },
+    "wheel": {
+      "before": {
+        "fps": [
+          24.526155938061926,
+          23.63321254135812
+        ],
+        "p95Ms": [
+          125.29999999999927,
+          133.59999999999854
+        ],
+        "longTasks": 204,
+        "counts": [
+          {
+            "ink": 511,
+            "scene": 501,
+            "reads": 511,
+            "png": 233,
+            "draws": 5610
+          },
+          {
+            "ink": 508,
+            "scene": 497,
+            "reads": 508,
+            "png": 225,
+            "draws": 5490
+          }
+        ]
+      },
+      "after": {
+        "fps": [
+          113.50563693534784,
+          113.28422656845314
+        ],
+        "p95Ms": [
+          12.600000000000364,
+          12.699999999998909
+        ],
+        "longTasks": 0,
+        "counts": [
+          {
+            "ink": 560,
+            "scene": 560,
+            "reads": 560,
+            "png": 0,
+            "draws": 6585
+          },
+          {
+            "ink": 562,
+            "scene": 562,
+            "reads": 562,
+            "png": 0,
+            "draws": 6615
+          }
+        ]
+      }
+    },
+    "idle-collapsed": {
+      "before": {
+        "fps": [
+          237.52254960914027,
+          236.0267162155381
+        ],
+        "p95Ms": [
+          4.30000000000291,
+          4.30000000000291
+        ],
+        "longTasks": 0,
+        "counts": [
+          {
+            "ink": 0,
+            "scene": 0,
+            "reads": 0,
+            "png": 0,
+            "draws": 0
+          },
+          {
+            "ink": 0,
+            "scene": 0,
+            "reads": 0,
+            "png": 0,
+            "draws": 0
+          }
+        ]
+      },
+      "after": {
+        "fps": [
+          232.02089192446758,
+          237.54519887505015
+        ],
+        "p95Ms": [
+          4.300000000001091,
+          4.300000000001091
+        ],
+        "longTasks": 0,
+        "counts": [
+          {
+            "ink": 0,
+            "scene": 0,
+            "reads": 0,
+            "png": 0,
+            "draws": 0
+          },
+          {
+            "ink": 0,
+            "scene": 0,
+            "reads": 0,
+            "png": 0,
+            "draws": 0
+          }
+        ]
+      }
+    }
+  }
+}

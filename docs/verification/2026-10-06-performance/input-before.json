@@ -1,0 +1,683 @@
+{
+  "method": "1440x1000, DPR 1, hardware-accelerated headless Chrome; interleaved fresh documents. Each input scenario sends 120 trusted CDP events at 60Hz targets (overloaded runs may take longer). FPS is measured from actual rAF intervals; CPU is total main-document time across the full input sequence. No concurrent browser benchmarks.",
+  "graphics": {
+    "available": true,
+    "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x000013C0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "browser": "Chrome/154.0.8037.98",
+  "runs": [
+    {
+      "base": "http://127.0.0.1:5192",
+      "repeat": 0,
+      "scenario": "idle-expanded",
+      "fps": 239.55403776617118,
+      "p95": 4.300000000000182,
+      "max": 5.399999999999636,
+      "longTasks": [],
+      "counts": {
+        "ink": 0,
+        "scene": 0,
+        "reads": 0,
+        "png": 0,
+        "draws": 0
+      },
+      "panChanged": false,
+      "zoomChanged": false,
+      "glass": "webgl",
+      "elapsedMs": 1996.3743999999997,
+      "cpu": {
+        "TaskDuration": 113.168,
+        "ScriptDuration": 45.131,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5192",
+      "repeat": 0,
+      "scenario": "hover",
+      "fps": 239.55403776617118,
+      "p95": 4.300000000000182,
+      "max": 4.400000000000546,
+      "longTasks": [],
+      "counts": {
+        "ink": 0,
+        "scene": 0,
+        "reads": 0,
+        "png": 0,
+        "draws": 0
+      },
+      "panChanged": false,
+      "zoomChanged": false,
+      "glass": "webgl",
+      "elapsedMs": 1996.5112,
+      "cpu": {
+        "TaskDuration": 135.295,
+        "ScriptDuration": 42.112,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5192",
+      "repeat": 0,
+      "scenario": "drag",
+      "fps": 169.18134125015254,
+      "p95": 12.600000000000364,
+      "max": 33.399999999999636,
+      "longTasks": [],
+      "counts": {
+        "ink": 119,
+        "scene": 119,
+        "reads": 119,
+        "png": 0,
+        "draws": 1785
+      },
+      "panChanged": true,
+      "zoomChanged": false,
+      "glass": "webgl",
+      "elapsedMs": 2466.2821000000004,
+      "cpu": {
+        "TaskDuration": 1523.1939999999997,
+        "ScriptDuration": 754.186,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 538.9799999999999
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5192",
+      "repeat": 0,
+      "scenario": "wheel",
+      "fps": 59.56907477820027,
+      "p95": 45.80000000000109,
+      "max": 104.19999999999891,
+      "longTasks": [
+        {
+          "start": 12549.400000035763,
+          "duration": 60
+        },
+        {
+          "start": 14037.800000011921,
+          "duration": 54
+        },
+        {
+          "start": 14477.100000023842,
+          "duration": 69
+        },
+        {
+          "start": 14826.800000011921,
+          "duration": 69
+        },
+        {
+          "start": 15005.5,
+          "duration": 63
+        },
+        {
+          "start": 15293.699999988079,
+          "duration": 77
+        },
+        {
+          "start": 15420.199999988079,
+          "duration": 52
+        },
+        {
+          "start": 15527.699999988079,
+          "duration": 61
+        },
+        {
+          "start": 15837,
+          "duration": 103
+        },
+        {
+          "start": 16728.19999998808,
+          "duration": 51
+        },
+        {
+          "start": 17788.600000023842,
+          "duration": 59
+        },
+        {
+          "start": 18218.5,
+          "duration": 61
+        }
+      ],
+      "counts": {
+        "ink": 542,
+        "scene": 541,
+        "reads": 542,
+        "png": 0,
+        "draws": 6285
+      },
+      "panChanged": false,
+      "zoomChanged": true,
+      "glass": "webgl",
+      "elapsedMs": 7108.6821,
+      "cpu": {
+        "TaskDuration": 6994.374000000001,
+        "ScriptDuration": 5462.790999999999,
+        "LayoutDuration": 11.625,
+        "RecalcStyleDuration": 1061.4859999999999
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5192",
+      "repeat": 0,
+      "scenario": "idle-collapsed",
+      "fps": 238.54866192242184,
+      "p95": 4.299999999999272,
+      "max": 8.399999999997817,
+      "longTasks": [],
+      "counts": {
+        "ink": 0,
+        "scene": 0,
+        "reads": 0,
+        "png": 0,
+        "draws": 0
+      },
+      "panChanged": false,
+      "zoomChanged": false,
+      "glass": "webgl",
+      "elapsedMs": 1999.4194000000025,
+      "cpu": {
+        "TaskDuration": 169.11600000000072,
+        "ScriptDuration": 40.18199999999972,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 0,
+      "scenario": "idle-expanded",
+      "fps": 239.90343509530751,
+      "p95": 4.300000000000182,
+      "max": 4.399999999999636,
+      "longTasks": [],
+      "counts": {
+        "ink": 0,
+        "scene": 0,
+        "reads": 0,
+        "png": 0,
+        "draws": 0
+      },
+      "panChanged": false,
+      "zoomChanged": false,
+      "glass": "webgl",
+      "elapsedMs": 1990.8058999999994,
+      "cpu": {
+        "TaskDuration": 93.06900000000007,
+        "ScriptDuration": 27.766000000000012,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 0,
+      "scenario": "hover",
+      "fps": 239.5389626659985,
+      "p95": 4.300000000000182,
+      "max": 4.800000000000182,
+      "longTasks": [],
+      "counts": {
+        "ink": 0,
+        "scene": 0,
+        "reads": 0,
+        "png": 0,
+        "draws": 0
+      },
+      "panChanged": false,
+      "zoomChanged": false,
+      "glass": "webgl",
+      "elapsedMs": 1996.2989000000016,
+      "cpu": {
+        "TaskDuration": 163.32600000000008,
+        "ScriptDuration": 41.964,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 0,
+      "scenario": "drag",
+      "fps": 201.4806980433633,
+      "p95": 8.399999999999636,
+      "max": 20.799999999999272,
+      "longTasks": [],
+      "counts": {
+        "ink": 110,
+        "scene": 110,
+        "reads": 110,
+        "png": 0,
+        "draws": 1605
+      },
+      "panChanged": true,
+      "zoomChanged": false,
+      "glass": "webgl",
+      "elapsedMs": 1998.4388,
+      "cpu": {
+        "TaskDuration": 1149.956,
+        "ScriptDuration": 388.46099999999996,
+        "LayoutDuration": 0.27499999999999747,
+        "RecalcStyleDuration": 529.0719999999999
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 0,
+      "scenario": "wheel",
+      "fps": 120.50848703064146,
+      "p95": 20.899999999999636,
+      "max": 41.899999999999636,
+      "longTasks": [],
+      "counts": {
+        "ink": 207,
+        "scene": 207,
+        "reads": 207,
+        "png": 0,
+        "draws": 2820
+      },
+      "panChanged": false,
+      "zoomChanged": true,
+      "glass": "webgl",
+      "elapsedMs": 4086.7568999999967,
+      "cpu": {
+        "TaskDuration": 1715.5650000000003,
+        "ScriptDuration": 540.3230000000001,
+        "LayoutDuration": 27.323999999999995,
+        "RecalcStyleDuration": 704.785
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 0,
+      "scenario": "idle-collapsed",
+      "fps": 224.46014329375222,
+      "p95": 4.300000000001091,
+      "max": 91.89999999999964,
+      "longTasks": [
+        {
+          "start": 14621.899999976158,
+          "duration": 93
+        }
+      ],
+      "counts": {
+        "ink": 1,
+        "scene": 1,
+        "reads": 1,
+        "png": 0,
+        "draws": 15
+      },
+      "panChanged": false,
+      "zoomChanged": false,
+      "glass": "webgl",
+      "elapsedMs": 1998.5535000000018,
+      "cpu": {
+        "TaskDuration": 218.79399999999993,
+        "ScriptDuration": 119.21199999999988,
+        "LayoutDuration": 0.10900000000001187,
+        "RecalcStyleDuration": 0.12999999999996348
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 1,
+      "scenario": "idle-expanded",
+      "fps": 239.4004928833677,
+      "p95": 4.300000000000182,
+      "max": 5.399999999999636,
+      "longTasks": [],
+      "counts": {
+        "ink": 0,
+        "scene": 0,
+        "reads": 0,
+        "png": 0,
+        "draws": 0
+      },
+      "panChanged": false,
+      "zoomChanged": false,
+      "glass": "webgl",
+      "elapsedMs": 1989.1131999999998,
+      "cpu": {
+        "TaskDuration": 90.26899999999993,
+        "ScriptDuration": 26.173999999999975,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 1,
+      "scenario": "hover",
+      "fps": 239.54200773364133,
+      "p95": 4.300000000000182,
+      "max": 4.699999999999818,
+      "longTasks": [],
+      "counts": {
+        "ink": 0,
+        "scene": 0,
+        "reads": 0,
+        "png": 0,
+        "draws": 0
+      },
+      "panChanged": false,
+      "zoomChanged": false,
+      "glass": "webgl",
+      "elapsedMs": 1992.966100000005,
+      "cpu": {
+        "TaskDuration": 125.17599999999996,
+        "ScriptDuration": 32.05899999999995,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 1,
+      "scenario": "drag",
+      "fps": 232.07066926186548,
+      "p95": 4.300000000001091,
+      "max": 8.5,
+      "longTasks": [],
+      "counts": {
+        "ink": 113,
+        "scene": 113,
+        "reads": 113,
+        "png": 0,
+        "draws": 1680
+      },
+      "panChanged": true,
+      "zoomChanged": false,
+      "glass": "webgl",
+      "elapsedMs": 2010.9603999999963,
+      "cpu": {
+        "TaskDuration": 1047.246,
+        "ScriptDuration": 378.027,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 447.6510000000001
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 1,
+      "scenario": "wheel",
+      "fps": 127.64008929082478,
+      "p95": 20.899999999999636,
+      "max": 37.600000000000364,
+      "longTasks": [],
+      "counts": {
+        "ink": 178,
+        "scene": 178,
+        "reads": 178,
+        "png": 0,
+        "draws": 2505
+      },
+      "panChanged": false,
+      "zoomChanged": true,
+      "glass": "webgl",
+      "elapsedMs": 3500.3227999999945,
+      "cpu": {
+        "TaskDuration": 1719.303,
+        "ScriptDuration": 535.482,
+        "LayoutDuration": 19.724000000000004,
+        "RecalcStyleDuration": 706.885
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 1,
+      "scenario": "idle-collapsed",
+      "fps": 239.5209580838322,
+      "p95": 4.299999999999272,
+      "max": 4.799999999999272,
+      "longTasks": [],
+      "counts": {
+        "ink": 0,
+        "scene": 0,
+        "reads": 0,
+        "png": 0,
+        "draws": 0
+      },
+      "panChanged": false,
+      "zoomChanged": false,
+      "glass": "webgl",
+      "elapsedMs": 1989.628499999999,
+      "cpu": {
+        "TaskDuration": 100.24199999999972,
+        "ScriptDuration": 27.21299999999993,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5192",
+      "repeat": 1,
+      "scenario": "idle-expanded",
+      "fps": 239.54813656765342,
+      "p95": 4.300000000000182,
+      "max": 5.100000000000364,
+      "longTasks": [],
+      "counts": {
+        "ink": 0,
+        "scene": 0,
+        "reads": 0,
+        "png": 0,
+        "draws": 0
+      },
+      "panChanged": false,
+      "zoomChanged": false,
+      "glass": "webgl",
+      "elapsedMs": 1990.2483000000066,
+      "cpu": {
+        "TaskDuration": 107.18700000000014,
+        "ScriptDuration": 39.32100000000016,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5192",
+      "repeat": 1,
+      "scenario": "hover",
+      "fps": 237.03108522071005,
+      "p95": 4.300000000000182,
+      "max": 25.100000000000364,
+      "longTasks": [],
+      "counts": {
+        "ink": 0,
+        "scene": 0,
+        "reads": 0,
+        "png": 0,
+        "draws": 0
+      },
+      "panChanged": false,
+      "zoomChanged": false,
+      "glass": "webgl",
+      "elapsedMs": 1994.6025999999983,
+      "cpu": {
+        "TaskDuration": 192.99399999999966,
+        "ScriptDuration": 48.647000000000105,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5192",
+      "repeat": 1,
+      "scenario": "drag",
+      "fps": 159.56836184134994,
+      "p95": 16.69999999999891,
+      "max": 103.69999999999891,
+      "longTasks": [
+        {
+          "start": 9035.099999964237,
+          "duration": 53
+        },
+        {
+          "start": 9098.299999952316,
+          "duration": 107
+        }
+      ],
+      "counts": {
+        "ink": 119,
+        "scene": 119,
+        "reads": 119,
+        "png": 0,
+        "draws": 1785
+      },
+      "panChanged": true,
+      "zoomChanged": false,
+      "glass": "webgl",
+      "elapsedMs": 2623.1524999999965,
+      "cpu": {
+        "TaskDuration": 1741.682,
+        "ScriptDuration": 970.917,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 505.34999999999997
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5192",
+      "repeat": 1,
+      "scenario": "wheel",
+      "fps": 76.71084318134699,
+      "p95": 46,
+      "max": 162.89999999999964,
+      "longTasks": [
+        {
+          "start": 11506.799999952316,
+          "duration": 53
+        },
+        {
+          "start": 11707.799999952316,
+          "duration": 51
+        },
+        {
+          "start": 11759.299999952316,
+          "duration": 52
+        },
+        {
+          "start": 12120.5,
+          "duration": 94
+        },
+        {
+          "start": 12582,
+          "duration": 58
+        },
+        {
+          "start": 12829.899999976158,
+          "duration": 74
+        },
+        {
+          "start": 12954.399999976158,
+          "duration": 66
+        },
+        {
+          "start": 13125,
+          "duration": 60
+        },
+        {
+          "start": 13417.5,
+          "duration": 50
+        },
+        {
+          "start": 13625.099999964237,
+          "duration": 54
+        },
+        {
+          "start": 13707.299999952316,
+          "duration": 60
+        },
+        {
+          "start": 13839.099999964237,
+          "duration": 57
+        },
+        {
+          "start": 13896.699999988079,
+          "duration": 55
+        },
+        {
+          "start": 13982.099999964237,
+          "duration": 61
+        },
+        {
+          "start": 14115.799999952316,
+          "duration": 63
+        },
+        {
+          "start": 14391.299999952316,
+          "duration": 55
+        },
+        {
+          "start": 14665.199999988079,
+          "duration": 65
+        },
+        {
+          "start": 14783.599999964237,
+          "duration": 65
+        },
+        {
+          "start": 15201.199999988079,
+          "duration": 55
+        },
+        {
+          "start": 15405.699999988079,
+          "duration": 50
+        },
+        {
+          "start": 15935.699999988079,
+          "duration": 164
+        },
+        {
+          "start": 17135.599999964237,
+          "duration": 52
+        }
+      ],
+      "counts": {
+        "ink": 602,
+        "scene": 601,
+        "reads": 602,
+        "png": 0,
+        "draws": 7170
+      },
+      "panChanged": false,
+      "zoomChanged": true,
+      "glass": "webgl",
+      "elapsedMs": 6280.289499999999,
+      "cpu": {
+        "TaskDuration": 6181.111,
+        "ScriptDuration": 5101.6050000000005,
+        "LayoutDuration": 18.468000000000004,
+        "RecalcStyleDuration": 646.7669999999999
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5192",
+      "repeat": 1,
+      "scenario": "idle-collapsed",
+      "fps": 239.54813656765327,
+      "p95": 4.299999999999272,
+      "max": 4.80000000000291,
+      "longTasks": [],
+      "counts": {
+        "ink": 0,
+        "scene": 0,
+        "reads": 0,
+        "png": 0,
+        "draws": 0
+      },
+      "panChanged": false,
+      "zoomChanged": false,
+      "glass": "webgl",
+      "elapsedMs": 1985.9150999999983,
+      "cpu": {
+        "TaskDuration": 104.4249999999991,
+        "ScriptDuration": 37.40099999999913,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      }
+    }
+  ],
+  "errors": []
+}

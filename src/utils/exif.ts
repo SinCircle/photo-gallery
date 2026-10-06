@@ -5,19 +5,18 @@ export function photoMetadata(photo: Photo) {
   const date = photo.takenAt ? new Date(photo.takenAt) : null
   return {
     date: date && !Number.isNaN(date.getTime()) ? date : null,
-    fields: photo.exif,
+    // Older indexed photos may already contain Make + a brand-prefixed Model.
+    fields: photo.exif.map(field => field.label === '相机'
+      ? { ...field, value: field.value.trim().replace(/^(.+?)\s+\1(?=\s|$)/i, '$1') }
+      : field),
   }
 }
 
-export function formatDateTime(dt: Date): string {
-  return new Intl.DateTimeFormat('zh-CN', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(dt)
-}
+const dateTimeFormatter = new Intl.DateTimeFormat('zh-CN', { dateStyle: 'medium', timeStyle: 'short' })
+const dateFormatter = new Intl.DateTimeFormat('zh-CN', { dateStyle: 'medium' })
+
+export function formatDateTime(dt: Date): string { return dateTimeFormatter.format(dt) }
 
 export function formatDateOnly(dt: Date): string {
-  return new Intl.DateTimeFormat('zh-CN', {
-    dateStyle: 'medium',
-  }).format(dt)
+  return dateFormatter.format(dt)
 }

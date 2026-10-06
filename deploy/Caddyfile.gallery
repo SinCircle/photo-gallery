@@ -1,0 +1,4 @@
+gallery.kaiacademy.top {
+	encode zstd gzip
+	reverse_proxy photo-gallery:80
+}

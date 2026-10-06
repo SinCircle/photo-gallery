@@ -8,6 +8,6 @@ export const CONFIG = {
   downloadBorderPx: 96,
 
   // Used by both the bottom dock metadata (CSS) and the downloaded border stamp (canvas).
-  stampFontFamilyCss: 'Cinzel Decorative, Cormorant SC, serif',
-  stampFontFamilyCanvas: '"Cinzel Decorative", "Cormorant SC", serif',
+  stampFontFamilyCss: 'Cinzel Decorative, Cormorant SC, Noto Serif SC, Songti SC, SimSun, serif',
+  stampFontFamilyCanvas: '"Cinzel Decorative", "Cormorant SC", "Noto Serif SC", "Songti SC", SimSun, serif',
 } as const

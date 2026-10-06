@@ -1,0 +1,36 @@
+name: photo-gallery
+services:
+  gallery:
+    image: photo-gallery:${GALLERY_RELEASE:?Set the release Git SHA}
+    container_name: photo-gallery
+    restart: unless-stopped
+    env_file:
+      - ${GALLERY_ENV_FILE:-/opt/photo-gallery/.env}
+    environment:
+      PHOTOS_DIR: /data/photos
+      PORT: "3000"
+    ports:
+      - "127.0.0.1:8088:80"
+    volumes:
+      - ${PHOTOS_HOST_DIR:-/srv/photo-gallery/photos}:/data/photos
+    networks:
+      proxy:
+        aliases:
+          - photo-gallery
+    mem_limit: 512m
+    cpus: 1.0
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "node", "-e", "Promise.all([fetch('http://127.0.0.1/api/health'),fetch('http://127.0.0.1/api/photos')]).then(rs=>{if(rs.some(r=>!r.ok))process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+networks:
+  proxy:
+    external: true
+    name: ${PROXY_NETWORK:-gaiyuan-production_default}

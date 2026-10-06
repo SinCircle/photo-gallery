@@ -3,12 +3,12 @@
 export const GLASS_BLUR_PX = 0
 
 // Regular Glass, using the reference preset from the liquid-glass demo site.
-// The only change is blurAmount (0.25 -> 0.15). The CSS hairline border is gone;
+// Blur is configurable for the expanded mobile panel. The CSS hairline border is gone;
 // the material's own rim highlight and grazing reflection stay.
-export function regularGlassConfig(zRadius = 18) {
+export function regularGlassConfig(zRadius = 18, blurAmount = .15) {
   return JSON.stringify({
     floating: false,
-    blurAmount: 0.15,
+    blurAmount,
     refraction: 0.95,
     chromAberration: 0.055,
     edgeHighlight: 0.3,

@@ -1,0 +1,10 @@
+{
+  "build": {
+    "dist\\assets\\index-CBdWAXGQ.css": "d6d0d7a42e035de8e239072f0236de73fc85cdff8b8921ba4550dbbf1329a260",
+    "dist\\assets\\index-DNeEE1l4.js": "2c8eda2eee1e2034ba12afb1cfa31a6cd6466b48b7ccd47d9ee60c93314f817b"
+  },
+  "dependencies": {
+    "liquidglass": "1.0.3",
+    "patchedBundleSHA256": "769f52704e2cfccdabfbe7d9cc908297ba73d4ec4da2e811c582ada6ca86e41c"
+  }
+}

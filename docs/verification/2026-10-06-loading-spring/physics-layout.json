@@ -1,0 +1,73 @@
+{
+  "layouts": [
+    {
+      "width": 1440,
+      "dpr": 1,
+      "frames": 60,
+      "minGap": 10.30450439453125,
+      "maxGap": 17.69549560546875
+    },
+    {
+      "width": 390,
+      "dpr": 2,
+      "frames": 60,
+      "minGap": 10.304519653320312,
+      "maxGap": 17.695480346679688
+    },
+    {
+      "width": 320,
+      "dpr": 2,
+      "frames": 60,
+      "minGap": 10.304519653320312,
+      "maxGap": 17.695480346679688
+    }
+  ],
+  "errors": [],
+  "idle": {
+    "frames": 1,
+    "requested": 142,
+    "executed": 142,
+    "requestedAll": 142,
+    "executedAll": 142
+  },
+  "paints": {
+    "ink": 0,
+    "draws": 0
+  },
+  "paused": {
+    "frames": 1,
+    "requested": 141,
+    "executed": 141,
+    "requestedAll": 141,
+    "executedAll": 141
+  },
+  "seamSpeeds": [
+    {
+      "before": 19.47021484375,
+      "after": 19.04296875
+    },
+    {
+      "before": 34.881591796875,
+      "after": 34.881591796875
+    },
+    {
+      "before": 18.585205078125,
+      "after": 18.98193359375
+    }
+  ],
+  "staticLayout": [
+    [
+      14,
+      16
+    ],
+    [
+      28,
+      16
+    ],
+    [
+      42,
+      16
+    ]
+  ],
+  "status": "passed"
+}

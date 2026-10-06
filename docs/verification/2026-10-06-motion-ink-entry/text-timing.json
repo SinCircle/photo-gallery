@@ -1,0 +1,484 @@
+{
+  "sizes": [
+    {
+      "width": 1440,
+      "phases": [
+        {
+          "time": 0,
+          "bar": 56,
+          "items": [
+            {
+              "opacity": 0,
+              "visibility": "visible",
+              "filter": "blur(6px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0,
+              "visibility": "visible",
+              "filter": "blur(6px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0,
+              "visibility": "visible",
+              "filter": "blur(6px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0,
+              "visibility": "visible",
+              "filter": "blur(6px)",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 40,
+          "bar": 82.640625,
+          "items": [
+            {
+              "opacity": 0.168653,
+              "visibility": "visible",
+              "filter": "blur(4.98808px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.168653,
+              "visibility": "visible",
+              "filter": "blur(4.98808px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.168653,
+              "visibility": "visible",
+              "filter": "blur(4.98808px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.168653,
+              "visibility": "visible",
+              "filter": "blur(4.98808px)",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 120,
+          "bar": 236.640625,
+          "items": [
+            {
+              "opacity": 0.440249,
+              "visibility": "visible",
+              "filter": "blur(3.35851px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.440249,
+              "visibility": "visible",
+              "filter": "blur(3.35851px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.440249,
+              "visibility": "visible",
+              "filter": "blur(3.35851px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.440249,
+              "visibility": "visible",
+              "filter": "blur(3.35851px)",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 350,
+          "bar": 687.046875,
+          "items": [
+            {
+              "opacity": 0.825622,
+              "visibility": "visible",
+              "filter": "blur(1.04627px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.825622,
+              "visibility": "visible",
+              "filter": "blur(1.04627px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.825622,
+              "visibility": "visible",
+              "filter": "blur(1.04627px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.825622,
+              "visibility": "visible",
+              "filter": "blur(1.04627px)",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 700,
+          "bar": 761.25,
+          "items": [
+            {
+              "opacity": 0.971779,
+              "visibility": "visible",
+              "filter": "blur(0.169325px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.971779,
+              "visibility": "visible",
+              "filter": "blur(0.169325px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.971779,
+              "visibility": "visible",
+              "filter": "blur(0.169325px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.971779,
+              "visibility": "visible",
+              "filter": "blur(0.169325px)",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 1050,
+          "bar": 729.265625,
+          "items": [
+            {
+              "opacity": 0.997677,
+              "visibility": "visible",
+              "filter": "blur(0.0139376px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.997677,
+              "visibility": "visible",
+              "filter": "blur(0.0139376px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.997677,
+              "visibility": "visible",
+              "filter": "blur(0.0139376px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.997677,
+              "visibility": "visible",
+              "filter": "blur(0.0139376px)",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 1400,
+          "bar": 731.546875,
+          "items": [
+            {
+              "opacity": 1,
+              "visibility": "visible",
+              "filter": "blur(0px)",
+              "delay": 0
+            },
+            {
+              "opacity": 1,
+              "visibility": "visible",
+              "filter": "blur(0px)",
+              "delay": 0
+            },
+            {
+              "opacity": 1,
+              "visibility": "visible",
+              "filter": "blur(0px)"
+            },
+            {
+              "opacity": 1,
+              "visibility": "visible",
+              "filter": "blur(0px)"
+            }
+          ]
+        }
+      ],
+      "zoom": {
+        "rect": {
+          "x": -5020.23046875,
+          "y": -6306.8544921875,
+          "width": 11480.4609375,
+          "height": 15326.416015625,
+          "top": -6306.8544921875,
+          "right": 6460.23046875,
+          "bottom": 9019.5615234375,
+          "left": -5020.23046875
+        },
+        "buttons": [
+          {
+            "text": "返回",
+            "topmost": true
+          },
+          {
+            "text": "比例：自由",
+            "topmost": true
+          },
+          {
+            "text": "下载",
+            "topmost": true
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "phases": [
+        {
+          "time": 0,
+          "bar": 56,
+          "items": [
+            {
+              "opacity": 0,
+              "visibility": "visible",
+              "filter": "blur(6px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0,
+              "visibility": "visible",
+              "filter": "blur(6px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0,
+              "visibility": "visible",
+              "filter": "blur(6px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0,
+              "visibility": "visible",
+              "filter": "blur(6px)",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 40,
+          "bar": 67.71875,
+          "items": [
+            {
+              "opacity": 0.168653,
+              "visibility": "visible",
+              "filter": "blur(4.98808px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.168653,
+              "visibility": "visible",
+              "filter": "blur(4.98808px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.168653,
+              "visibility": "visible",
+              "filter": "blur(4.98808px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.168653,
+              "visibility": "visible",
+              "filter": "blur(4.98808px)",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 120,
+          "bar": 135.515625,
+          "items": [
+            {
+              "opacity": 0.440249,
+              "visibility": "visible",
+              "filter": "blur(3.35851px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.440249,
+              "visibility": "visible",
+              "filter": "blur(3.35851px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.440249,
+              "visibility": "visible",
+              "filter": "blur(3.35851px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.440249,
+              "visibility": "visible",
+              "filter": "blur(3.35851px)",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 350,
+          "bar": 333.625,
+          "items": [
+            {
+              "opacity": 0.825622,
+              "visibility": "visible",
+              "filter": "blur(1.04627px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.825622,
+              "visibility": "visible",
+              "filter": "blur(1.04627px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.825622,
+              "visibility": "visible",
+              "filter": "blur(1.04627px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.825622,
+              "visibility": "visible",
+              "filter": "blur(1.04627px)",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 700,
+          "bar": 366.625,
+          "items": [
+            {
+              "opacity": 0.971779,
+              "visibility": "visible",
+              "filter": "blur(0.169325px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.971779,
+              "visibility": "visible",
+              "filter": "blur(0.169325px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.971779,
+              "visibility": "visible",
+              "filter": "blur(0.169325px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.971779,
+              "visibility": "visible",
+              "filter": "blur(0.169325px)",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 1050,
+          "bar": 352.671875,
+          "items": [
+            {
+              "opacity": 0.997677,
+              "visibility": "visible",
+              "filter": "blur(0.0139376px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.997677,
+              "visibility": "visible",
+              "filter": "blur(0.0139376px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.997677,
+              "visibility": "visible",
+              "filter": "blur(0.0139376px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.997677,
+              "visibility": "visible",
+              "filter": "blur(0.0139376px)",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 1400,
+          "bar": 353.625,
+          "items": [
+            {
+              "opacity": 1,
+              "visibility": "visible",
+              "filter": "blur(0px)"
+            },
+            {
+              "opacity": 1,
+              "visibility": "visible",
+              "filter": "blur(0px)",
+              "delay": 0
+            },
+            {
+              "opacity": 1,
+              "visibility": "visible",
+              "filter": "blur(0px)"
+            },
+            {
+              "opacity": 1,
+              "visibility": "visible",
+              "filter": "blur(0px)"
+            }
+          ]
+        }
+      ],
+      "zoom": {
+        "rect": {
+          "x": -6282.72265625,
+          "y": -6374.7001953125,
+          "width": 12955.4453125,
+          "height": 17295.51953125,
+          "top": -6374.7001953125,
+          "right": 6672.72265625,
+          "bottom": 10920.8193359375,
+          "left": -6282.72265625
+        },
+        "buttons": [
+          {
+            "text": "返回",
+            "topmost": true
+          },
+          {
+            "text": "比例：自由",
+            "topmost": true
+          },
+          {
+            "text": "下载",
+            "topmost": true
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "noClickThrough": true,
+  "status": "passed"
+}

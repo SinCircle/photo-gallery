@@ -5,13 +5,14 @@ import path from 'node:path'
 
 // Review the built candidate without replacing the accepted port-80 stack.
 // Read-only API/media requests use that same stack and photo library.
-const root = path.resolve('dist')
+const root = path.resolve(process.env.VERIFY_DIST || 'dist')
 const port = Number(process.env.VERIFY_PORT || 5187)
+const upstreamUrl = process.env.VERIFY_UPSTREAM || 'http://127.0.0.1'
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml' }
 http.createServer(async (req, res) => {
   if (!['GET', 'HEAD'].includes(req.method)) { res.writeHead(405).end(); return }
   if (/^\/(api|media)\//.test(req.url)) {
-    const upstream = http.request(new URL(req.url, 'http://127.0.0.1'), { method: req.method }, response => {
+    const upstream = http.request(new URL(req.url, upstreamUrl), { method: req.method }, response => {
       res.writeHead(response.statusCode, response.headers); response.pipe(res)
     })
     upstream.on('error', () => res.writeHead(502).end())

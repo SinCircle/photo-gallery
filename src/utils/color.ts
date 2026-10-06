@@ -3,10 +3,12 @@ function srgbToLin(c: number): number {
   return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4
 }
 
+const channels = Float64Array.from({ length: 256 }, (_, i) => srgbToLin(i))
+
 function luminance(r: number, g: number, b: number): number {
-  const R = srgbToLin(r)
-  const G = srgbToLin(g)
-  const B = srgbToLin(b)
+  const R = channels[r]
+  const G = channels[g]
+  const B = channels[b]
   return 0.2126 * R + 0.7152 * G + 0.0722 * B
 }
 

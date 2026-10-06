@@ -1,3 +1,6 @@
+import { EASE_OUT, TOOLBAR_OPEN_MS, TOOLBAR_CLOSE_MS, toolbarSpring } from './motion'
+import { BLUR_TIME_SCALE } from './blurState'
+
 const IDLE_MS = 2800
 
 // Reserve the expanded footprint, but resize the actual glass box. Scaling a
@@ -47,8 +50,8 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
     const currentOpacity = getComputedStyle(clip).opacity
     const dotOpacity = getComputedStyle(dot).opacity
     const materialOpacity = getComputedStyle(material).opacity
-    const metadata = content.querySelector<HTMLElement>('.dockMeta')
-    const currentBlur = metadata ? getComputedStyle(metadata).filter : 'none'
+    const currentBlur = getComputedStyle(clip).filter
+    const dotBlur = getComputedStyle(dot).filter
     for (const animation of animations) animation.cancel()
     animations = []
     delete bar.dataset.moving
@@ -63,28 +66,23 @@ export function attachIdleToolbar(bar: HTMLElement, signal: AbortSignal, edge: '
     dot.style.opacity = next ? '0' : '1'
     bar.style.width = `${next ? width : 56}px`
     bar.style.height = `${next ? height : 32}px`
-    if (metadata) metadata.style.filter = next ? 'blur(0px)' : 'blur(8px)'
+    clip.style.filter = next ? 'blur(0px)' : 'blur(6px)'
+    dot.style.filter = next ? 'blur(6px)' : 'blur(0px)'
     if (!preference.matches) {
       bar.dataset.moving = ''
       const targetW = next ? width : 56, targetH = next ? height : 32
-      const dw = targetW - current.width, dh = targetH - current.height
-      const spring = (delta: number, target: number, fraction: number) =>
-        Math.sign(delta) * Math.min(Math.abs(delta) * fraction, target * .08)
-      const easing = 'cubic-bezier(.22,.8,.25,1)'
-      const size = (w: number, h: number, offset: number) => ({ width: `${w}px`, height: `${h}px`, offset })
-      animations.push(bar.animate([
-        size(current.width, current.height, 0),
-        size(targetW + spring(dw, targetW, .035), targetH + spring(dh, targetH, .06), .64),
-        size(targetW - spring(dw, targetW, .012), targetH - spring(dh, targetH, .02), .82),
-        size(targetW, targetH, 1),
-      ], { duration: next ? 540 : 460, delay: next ? 0 : 80, easing, fill: 'backwards' }))
-      animations.push(clip.animate([{ opacity: currentOpacity }, { opacity: next ? 1 : 0 }],
-        { duration: next ? 320 : 180, delay: next ? 100 : 0, easing, fill: 'backwards' }))
-      if (metadata) animations.push(metadata.animate([{ filter: currentBlur }, { filter: next ? 'blur(0px)' : 'blur(8px)' }],
-        { duration: next ? 380 : 220, delay: next ? 100 : 0, easing, fill: 'backwards' }))
+      const easing = EASE_OUT
+      const duration = next ? TOOLBAR_OPEN_MS : TOOLBAR_CLOSE_MS
+      animations.push(bar.animate(toolbarSpring(current, { width: targetW, height: targetH }, duration, innerWidth - 16),
+        { duration, fill: 'backwards' }))
+      animations.push(bar.animate(toolbarSpring(current, { width: targetW, height: targetH }, duration, innerWidth - 16, 'height'),
+        { duration, fill: 'backwards' }))
+      animations.push(clip.animate([{ opacity: currentOpacity, filter: currentBlur }, { opacity: next ? 1 : 0, filter: clip.style.filter }],
+        { duration: next ? 220 * BLUR_TIME_SCALE : 180, easing, fill: 'backwards' }))
       for (const [element, opacity] of [[dot, dotOpacity], [material, materialOpacity]] as const) {
-        animations.push(element.animate([{ opacity }, { opacity: next ? 0 : 1 }],
-          { duration: 200, delay: next ? 0 : 180, easing, fill: 'backwards' }))
+        animations.push(element.animate([{ opacity, ...(element === dot ? { filter: dotBlur } : {}) },
+          { opacity: next ? 0 : 1, ...(element === dot ? { filter: dot.style.filter } : {}) }],
+          { duration: element === dot && next ? 280 * BLUR_TIME_SCALE : 280, easing, fill: 'backwards' }))
       }
       animations[0].onfinish = () => {
         delete bar.dataset.moving

@@ -1,4 +1,5 @@
 :root {
+  --motion-ease-out: cubic-bezier(.16, 1, .3, 1);
   --bg: #f4f4f4;
   --surface: #ffffff;
   --ink: #111111;
@@ -16,10 +17,11 @@
   --photo-gutter: 18px;
 
   --frame: clamp(14px, 2.2vw, 26px); /* preview white border thickness (CSS) */
-  --stamp-font: 'Cinzel Decorative', 'Cormorant SC', ui-serif, Georgia, 'Times New Roman', serif;
+  --stamp-font: 'Cinzel Decorative', 'Cormorant SC', var(--font-chinese);
 
   color-scheme: light;
-  font-family: 'Cormorant Garamond', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-chinese: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', SimSun, serif;
+  font-family: 'Cormorant Garamond', var(--font-chinese);
   line-height: 1.5;
   font-weight: 500;
   font-synthesis: none;
@@ -63,6 +65,13 @@ button:focus-visible {
 #app {
   min-height: 100%;
 }
+
+/* Bounded compositor planes: the photo always stays below the real toolbar. */
+.photoTransitionBackdrop { position: fixed; inset: 0; z-index: 2; overflow: clip; pointer-events: none; }
+.photoTransitionSurface { position: fixed; inset: 0; z-index: 10; overflow: clip; contain: strict; pointer-events: none; }
+.photoTransitionImage { position: absolute; left: 0; top: 0; z-index: 10; transform-origin: 0 0; pointer-events: none; will-change: transform; }
+.photoTransitionToolbar { position: fixed; inset: 0; z-index: 20; pointer-events: none; }
+.photoTransitionToolbar * { pointer-events: none !important; }
 
 .shell {
   min-height: 100%;
@@ -128,7 +137,7 @@ button:focus-visible {
 }
 
 .brandTitle {
-  font-family: 'Cinzel', ui-serif, Georgia, 'Times New Roman', serif;
+  font-family: 'Cinzel', var(--font-chinese);
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -156,8 +165,8 @@ button:focus-visible {
   font: inherit;
   white-space: nowrap;
   cursor: pointer;
-  transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    background 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 180ms var(--motion-ease-out),
+    background 180ms var(--motion-ease-out);
 }
 
 .btn:hover {
@@ -229,7 +238,7 @@ button:focus-visible {
   inset: 0;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 240ms ease;
+  transition: opacity 240ms var(--motion-ease-out);
   display: block;
   vertical-align: middle;
 }
@@ -242,7 +251,7 @@ button:focus-visible {
   position: absolute;
   left: 12px;
   bottom: 12px;
-  font-family: 'Cinzel Decorative', 'Cormorant SC', ui-serif, Georgia, 'Times New Roman', serif;
+  font-family: 'Cinzel Decorative', 'Cormorant SC', var(--font-chinese);
   font-weight: 700;
   font-size: clamp(12px, 1.3vw, 16px);
   letter-spacing: 0.08em;
@@ -291,6 +300,20 @@ button:focus-visible {
   opacity: 0.92;
 }
 
+.photoStatus {
+  position: fixed;
+  top: max(16px, env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(100vw - 32px);
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(250, 250, 250, .94);
+  color: #222;
+  font-size: 13px;
+  z-index: 10;
+}
+
 .photoBg::after {
   content: '';
   position: absolute;
@@ -312,7 +335,7 @@ button:focus-visible {
   left: 50%;
   top: 50%;
   will-change: transform;
-  transition: transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 160ms var(--motion-ease-out);
 }
 
 .photoZoom {
@@ -320,7 +343,7 @@ button:focus-visible {
   left: 0;
   top: 0;
   will-change: transform;
-  transition: transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 160ms var(--motion-ease-out);
 }
 
 .photoImg {
@@ -334,12 +357,12 @@ button:focus-visible {
 
 .photoImgLow {
   opacity: 1;
-  transition: opacity 260ms ease;
+  transition: opacity 260ms var(--motion-ease-out);
 }
 
 .photoImgHigh {
   opacity: 0;
-  transition: opacity 260ms ease;
+  transition: opacity 260ms var(--motion-ease-out);
 }
 
 .photoStage.hiReady .photoImgLow {
@@ -506,6 +529,26 @@ button:focus-visible {
   inherits: false;
   initial-value: 0;
 }
+@property --glass-material {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+@property --dock-tone {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 255;
+}
+@property --dock-shadow-progress {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+@property --dock-meta-shadow-progress {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
 .capsuleDock {
   position: relative;
   width: 100%;
@@ -522,6 +565,7 @@ button:focus-visible {
   z-index: 1;
   /* Sized by its contents, capped by the slot (65vw on desktop). */
   width: max-content;
+  flex: 0 0 auto;
   max-width: 100%;
   height: 44px;
   display: flex;
@@ -532,10 +576,13 @@ button:focus-visible {
   border: 0;
   border-radius: 999px;
   background: rgba(255, 255, 255, .35);
-  box-shadow: 0 10px 34px rgba(0, 0, 0, .1), 0 1px 2px rgba(0, 0, 0, .05);
-  backdrop-filter: blur(var(--capsule-blur));
-  -webkit-backdrop-filter: blur(var(--capsule-blur));
-  overflow: hidden;
+  box-shadow: 0 10px 34px rgb(0 0 0 / calc(.1 * var(--glass-material))), 0 1px 2px rgb(0 0 0 / calc(.05 * var(--glass-material)));
+  backdrop-filter: blur(calc(var(--capsule-blur) * var(--glass-material)));
+  -webkit-backdrop-filter: blur(calc(var(--capsule-blur) * var(--glass-material)));
+  /* LiquidGlass writes overflow:visible inline for its output canvas. Keep
+     this real content container clipped; its own box-shadow remains outside. */
+  overflow: hidden !important;
+  --capsule-blur: .15px;
   --dock-ink: var(--ink);
   color: var(--dock-ink);
   pointer-events: auto;
@@ -550,6 +597,7 @@ button:focus-visible {
   inset: 0;
   border-radius: inherit;
   background: rgba(255, 255, 255, .1);
+  opacity: var(--glass-material);
   pointer-events: none;
   z-index: 2;
 }
@@ -558,9 +606,23 @@ button:focus-visible {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
+/* Dots and their container reveal together after the first painted surface. */
+.capsuleDock[data-glass-pending] > .dockBar {
+  opacity: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.capsuleDock[data-glass-pending] > .dockBar::after,
+.capsuleDock[data-glass-pending] > .dockBar > canvas[data-glass-output] { opacity: 0; }
 .capsuleDock > .dockBar > canvas[data-glass-output] {
   z-index: 0;
   border-radius: inherit;
+  opacity: var(--glass-material);
+  /* Blur the material inside its parent's clip. Filtering the entire bar
+     afterwards let blurred text spread beyond that finished clip. */
+  filter: blur(calc(6px * (1 - var(--glass-material))));
 }
 .capsuleDock > .dockBar > .dockMeta,
 .capsuleDock > .dockBar > .dockAction { position: relative; z-index: 3; }
@@ -572,37 +634,38 @@ button:focus-visible {
   padding: 0;
   font-weight: 600;
   color: var(--dock-ink);
-  /* The run of labels is wide, so it is filled by the computed gradient that
-     matches the photo slice by slice instead of a single flat colour. */
+  /* Each label keeps a crisp black or white fill; shadow masks remain local. */
 }
 .capsuleDock .dockGlyph { position: relative; display: inline-block; }
 .capsuleDock .dockFill {
   position: relative;
   z-index: 1;
   display: inline-block;
-  background-image: var(--dock-ink-texture, var(--dock-ink-gradient));
-  background-size: var(--dock-ink-size);
-  background-repeat: no-repeat;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: rgb(var(--dock-tone) var(--dock-tone) var(--dock-tone));
   text-shadow: none;
 }
-/* Two crisp, independently painted outlines behind the opaque ink fill.
-   The thin black/white pair provides separation in either direction, including
-   where continuous ink passes through a mid-tone. No blur crosses the core. */
-.capsuleDock .dockOutline { display: none; filter: url(#dock-outline-ring); }
-.capsuleDock [data-halo] .dockOutline { display: block; }
-.capsuleDock .dockOutline,
-.capsuleDock .dockOutline::before {
+/* Soft opposite-colour shadows behind the fill, masked to failing patches.
+   Extra space lets the blur fall off naturally instead of clipping at a glyph.
+   There is no stroke, dilation or pair of black/white outline rings. */
+.capsuleDock .dockShadow {
+  display: block;
   position: absolute;
-  inset: 0;
+  inset: -3px;
   pointer-events: none;
-  text-shadow: none;
+  mask-size: 100% 100%;
+  mask-position: 0 0;
+  mask-repeat: no-repeat;
+  mask-image: var(--dock-shadow-mask);
 }
-.capsuleDock .dockOutline::before {
+
+
+.capsuleDock .dockShadow::before {
   content: attr(data-label);
-  color: black;
+  position: absolute;
+  inset: 3px;
+  color: transparent;
+  text-shadow: 0 1px 2px rgb(calc(255 - var(--dock-tone)) calc(255 - var(--dock-tone)) calc(255 - var(--dock-tone)) / .9),
+    0 0 1px rgb(calc(255 - var(--dock-tone)) calc(255 - var(--dock-tone)) calc(255 - var(--dock-tone)) / .65);
 }
 .capsuleDock > .dockBar > .dockBack,
 .capsuleDock > .dockBar > .dockFit,
@@ -626,7 +689,7 @@ button:focus-visible {
   padding: 6px 12px;
   border-radius: 999px;
   transform-origin: 50% 50%;
-  transition: --dock-lift 260ms cubic-bezier(.2,.8,.2,1), transform 260ms cubic-bezier(.2,.8,.2,1);
+  transition: --dock-lift 260ms var(--motion-ease-out), transform 260ms var(--motion-ease-out);
 }
 .capsuleDock .dockAction:hover { --dock-lift: .22; transform: scale(1.08); }
 .capsuleDock .dockAction:active { --dock-lift: .3; transform: scale(1.03); }
@@ -650,47 +713,69 @@ button:focus-visible {
   pointer-events: none;
   z-index: 4;
 }
-/* While the photo is still arriving the bar stays in its idle shape and runs a
-   three-dot relay: a dot is carried in from the left, crosses the three slots,
-   and is released on the right as the next one arrives. */
+/* Three resting slots and a fourth ball for entry/exit. Positions and sizes
+   animate independently, without changing the capsule's layout. */
 .capsuleDock .capsuleDots {
   position: absolute;
   inset: 0;
-  display: none;
+  display: block;
+  opacity: 0;
+  filter: blur(6px);
   pointer-events: none;
   z-index: 4;
 }
-.capsuleDock .dockBar[data-loading] .capsuleDots { display: block; }
+.capsuleDock .stateOutgoing {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  pointer-events: none;
+}
+.capsuleDock .dockDownload > .downloadLoading {
+  inset: auto;
+  left: 50%;
+  top: 50%;
+  width: 56px;
+  height: 32px;
+  transform: translate(-50%, -50%);
+}
 .capsuleDock .capsuleDots i {
   position: absolute;
   left: 50%;
   top: 50%;
+  display: block;
   width: 5px;
   height: 5px;
-  margin: 0;
+  margin: -2.5px 0 0 -2.5px;
   border-radius: 50%;
   /* Same ink the labels are filled with, so the dots sit in the picture the way
      the text does instead of being one fixed grey. */
   background: var(--dock-dot-ink, var(--dock-ink));
-  opacity: .3;
-  animation: capsuleDotTravel 1.8s cubic-bezier(.42, .24, .58, .76) infinite;
+  opacity: .9;
 }
-.capsuleDock .capsuleDots i:nth-child(2) { animation-delay: -.6s; }
-.capsuleDock .capsuleDots i:nth-child(3) { animation-delay: -1.2s; }
-/* Every 600ms segment travels exactly 14px with the SAME easing. The three
-   offsets therefore share velocity at every instant and cannot bunch up.
-   Nonzero, equal endpoint slopes join the segments without a stop; symmetric
-   control points mirror entry and exit. The dim end dots stay visible. */
-@keyframes capsuleDotTravel {
-  /* Include the 2.5px centering in the transform: fractional layout margins
-     are snapped by Chrome's composited animation layer before translation. */
-  0% { transform: translate(-23.5px, -2.5px); opacity: .3; }
-  33.3333333333% { transform: translate(-9.5px, -2.5px); opacity: .9; }
-  66.6666666667% { transform: translate(4.5px, -2.5px); opacity: .9; }
-  100% { transform: translate(18.5px, -2.5px); opacity: .3; }
-}
+.capsuleDock .capsuleDots i:nth-child(1) { translate: -14px 0; }
+.capsuleDock .capsuleDots i:nth-child(3) { translate: 14px 0; }
+.capsuleDock .capsuleDots i:nth-child(4) { translate: -28px 0; transform: scale(0); }
 @media (max-width: 560px) {
-  .capsuleDock > .dockBar { gap: 10px; padding: 0 13px; }
+  .photoShell > .toolbarSlot { max-width: none; }
+  .capsuleDock { height: 78px; }
+  .capsuleDock > .dockBar {
+    width: 100%;
+    height: 78px;
+    display: grid;
+    grid-template-areas: 'meta meta meta' 'back fit download';
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: 30px 36px;
+    gap: 0 10px;
+    padding: 6px 13px;
+    /* A rounded rectangle keeps the upper row clear of the pill's endcaps. */
+    border-radius: 22px;
+  }
+  .capsuleDock .dockMeta { grid-area: meta; width: 100%; height: 30px; }
+  .capsuleDock .dockBack { grid-area: back; justify-self: start; }
+  .capsuleDock .dockFit { grid-area: fit; justify-self: center; }
+  .capsuleDock .dockDownload { grid-area: download; justify-self: end; }
+  .capsuleDock .dockAction { padding-inline: 8px; }
 }
 
 .empty {
@@ -756,8 +841,6 @@ button:focus-visible {
   }
 
   /* Preserve three distinct dots when motion is reduced. */
-  .capsuleDock .capsuleDots i { animation: none; opacity: .8; transform: translate(-16.5px, -2.5px); }
-  .capsuleDock .capsuleDots i:nth-child(2) { transform: translate(-2.5px, -2.5px); }
-  .capsuleDock .capsuleDots i:nth-child(3) { transform: translate(11.5px, -2.5px); }
+  .capsuleDock .capsuleDots i { opacity: .8; }
   .capsuleDock .dockAction { transition: none; }
 }

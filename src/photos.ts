@@ -9,6 +9,9 @@ export type Photo = {
   derived: { thumb: boolean; web: boolean }
 }
 
+let knownPhotos: Photo[] | undefined
+export const getKnownPhotos = () => knownPhotos
+
 export function thumbnailUrl(photo: Photo): string {
   return `/media/thumbs/${encodeURIComponent(photo.id)}`
 }
@@ -31,5 +34,6 @@ export async function getAllPhotos(): Promise<Photo[]> {
   const result = await response.json() as { photos: Photo[] }
   // Keep the legacy filename order (including featured filenames without !).
   // Reading the new API must not silently change gallery/navigation order.
-  return result.photos.sort((a, b) => photoFileName(b).localeCompare(photoFileName(a), undefined, { numeric: true }))
+  knownPhotos = result.photos.sort((a, b) => photoFileName(b).localeCompare(photoFileName(a), undefined, { numeric: true }))
+  return knownPhotos
 }

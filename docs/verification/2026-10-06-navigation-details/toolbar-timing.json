@@ -1,0 +1,365 @@
+{
+  "sizes": [
+    {
+      "width": 1440,
+      "phases": [
+        {
+          "time": 0,
+          "bar": 56,
+          "items": [
+            {
+              "opacity": 0,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 0,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 0,
+              "visibility": "visible",
+              "filter": "blur(0px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 40,
+          "bar": 156.953125,
+          "items": [
+            {
+              "opacity": 0.594797,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 0.594797,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 0.594797,
+              "visibility": "visible",
+              "filter": "blur(0px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.594797,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 80,
+          "bar": 260.96875,
+          "items": [
+            {
+              "opacity": 0.860592,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 0.860592,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 0.860592,
+              "visibility": "visible",
+              "filter": "blur(0px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.860592,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 160,
+          "bar": 478.0625,
+          "items": [
+            {
+              "opacity": 0.987415,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 0.987415,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 0.987415,
+              "visibility": "visible",
+              "filter": "blur(0px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.987415,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 220,
+          "bar": 647.953125,
+          "items": [
+            {
+              "opacity": 1,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 1,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 1,
+              "visibility": "visible",
+              "filter": "blur(0px)"
+            },
+            {
+              "opacity": 1,
+              "visibility": "visible",
+              "filter": "none"
+            }
+          ]
+        }
+      ],
+      "zoom": {
+        "rect": {
+          "x": -7142.99951171875,
+          "y": -8775.9921875,
+          "width": 15726,
+          "height": 20994.208984375,
+          "top": -8775.9921875,
+          "right": 8583.00048828125,
+          "bottom": 12218.216796875,
+          "left": -7142.99951171875
+        },
+        "buttons": [
+          {
+            "text": "返回",
+            "topmost": true
+          },
+          {
+            "text": "比例：自由",
+            "topmost": true
+          },
+          {
+            "text": "下载",
+            "topmost": true
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "phases": [
+        {
+          "time": 0,
+          "bar": 56,
+          "items": [
+            {
+              "opacity": 0,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 0,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 0,
+              "visibility": "visible",
+              "filter": "blur(0px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 40,
+          "bar": 90.1875,
+          "items": [
+            {
+              "opacity": 0.594797,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 0.594797,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 0.594797,
+              "visibility": "visible",
+              "filter": "blur(0px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.594797,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 80,
+          "bar": 125.40625,
+          "items": [
+            {
+              "opacity": 0.860592,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 0.860592,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 0.860592,
+              "visibility": "visible",
+              "filter": "blur(0px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.860592,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 160,
+          "bar": 198.921875,
+          "items": [
+            {
+              "opacity": 0.987415,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 0.987415,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 0.987415,
+              "visibility": "visible",
+              "filter": "blur(0px)",
+              "delay": 0
+            },
+            {
+              "opacity": 0.987415,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            }
+          ]
+        },
+        {
+          "time": 220,
+          "bar": 256.453125,
+          "items": [
+            {
+              "opacity": 1,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 1,
+              "visibility": "visible",
+              "filter": "none",
+              "delay": 0
+            },
+            {
+              "opacity": 1,
+              "visibility": "visible",
+              "filter": "blur(0px)"
+            },
+            {
+              "opacity": 1,
+              "visibility": "visible",
+              "filter": "none"
+            }
+          ]
+        }
+      ],
+      "zoom": {
+        "rect": {
+          "x": -6282.8876953125,
+          "y": -6374.87109375,
+          "width": 12955.775390625,
+          "height": 17295.958984375,
+          "top": -6374.87109375,
+          "right": 6672.8876953125,
+          "bottom": 10921.087890625,
+          "left": -6282.8876953125
+        },
+        "buttons": [
+          {
+            "text": "返回",
+            "topmost": true
+          },
+          {
+            "text": "比例：自由",
+            "topmost": true
+          },
+          {
+            "text": "下载",
+            "topmost": true
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "noClickThrough": true,
+  "status": "passed"
+}

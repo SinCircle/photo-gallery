@@ -29,7 +29,10 @@ export function buildExifFields(raw) {
 
   const fields = []
 
-  const camera = [raw.Make, raw.Model].filter(Boolean).join(' ')
+  const make = String(raw.Make ?? '').trim().replace(/\s+/g, ' ')
+  const model = String(raw.Model ?? '').trim().replace(/\s+/g, ' ')
+  const includesMake = model.toLowerCase() === make.toLowerCase() || model.toLowerCase().startsWith(make.toLowerCase() + ' ')
+  const camera = make && includesMake ? model : [make, model].filter(Boolean).join(' ')
   if (camera) fields.push({ label: '相机', value: camera })
   if (raw.LensModel) fields.push({ label: '镜头', value: String(raw.LensModel) })
   if (typeof raw.FNumber === 'number') fields.push({ label: '光圈', value: `f/${raw.FNumber}` })

@@ -1,0 +1,12 @@
+{
+  "artifacts": [
+    {
+      "path": "dist/assets/index-ALUV53Ot.css",
+      "sha256": "996f039bf4e17d03d6c99367a18380636fefdf125556b2a0562c308fd7da5ad5"
+    },
+    {
+      "path": "dist/assets/index-CcsAueHx.js",
+      "sha256": "3662a9bed5f85ef6a26b3bdc911b1b08cc6925d54038c60c69646502bfb39366"
+    }
+  ]
+}

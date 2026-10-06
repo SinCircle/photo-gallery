@@ -62,6 +62,15 @@ describe('buildExifFields', () => {
     expect(buildExifFields(null)).toEqual([])
   })
 
+  it('机型已带品牌时不重复拼接，保留原机型大小写', () => {
+    expect(buildExifFields({ Make: 'HUAWEI', Model: 'HUAWEI Pura 70 Ultra' }))
+      .toEqual([{ label: '相机', value: 'HUAWEI Pura 70 Ultra' }])
+    expect(buildExifFields({ Make: 'Canon ', Model: 'canon EOS R6' }))
+      .toEqual([{ label: '相机', value: 'canon EOS R6' }])
+    expect(buildExifFields({ Make: 'ABC', Model: 'ABCD' }))
+      .toEqual([{ label: '相机', value: 'ABC ABCD' }])
+  })
+
   it('镜头单独成项', () => {
     const fields = buildExifFields({ LensModel: 'XF 35mm F1.4' })
     expect(fields).toEqual([{ label: '镜头', value: 'XF 35mm F1.4' }])

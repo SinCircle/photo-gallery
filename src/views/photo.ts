@@ -6,9 +6,13 @@ import {
   supportsAlbumSave,
 } from '../utils/download'
 import { formatDateTime, photoMetadata } from '../utils/exif'
-import { getAllPhotos, thumbnailUrl, originalUrl, photoFileName } from '../photos'
+import { getAllPhotos, getKnownPhotos, thumbnailUrl, originalUrl, photoFileName } from '../photos'
 import { attachGlass } from '../utils/glass'
 import { attachCapsuleToolbar } from '../utils/capsuleToolbar'
+import { attachPhotoImage } from '../utils/photoImage'
+import { attachLoadingDots } from '../utils/loadingDots'
+import { attachBlurPresence, attachBlurText } from '../utils/blurState'
+import { EASE_IN_OUT } from '../utils/motion'
 
 type FitMode = 'contain' | 'fitHeight' | 'fitWidth' | 'oneToOne'
 
@@ -84,19 +88,21 @@ export async function renderPhotoView(
   container: HTMLElement,
   params: { photoId: string },
   signal: AbortSignal,
+  options: { settled?: Promise<void> } = {},
 ) {
-  clear(container)
-
   const shell = el('div', { className: 'shell photoShell' })
+  shell.dataset.entering = ''
   const bg = el('div', { className: 'photoBg' })
   bg.setAttribute('aria-hidden', 'true')
 
   const content = el('main', { className: 'content contentWithDock contentFull' })
 
   // Get photo from the full list to have thumbUrl
-  const allPhotos = await getAllPhotos()
+  const allPhotos = getKnownPhotos() ?? await getAllPhotos()
   if (signal.aborted) return
+  clear(container)
   const photo = allPhotos.find(p => p.id === params.photoId)
+  shell.dataset.photoId = params.photoId
   
   if (!photo) {
     content.append(
@@ -141,8 +147,12 @@ export async function renderPhotoView(
 
   // Bottom fixed dock: back + metadata + download.
   const dockInner = el('div', { className: 'dockInner capsuleDock' })
+  dockInner.dataset.glassPending = ''
   const dockBar = el('div', { className: 'dockBar' })
   dockBar.dataset.glassCapsule = 'bar'
+  // Start in the loading capsule, without first flashing the full toolbar and
+  // running a close animation while its image requests are still pending.
+  dockBar.dataset.loading = ''
   const backBtn = el('button', { className: 'dockAction dockBack', type: 'button' }, [
     el('span', { className: 'capsuleLabel' }, ['返回']),
   ])
@@ -171,16 +181,19 @@ export async function renderPhotoView(
   let translateY = 0
   let isFreeZoom = false
   let imageReady = false
+  let glassReady = false
+  let preparingDownload = false
+  let renderedMeta = false
   let metaReady = false
   let metaItems: Array<{ label: string; value: string }> = []
 
   const labelForCurrentScale = () => (isFreeZoom ? '自由' : labelForMode(mode))
 
   function updateMetaDisplay() {
-    if (!imageReady || !metaReady) {
-      // Until the photo and its metadata both arrive the bar stays in its idle
-      // shape and shows the travelling-dot loop instead of the controls.
-      dockBar.dataset.loading = ''
+    dockBar.toggleAttribute('data-loading', !imageReady)
+    dockBar.toggleAttribute('data-expandable', metaReady && glassReady)
+    updateDownloadLoading()
+    if (!metaReady) {
       metaList.hidden = false
       if (metaList.firstChild !== metaLoading || metaList.childNodes.length !== 1) {
         metaList.replaceChildren(metaLoading)
@@ -188,8 +201,6 @@ export async function renderPhotoView(
       updateDockStacking()
       return
     }
-    delete dockBar.dataset.loading
-
     const items = metaItems
     if (items.length === 0) {
       metaList.hidden = true
@@ -198,18 +209,14 @@ export async function renderPhotoView(
     }
 
     metaList.hidden = false
-    // Keep the metadata row reserved while its existing webfont resolves.
-    // Revealing only after font layout prevents a late EXIF glyph-width shift.
-    metaList.style.visibility = 'hidden'
-    metaList.replaceChildren(
+    // Show the fallback font immediately. The font event already invalidates
+    // ink and the ResizeObserver updates layout when the webfont arrives.
+    if (!renderedMeta) metaList.replaceChildren(
       ...items.map((it) =>
-        el('span', { className: 'dockMetaItem' }, [`${it.label}：${it.value}`]),
+        el('span', { className: 'dockMetaItem', title: it.label }, [it.value]),
       ),
     )
-    void document.fonts.ready.then(() => {
-      if (!signal.aborted) metaList.style.visibility = ''
-    })
-
+    renderedMeta = true
     requestAnimationFrame(() => updateDockStacking())
   }
 
@@ -377,6 +384,7 @@ export async function renderPhotoView(
     const safe = safeMetrics(stageW, stageH, mode)
     pan.style.transform = `translate3d(${translateX}px, ${translateY + safe.centerOffsetY}px, 0)`
     zoom.style.transform = `translate3d(-50%, -50%, 0) scale(${scale})`
+    imageLoader.resize(boxW * scale)
   }
 
   function relayout(resetToCenter: boolean) {
@@ -407,73 +415,45 @@ export async function renderPhotoView(
   imgLow.src = lowSrc
   bg.style.backgroundImage = `url(${lowSrc})`
 
-  // Start hi-res loading only when the user isn't actively interacting, to avoid stutter.
-  let hiStarted = false
-  let hiReady = false
-  let hiStartTimer: number | undefined
-
-  const startHi = () => {
-    if (hiStarted) return
-    if (activePointers.size) { scheduleHiStart(650); return }
-    hiStarted = true
-    imgHigh.src = originalUrl(photo)
-  }
-
-  const scheduleHiStart = (delayMs: number) => {
-    if (hiStarted) return
-    if (hiStartTimer) window.clearTimeout(hiStartTimer)
-    hiStartTimer = window.setTimeout(() => startHi(), delayMs)
-  }
-
-  imgHigh.addEventListener(
-    'load',
-    async () => {
-      if (signal.aborted) return
-      imageReady = true
-      updateMetaDisplay()
-      try {
-        await imgHigh.decode?.()
-      } catch {
-        // ignore
+  const imageStatus = el('div', { className: 'photoStatus' })
+  imageStatus.setAttribute('role', 'status')
+  imageStatus.hidden = true
+  const retryImage = el('button', { className: 'btn', type: 'button' }, ['重试'])
+  imageStatus.append('清晰图片加载失败，当前保留预览。', retryImage)
+  content.append(imageStatus)
+  const imageLoader = attachPhotoImage(photo, imgHigh, stage, signal, () => {
+    if (imageReady || signal.aborted) return
+    const finish = () => { if (!signal.aborted && !imageReady) { imageReady = true; updateMetaDisplay() } }
+    // Updating the original can require one expensive canvas readback. Keep
+    // the loading state until that glass frame is really painted, then start
+    // expansion, instead of doing both jobs in its first animation frame.
+    if (dockInner.dataset.glass === 'webgl') {
+      let prepared = false
+      const afterPaint = () => {
+        if (!prepared && dockInner.dataset.glass !== 'css') return
+        dockInner.removeEventListener('glasspaint', afterPaint)
+        dockInner.removeEventListener('glassscene', afterScene)
+        finish()
       }
-
-      fullNaturalW = photo.width
-
-      if (!boxReady) {
-        const aspect = imgHigh.naturalWidth / Math.max(1, imgHigh.naturalHeight)
-        setBoxFromAspect(aspect)
-        boxReady = true
-        relayout(true)
-        enableAnimSoon()
-      }
-
-      if (signal.aborted) return
-      // Crossfade as soon as the hi-res is ready.
-      if (hiReady) return
-      hiReady = true
-      stage.classList.add('hiReady')
-      // If user is in 1:1, update scale based on real pixels.
-      if (mode === 'oneToOne') relayout(false)
-
-      // Hide the low layer only after the hi-res fade-in completes.
-      const onHiFadeDone = () => {
-        stage.classList.add('hiDone')
-      }
-
-      imgHigh.addEventListener('transitionend', onHiFadeDone, { once: true })
-      // Fallback in case transitionend doesn't fire.
-      window.setTimeout(onHiFadeDone, 320)
-    },
-    { once: true },
-  )
-
-  // Kick off hi-res after thumb is up (or a short delay if thumb isn't ready).
-  scheduleHiStart(260)
+      const afterScene = () => { prepared = true; if (dockInner.dataset.glass === 'css') afterPaint() }
+      dockInner.addEventListener('glassscene', afterScene, { signal })
+      dockInner.addEventListener('glasspaint', afterPaint, { signal })
+      dockInner.dispatchEvent(new Event('glassrefresh'))
+    } else finish()
+  }, failed => { imageStatus.hidden = !failed })
+  retryImage.addEventListener('click', () => { imageReady = false; updateMetaDisplay(); imageLoader.retry() }, { signal })
+  const scheduleHiStart = (delay: number) => imageLoader.defer(delay)
 
   const fitLabel = el('span', { className: 'capsuleLabel' }, [`比例：${labelForCurrentScale()}`])
+  const updateFitLabel = () => {
+    const text = `比例：${labelForCurrentScale()}`
+    // A wheel/pinch usually leaves the label at “自由”. Replacing identical
+    // text would make LiquidGlass rasterise its entire content again.
+    if (fitLabel.textContent !== text) fitLabel.textContent = text
+  }
   const fitBtn = el('button', { className: 'dockAction dockFit', type: 'button' }, [fitLabel])
   fitBtn.addEventListener('click', () => {
-    if (!boxReady) return
+    if (!boxReady || document.documentElement.dataset.photoTransition) return
 
     // If user is actively tapping, delay hi-res start to avoid main-thread stutter.
     scheduleHiStart(650)
@@ -511,7 +491,7 @@ export async function renderPhotoView(
     translateX = -centerX * scale
     translateY = -newSafe.centerOffsetY - centerY * scale
 
-    fitLabel.textContent = `比例：${labelForCurrentScale()}`
+    updateFitLabel()
     clampPan(stageW, stageH)
     apply(stageW, stageH)
   })
@@ -562,6 +542,7 @@ export async function renderPhotoView(
   }
 
   const onPointerDown = (e: PointerEvent) => {
+    if (document.documentElement.dataset.photoTransition) return
     if (e.pointerType === 'mouse' && e.button !== 0) return
 
     activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
@@ -596,7 +577,7 @@ export async function renderPhotoView(
       const nextScale = pinchStartScale * (distance / pinchStartDistance)
 
       const changed = applyScaleAtPoint(stageW, stageH, centerX, centerY, nextScale)
-      if (changed) fitLabel.textContent = `比例：${labelForCurrentScale()}`
+      if (changed) updateFitLabel()
       return
     }
 
@@ -610,6 +591,7 @@ export async function renderPhotoView(
   }
 
   const onPointerUp = (e: PointerEvent) => {
+    if (!activePointers.has(e.pointerId)) return
     activePointers.delete(e.pointerId)
     scheduleHiStart(650)
     if (stage.hasPointerCapture(e.pointerId)) stage.releasePointerCapture(e.pointerId)
@@ -645,14 +627,22 @@ export async function renderPhotoView(
     const anchorX = e.clientX - stageRect.left
     const anchorY = e.clientY - stageRect.top
     const changed = applyScaleAtPoint(stageW, stageH, anchorX, anchorY, scale * zoomFactor)
-    if (changed) fitLabel.textContent = `比例：${labelForCurrentScale()}`
+    if (changed) updateFitLabel()
   }
 
   stage.addEventListener('pointerdown', onPointerDown)
   stage.addEventListener('pointermove', onPointerMove)
   stage.addEventListener('pointerup', onPointerUp)
   stage.addEventListener('pointercancel', onPointerUp)
+  stage.addEventListener('lostpointercapture', onPointerUp)
   stage.addEventListener('wheel', onWheel, { passive: false })
+
+  window.addEventListener('blur', () => {
+    activePointers.clear()
+    pinching = false
+    setDragging(false)
+    scheduleHiStart(650)
+  }, { signal })
 
   window.addEventListener('resize', () => relayout(false), { signal })
 
@@ -662,31 +652,54 @@ export async function renderPhotoView(
   const downloadLabel = albumSave ? '保存' : '下载'
 
   const downloadText = el('span', { className: 'capsuleLabel' }, [downloadLabel])
+  const showDownloadText = attachBlurPresence(downloadText, signal, false, EASE_IN_OUT)
+  const setDownloadText = attachBlurText(downloadText, signal)
   const downloadBtn = el('button', { className: 'dockAction dockDownload', type: 'button' }, [downloadText])
+  const downloadDots = el('span', { className: 'capsuleDots downloadLoading' })
+  downloadDots.setAttribute('aria-hidden', 'true')
+  for (let i = 0; i < 4; i++) downloadDots.append(document.createElement('i'))
+  downloadBtn.append(downloadDots)
+  const setDownloadLoading = attachLoadingDots(downloadDots, signal, EASE_IN_OUT)
+  const updateDownloadLoading = () => {
+    const busy = !imageReady || preparingDownload
+    downloadBtn.toggleAttribute('data-busy', busy)
+    dockBar.toggleAttribute('data-busy', preparingDownload)
+    downloadBtn.disabled = busy
+    setDownloadLoading(busy && glassReady)
+    void showDownloadText(!busy)
+    if (busy) {
+      downloadBtn.setAttribute('aria-busy', 'true')
+      downloadBtn.setAttribute('aria-label', preparingDownload ? '正在准备图片' : '正在加载原图')
+    } else {
+      downloadBtn.removeAttribute('aria-busy')
+      downloadBtn.removeAttribute('aria-label')
+    }
+  }
   downloadBtn.addEventListener('click', async () => {
-    downloadText.textContent = '等待'
-    downloadBtn.disabled = true
+    preparingDownload = true
+    updateDownloadLoading()
     let blob: Blob | null = null
     try {
       const meta = await metaPromise
       const stamp = meta.date ? `SinCircle  ${formatDateTime(meta.date)}` : 'SinCircle'
       blob = await generateBorderedBlob({ url: originalUrl(photo), stampText: stamp })
       await saveBorderedImage(blob)
-      downloadText.textContent = downloadLabel
+      setDownloadText(downloadLabel)
     } catch (err) {
       // Mobile has no download fallback — surface the failure so it's visible.
       const reason = err instanceof Error ? err.name : '未知错误'
       console.error('保存到相册失败', err)
-      downloadText.textContent = `失败(${reason})`
+      setDownloadText(`失败(${reason})`)
       window.setTimeout(() => {
-        if (!downloadBtn.disabled) downloadText.textContent = downloadLabel
+        if (!downloadBtn.disabled && !signal.aborted) setDownloadText(downloadLabel)
       }, 2000)
       // If the watermarked image was generated but saving failed (e.g. no Web
       // Share on Huawei's browser), fall back to a long-press hint. It shows
       // the bordered blob itself, so the watermark is preserved.
       if (blob && isMobileDevice()) showLongPressSaveOverlay(blob)
     } finally {
-      downloadBtn.disabled = false
+      preparingDownload = false
+      updateDownloadLoading()
     }
   })
 
@@ -694,8 +707,23 @@ export async function renderPhotoView(
   dockInner.append(dockBar)
   shell.append(bg, content, dockInner)
   container.append(shell)
+  dockInner.addEventListener('glassready', () => {
+    glassReady = true
+    updateMetaDisplay()
+  }, { once: true, signal })
   const dockSlot = attachCapsuleToolbar(dockInner, signal)
-  void attachGlass(shell, dockInner, signal)
+  // Shared-image motion needs only the thumbnail. Heavy canvas/shader
+  // setup and display-image decoding start after that motion has finished.
+  let enhanceTimer = 0
+  void (options.settled ?? Promise.resolve()).then(() => {
+    if (signal.aborted) return
+    enhanceTimer = window.setTimeout(() => {
+      if (signal.aborted) return
+      delete shell.dataset.entering
+      void attachGlass(shell, dockInner, signal)
+      imageLoader.start()
+    }, 0)
+  })
 
   // Re-layout when dock wraps (e.g., narrow widths).
   const ro = new ResizeObserver(() => {
@@ -705,7 +733,7 @@ export async function renderPhotoView(
   ro.observe(dockSlot)
   signal.addEventListener('abort', () => {
     ro.disconnect()
-    if (hiStartTimer) window.clearTimeout(hiStartTimer)
+    window.clearTimeout(enhanceTimer)
   }, { once: true })
 
   // Preserve keyboard navigation without accumulating handlers on route changes.
@@ -727,6 +755,7 @@ export async function renderPhotoView(
 
   void (async () => {
     const meta = await metaPromise
+    if (signal.aborted) return
     const items: Array<{ label: string; value: string }> = []
     if (meta.date) items.push({ label: '日期', value: formatDateTime(meta.date) })
     items.push(...meta.fields)
