@@ -20,9 +20,6 @@
   --stamp-font: 'Cinzel Decorative', 'Cormorant SC', var(--font-chinese);
 
   color-scheme: light;
-  /* Photo pixels and sampled control colours must stay in the same colour
-     space. Browser auto-darkening otherwise inverts text/dots after sampling. */
-  color-scheme: only light;
   --font-chinese: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', SimSun, serif;
   font-family: 'Cormorant Garamond', var(--font-chinese);
   line-height: 1.5;
