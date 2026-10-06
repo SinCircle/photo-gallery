@@ -4,6 +4,33 @@ import { GLASS_BLUR_PX } from './glassConfig'
 const backgrounds = new WeakMap<HTMLElement, { key: string; canvas: HTMLCanvasElement }>()
 const rawScenes = new WeakMap<HTMLElement, HTMLCanvasElement>()
 
+// drawImage snaps its outer image rectangle to pixel centres. A photograph
+// edge crossing a glyph band can therefore add/remove a whole row at once.
+// Paint disjoint pixel-aligned patches through a fractional rectangle clip:
+// boundary patches cover full pixels, and the clip supplies their actual area.
+function drawCoveredImage(ctx: CanvasRenderingContext2D, media: CanvasImageSource,
+  left: number, top: number, right: number, bottom: number,
+  imageLeft: number, imageTop: number, scaleX: number, scaleY: number, dpr: number) {
+  const cuts = (a: number, b: number) => [...new Set([
+    Math.floor(a * dpr) / dpr, Math.ceil(a * dpr) / dpr,
+    Math.floor(b * dpr) / dpr, Math.ceil(b * dpr) / dpr,
+  ])].sort((x, y) => x - y)
+  const xs = cuts(left, right), ys = cuts(top, bottom)
+  ctx.save()
+  ctx.beginPath()
+  ctx.rect(left, top, right - left, bottom - top)
+  ctx.clip()
+  for (let row = 1; row < ys.length; row++) for (let col = 1; col < xs.length; col++) {
+    const x0 = Math.max(left, xs[col - 1]), x1 = Math.min(right, xs[col])
+    const y0 = Math.max(top, ys[row - 1]), y1 = Math.min(bottom, ys[row])
+    if (x1 <= x0 || y1 <= y0) continue
+    ctx.drawImage(media, (x0 - imageLeft) * scaleX, (y0 - imageTop) * scaleY,
+      (x1 - x0) * scaleX, (y1 - y0) * scaleY,
+      xs[col - 1], ys[row - 1], xs[col] - xs[col - 1], ys[row] - ys[row - 1])
+  }
+  ctx.restore()
+}
+
 export function captureGlassScene(root: HTMLElement, glass: HTMLElement) {
   const nativeCapsules = glass.hasAttribute('data-capsule-root')
   const rootBox = glass.getBoundingClientRect()
@@ -86,9 +113,8 @@ export function captureGlassScene(root: HTMLElement, glass: HTMLElement) {
       // interactive frame; only the pixels actually behind the glass are used.
       const left = Math.max(x, rect.left), top = Math.max(y, rect.top)
       const right = Math.min(x + width, rect.right), bottom = Math.min(y + height, rect.bottom)
-      ctx.drawImage(media, (left - rect.left) * naturalW / rect.width, (top - rect.top) * naturalH / rect.height,
-        (right - left) * naturalW / rect.width, (bottom - top) * naturalH / rect.height,
-        left - x, top - y, right - left, bottom - top)
+      drawCoveredImage(ctx, media, left - x, top - y, right - x, bottom - y,
+        rect.left - x, rect.top - y, naturalW / rect.width, naturalH / rect.height, dpr)
       ctx.restore()
     })
   }
