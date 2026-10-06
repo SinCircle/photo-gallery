@@ -627,17 +627,6 @@ button:focus-visible {
 }
 .capsuleDock .dockAction:hover { --dock-lift: .22; transform: scale(1.08); }
 .capsuleDock .dockAction:active { --dock-lift: .3; transform: scale(1.03); }
-/* A patch of photo the ink cannot separate from on its own gets a halo in the
-   opposite tone, which is dropped behind the glyphs rather than over them, so
-   the computed ink stays the colour it was computed as. */
-.capsuleDock .dockAction[data-halo='dark'],
-.capsuleDock .dockMetaItem[data-halo='dark'] {
-  filter: drop-shadow(0 0 1px rgba(0, 0, 0, .8)) drop-shadow(0 0 3px rgba(0, 0, 0, .5));
-}
-.capsuleDock .dockAction[data-halo='light'],
-.capsuleDock .dockMetaItem[data-halo='light'] {
-  filter: drop-shadow(0 0 1px rgba(255, 255, 255, .95)) drop-shadow(0 0 3px rgba(255, 255, 255, .6));
-}
 .capsuleDock .capsuleLabel, .capsuleDock .dockMetaItem {
   background: none;
   border-radius: 0;
@@ -652,14 +641,15 @@ button:focus-visible {
   height: 6px;
   margin: -3px 0 0 -3px;
   border-radius: 50%;
-  background: var(--ink-muted);
+  /* Matches the label ink, which is computed from the photo behind the bar. */
+  background: var(--dock-dot-ink, var(--ink-muted));
   opacity: 0;
   pointer-events: none;
   z-index: 4;
 }
 /* While the photo is still arriving the bar stays in its idle shape and runs a
-   three-dot relay: a dot is born in the left slot, walks to the middle, then to
-   the right, and leaves to the right as the next one appears. */
+   three-dot relay: a dot is carried in from the left, crosses the three slots,
+   and is released on the right as the next one arrives. */
 .capsuleDock .capsuleDots {
   position: absolute;
   inset: 0;
@@ -676,20 +666,40 @@ button:focus-visible {
   height: 5px;
   margin: -2.5px 0 0 -2.5px;
   border-radius: 50%;
-  background: var(--ink-muted);
+  /* Same ink the labels are filled with, so the dots sit in the picture the way
+     the text does instead of being one fixed grey. */
+  background: var(--dock-dot-ink, var(--ink-muted));
   opacity: 0;
-  animation: capsuleDotTravel 1.8s cubic-bezier(.4,.05,.35,1) infinite;
+  animation: capsuleDotTravel 1.8s cubic-bezier(.45, .05, .5, .95) infinite;
 }
-.capsuleDock .capsuleDots i:nth-child(2) { animation-delay: .6s; }
-.capsuleDock .capsuleDots i:nth-child(3) { animation-delay: 1.2s; }
-/* Three fixed slots. A dot is born in the left one, steps to the middle, then
-   to the right, and leaves to the right as the next dot takes the left slot. */
+/* Negative offsets, so the run is already in progress when it appears instead of
+   building up from one dot over the first two cycles. */
+.capsuleDock .capsuleDots i:nth-child(2) { animation-delay: -.6s; }
+.capsuleDock .capsuleDots i:nth-child(3) { animation-delay: -1.2s; }
+/* The run is symmetric: a dot eases in from -27 to the left slot and eases out
+   from the right slot to +27, mirror images, with no stop at either end. Every
+   segment is eased, so the dot carries its weight across instead of snapping
+   between slots and waiting. */
 @keyframes capsuleDotTravel {
-  0% { transform: translateX(-13px) scale(.5); opacity: 0; }
-  7%, 30% { transform: translateX(-13px) scale(1); opacity: .85; }
-  37%, 58% { transform: translateX(0) scale(1); opacity: .85; }
-  65%, 86% { transform: translateX(13px) scale(1); opacity: .85; }
-  95%, 100% { transform: translateX(27px) scale(.5); opacity: 0; }
+  0% {
+    transform: translateX(-27px) scale(.4);
+    opacity: 0;
+    animation-timing-function: cubic-bezier(.22, .72, .32, 1);
+  }
+  16% {
+    transform: translateX(-13px) scale(1);
+    opacity: .9;
+    animation-timing-function: cubic-bezier(.45, .05, .5, .95);
+  }
+  84% {
+    transform: translateX(13px) scale(1);
+    opacity: .9;
+    animation-timing-function: cubic-bezier(.68, .28, .78, .28);
+  }
+  100% {
+    transform: translateX(27px) scale(.4);
+    opacity: 0;
+  }
 }
 @media (max-width: 560px) {
   .capsuleDock > .dockBar { gap: 10px; padding: 0 13px; }

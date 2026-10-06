@@ -43,6 +43,11 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
   let inkReadAt = 0
   const readInk = () => {
     if (!inkCtx) return
+    // Until the photo has pixels, the scene canvas holds nothing and reads as
+    // black, while the bar is still showing the page behind it. Taking that black
+    // as the backdrop would hand the labels and the dots light ink for a light
+    // bar. The photo lives outside this dock, so it is looked up from the page.
+    if (!document.querySelector<HTMLImageElement>('.photoImgLow')?.naturalWidth) return
     const now = performance.now()
     if (now - inkReadAt < 220) return
     inkReadAt = now
@@ -77,46 +82,30 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
     // which is what let mid-tone photos wash the labels out.
     const veiled = (y: number) => toLinear(0.9 * toSrgb01(y) + 0.1)
     const TARGET_RATIO = 9.5
+    const FLOOR_RATIO = 5
+    const contrast = (a: number, b: number) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
     const inkValue = (y: number, light: boolean) =>
       light ? TARGET_RATIO * (y + 0.05) - 0.05 : (y + 0.05) / TARGET_RATIO - 0.05
     const sorted = sampled.map(veiled).sort((a, b) => a - b)
     const median = sorted[Math.floor(SAMPLES / 2)]
-    // Light and dark ink reach equal contrast on a backdrop of this luminance,
-    // so it is the honest place to turn around — and the row turns around here,
-    // once, rather than inverting again for every bright patch it crosses.
+    // The row's default direction, taken from the backdrop's own middle — the
+    // luminance at which light and dark ink are equally legible. Each slice may
+    // still turn around from it: the ink has to follow the photo, not the row's
+    // average, or a light patch keeps ink it cannot be read in.
     const preferLight = median < 0.18
+    const choose = (y: number) => {
+      const preferred = Math.min(1, Math.max(0, inkValue(y, preferLight)))
+      if (contrast(y, preferred) >= FLOOR_RATIO) return preferred
+      const other = Math.min(1, Math.max(0, inkValue(y, !preferLight)))
+      return contrast(y, other) > contrast(y, preferred) ? other : preferred
+    }
     const inkAt = (i: number) => {
-      // Smooth the backdrop, never the ink: averaging stays inside the direction
-      // the row already committed to, whereas averaging the ink itself would
-      // blend black and white into the grey middle this row is trying to avoid.
+      // Smooth the backdrop the choice is made from, never the ink it produces:
+      // averaging picked ink would blend black and white into the grey middle
+      // this row is trying to avoid.
       let sum = 0
       for (let k = -1; k <= 1; k++) sum += veiled(lumaAt(i + k))
-      return Math.min(1, Math.max(0, inkValue(sum / 3, preferLight)))
-    }
-    // Where even the row's own direction cannot reach a legible ratio there is
-    // nothing left to raise the ink to, so separation comes from a halo in the
-    // opposite tone — the same trick as white text with a dark shadow, placed
-    // only on the patches whose ratio actually asks for it.
-    const contrast = (a: number, b: number) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
-    const HALO_BELOW = 4.5
-    const haloFor = (box: DOMRect) => {
-      if (!barBoxNow.width) return ''
-      const at = (x: number) => Math.round(((x - barBoxNow.left) / barBoxNow.width) * (SAMPLES - 1))
-      const first = Math.max(0, at(box.left))
-      const last = Math.min(SAMPLES - 1, at(box.right))
-      let backdrop = 0
-      let ink = 0
-      let n = 0
-      for (let i = first; i <= last; i++) {
-        backdrop += veiled(lumaAt(i))
-        ink += inkAt(i)
-        n++
-      }
-      if (!n) return ''
-      // Judged over the label's whole footprint rather than its worst single
-      // sample: one stray dark pixel at the end of the bar is not a label that
-      // cannot be read.
-      return contrast(backdrop / n, ink / n) < HALO_BELOW ? (preferLight ? 'dark' : 'light') : ''
+      return choose(sum / 3)
     }
     const STOPS = 48
     const stops: string[] = []
@@ -136,6 +125,10 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
     const centre = veiled(lumaAt(Math.round((SAMPLES - 1) / 2)))
     bar.dataset.tone = centre < 0.18 ? 'dark' : 'light'
     bar.dataset.ink = 'gradient'
+    // The idle and loading dots sit on the same glass as the labels, so they are
+    // drawn in the same ink rather than a fixed grey that only suits some photos.
+    const dotInk = toSrgb(inkAt(Math.round((SAMPLES - 1) / 2)))
+    bar.style.setProperty('--dock-dot-ink', `rgb(${dotInk},${dotInk},${dotInk})`)
     // Every label is a window onto that one gradient, so they line up as a
     // single run instead of each picking its own colour. Metadata is filled per
     // item rather than as one block so a halo can land on the item that needs
@@ -147,7 +140,6 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
       target.style.backgroundPosition = target.classList.contains('dockAction')
         ? `${offset}px 0, 0 0`
         : `${offset}px 0`
-      target.dataset.halo = haloFor(box)
     }
   }
   const pointers = new Set<number>()
@@ -183,7 +175,11 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
     dot.style.opacity = expanded ? '0' : loading() ? '0' : '1'
     applyChrome(expanded)
     delete root.dataset.moving
-    if (expanded) { readInk(); startTone() } else stopTone()
+    // The dots carry the same computed ink as the labels, so the ink is read in
+    // every state; only the open bar (and the arriving photo) needs the top-up.
+    readInk()
+    if (expanded || loading()) startTone()
+    else stopTone()
     root.dispatchEvent(new Event('glassrefresh'))
   }
   const morph = () => {
