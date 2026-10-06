@@ -15,8 +15,11 @@ export function regularGlassConfig() {
     specular: 0,
     fresnel: 1,
     distortion: 0,
-    cornerRadius: 40,
-    zRadius: 40,
+    // The bar is 44px tall, so the corner radius is the pill's own half-height
+    // and the bevel is scaled to match; the demo's 40px pair sits on a much
+    // taller component and put the bevel crest across the middle of this bar.
+    cornerRadius: 22,
+    zRadius: 20,
     opacity: 1,
     saturation: 0,
     brightness: 0,
