@@ -66,7 +66,13 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
     const sampled = Array.from({ length: SAMPLES }, (_, i) =>
       0.2126 * toLinear(data[i * 4] / 255) + 0.7152 * toLinear(data[i * 4 + 1] / 255) + 0.0722 * toLinear(data[i * 4 + 2] / 255))
     const lumaAt = (i: number) => sampled[Math.min(SAMPLES - 1, Math.max(0, i))]
-    const toSrgb = (y: number) => Math.round(255 * (y <= 0.0031308 ? y * 12.92 : 1.055 * y ** (1 / 2.4) - 0.055))
+    const toSrgb01 = (y: number) => (y <= 0.0031308 ? y * 12.92 : 1.055 * y ** (1 / 2.4) - 0.055)
+    const toSrgb = (y: number) => Math.round(255 * toSrgb01(y))
+    // The label sits on the photo as the bar renders it, and the bar lays its
+    // own white veil over the photo before the label is drawn. Choosing the ink
+    // against the bare photo therefore overstates the contrast it will have,
+    // which is what let mid-tone photos wash the labels out.
+    const veiled = (y: number) => toLinear(0.9 * toSrgb01(y) + 0.1)
     const contrast = (a: number, b: number) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
     // Continuity beats maximum contrast: the row commits to one direction and
     // pushes the ink as far as that direction allows (brighter, or darker)
@@ -76,7 +82,7 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
     const FLOOR_RATIO = 5
     const inkValue = (y: number, light: boolean) =>
       light ? TARGET_RATIO * (y + 0.05) - 0.05 : (y + 0.05) / TARGET_RATIO - 0.05
-    const sorted = [...sampled].sort((a, b) => a - b)
+    const sorted = sampled.map(veiled).sort((a, b) => a - b)
     const median = sorted[Math.floor(SAMPLES / 2)]
     const preferLight = median < 0.18
     const choose = (y: number) => {
@@ -86,10 +92,12 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
       return contrast(y, other) > contrast(y, preferred) ? other : preferred
     }
     const inkAt = (i: number) => {
-      // A short moving average keeps the switch from landing as a hard step.
+      // Smooth the backdrop, never the ink: averaging stays in the direction the
+      // run already committed to, whereas averaging the ink itself would blend
+      // black and white into the grey middle this row is trying to avoid.
       let sum = 0
-      for (let k = -1; k <= 1; k++) sum += choose(lumaAt(i + k))
-      return sum / 3
+      for (let k = -1; k <= 1; k++) sum += veiled(lumaAt(i + k))
+      return choose(sum / 3)
     }
     const STOPS = 48
     const stops: string[] = []
@@ -114,7 +122,11 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
     const scroll = metaList?.scrollLeft ?? 0
     for (const target of inkTargets()) {
       const box = target.getBoundingClientRect()
-      target.style.backgroundPosition = `${-(box.left - barBoxNow.left - (target === metaList ? scroll : 0))}px 0`
+      const offset = -(box.left - barBoxNow.left - (target === metaList ? scroll : 0))
+      // Actions carry a second, hover-driven layer under the ink; it stays put.
+      target.style.backgroundPosition = target.classList.contains('dockAction')
+        ? `${offset}px 0, 0 0`
+        : `${offset}px 0`
     }
   }
   const pointers = new Set<number>()
