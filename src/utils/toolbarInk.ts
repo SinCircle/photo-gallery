@@ -55,13 +55,45 @@ export function backdropAt(sampled: number[], fraction: number) {
 export { luminance }
 
 export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: AbortSignal) {
+  const filters = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+  filters.setAttribute('width', '0')
+  filters.setAttribute('height', '0')
+  filters.setAttribute('aria-hidden', 'true')
+  filters.style.position = 'absolute'
+  // Subtract the original alpha, so this layer contains ONLY the outline.
+  // Painting a complete stroked clone behind background-clip:text can still
+  // tint nearly opaque antialiased core pixels by one channel value.
+  filters.innerHTML = `<defs><filter id="dock-outline-ring" x="-10%" y="-50%" width="120%" height="200%" color-interpolation-filters="sRGB">
+    <feMorphology in="SourceAlpha" operator="dilate" radius="1" result="outer"/>
+    <feMorphology in="SourceAlpha" operator="dilate" radius=".5" result="inner"/>
+    <feComposite in="outer" in2="inner" operator="out" result="outerRing"/>
+    <feComposite in="inner" in2="SourceAlpha" operator="out" result="innerRing"/>
+    <feFlood flood-color="white"/><feComposite in2="outerRing" operator="in" result="whiteRing"/>
+    <feFlood flood-color="black"/><feComposite in2="innerRing" operator="in" result="blackRing"/>
+    <feMerge><feMergeNode in="whiteRing"/><feMergeNode in="blackRing"/></feMerge>
+  </filter></defs>`
+  root.append(filters)
   const readInk = () => {
     const barBox = bar.getBoundingClientRect()
     if (!barBox.width) return
     const targets = [...bar.querySelectorAll<HTMLElement>('.dockAction, .dockMetaItem')]
+    for (const target of targets) {
+      const glyph = target.querySelector<HTMLElement>('.capsuleLabel') || target
+      if (glyph.querySelector('.dockFill')) continue
+      const text = glyph.textContent || ''
+      const fill = document.createElement('span')
+      fill.className = 'dockFill'
+      fill.textContent = text
+      const outline = document.createElement('span')
+      outline.className = 'dockOutline'
+      outline.dataset.label = text
+      outline.setAttribute('aria-hidden', 'true')
+      glyph.classList.add('dockGlyph')
+      glyph.replaceChildren(outline, fill)
+    }
     const textBoxes = targets.map(target => {
       const range = document.createRange()
-      range.selectNodeContents(target.querySelector('.capsuleLabel') || target)
+      range.selectNodeContents(target.querySelector('.dockFill')!)
       return range.getBoundingClientRect()
     }).filter(box => box.width && box.height)
     const expanded = root.dataset.toolbar === 'expanded'
@@ -86,13 +118,36 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
     bar.dataset.ink = 'gradient'
     const dotInk = inkForBackdrop(backdropAt(sampled, .5)).toFixed(3)
     bar.style.setProperty('--dock-dot-ink', `rgb(${dotInk},${dotInk},${dotInk})`)
-    for (const target of targets) {
-      const offset = -(target.getBoundingClientRect().left - barBox.left)
-      target.style.backgroundPosition = target.classList.contains('dockAction') ? `${offset}px 0, 0 0` : `${offset}px 0`
+    const labels = []
+    for (const [index, target] of targets.entries()) {
+      const fill = target.querySelector<HTMLElement>('.dockFill')!
+      const box = fill.getBoundingClientRect()
+      fill.style.backgroundPosition = `${-(box.left - barBox.left)}px 0`
+      // Test local pixels, not the average of a label (which hides failing
+      // strokes on a hard edge). Keep each label's own vertical text range.
+      let minimum = Infinity
+      if (strip && expanded) {
+        const text = textBoxes[index]
+        if (text) for (let row = 0; row < strip.height; row++) {
+          const py = strip.box.top + (strip.y + row + .5) / strip.sy
+          if (py < text.top || py > text.bottom) continue
+          for (let col = 0; col < strip.width; col++) {
+            const px = strip.box.left + (strip.x + col + .5) / strip.sx
+            if (px < Math.max(box.left, barBox.left) || px > Math.min(box.right, barBox.right)) continue
+            const t = Math.max(0, Math.min(47, (px - barBox.left) / barBox.width * 47))
+            const low = Math.floor(t), high = Math.min(47, low + 1)
+            const ink = linear((values[low] + (values[high] - values[low]) * (t - low)) / 255)
+            const backdrop = veiled(luminance(strip.data, (row * strip.width + col) * 4))
+            minimum = Math.min(minimum, contrast(ink, backdrop))
+          }
+        }
+      }
+      target.toggleAttribute('data-halo', minimum < 5)
+      labels.push({ text: fill.textContent, minimum, halo: minimum < 5 })
     }
     // The probe listens to this event to check the real sampler against an
     // independent pixel-area oracle, rather than duplicating our algorithm.
-    bar.dispatchEvent(new CustomEvent('dockink', { bubbles: true, detail: { sampled, values, band, source: strip ? 'photo' : 'page' } }))
+    bar.dispatchEvent(new CustomEvent('dockink', { bubbles: true, detail: { sampled, values, band, labels, source: strip ? 'photo' : 'page' } }))
   }
   // Consume each new scene immediately; a 480ms polling window otherwise turns
   // even a continuous colour function into visible steps during a live drag.

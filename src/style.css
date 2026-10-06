@@ -575,29 +575,34 @@ button:focus-visible {
   /* The run of labels is wide, so it is filled by the computed gradient that
      matches the photo slice by slice instead of a single flat colour. */
 }
-.capsuleDock > .dockBar[data-ink='gradient'] .dockMetaItem {
-  /* Every label is a window onto one bar-wide gradient, so the run reads as a
-     single continuous colour rather than each label picking its own. Filling
-     each item separately — rather than the row as a block — is what lets a
-     halo below land on one item without shading the rest. */
+.capsuleDock .dockGlyph { position: relative; display: inline-block; }
+.capsuleDock .dockFill {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
   background-image: var(--dock-ink-gradient);
   background-size: var(--dock-ink-size);
   background-repeat: no-repeat;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  text-shadow: none;
 }
-.capsuleDock > .dockBar[data-ink='gradient'] .dockAction {
-  /* Two layers: the same ink gradient on the glyphs, and beneath it the lift
-     that fills the whole capsule-shaped hit zone. Clipping each layer to its
-     own box is what keeps the lightening off the label itself. */
-  background-image: var(--dock-ink-gradient),
-    linear-gradient(rgb(255 255 255 / var(--dock-lift, 0)), rgb(255 255 255 / var(--dock-lift, 0)));
-  background-size: var(--dock-ink-size), auto;
-  background-repeat: no-repeat, no-repeat;
-  -webkit-background-clip: text, padding-box;
-  background-clip: text, padding-box;
-  color: transparent;
+/* Two crisp, independently painted outlines behind the opaque ink fill.
+   The thin black/white pair provides separation in either direction, including
+   where continuous ink passes through a mid-tone. No blur crosses the core. */
+.capsuleDock .dockOutline { display: none; filter: url(#dock-outline-ring); }
+.capsuleDock [data-halo] .dockOutline { display: block; }
+.capsuleDock .dockOutline,
+.capsuleDock .dockOutline::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  text-shadow: none;
+}
+.capsuleDock .dockOutline::before {
+  content: attr(data-label);
+  color: black;
 }
 .capsuleDock > .dockBar > .dockBack,
 .capsuleDock > .dockBar > .dockFit,
@@ -605,8 +610,6 @@ button:focus-visible {
 /* On a dark photo the labels flip to white rather than staying black on dark
    glass. The tone is measured from the pixels under the bar. */
 .capsuleDock > .dockBar[data-tone='dark'] { --dock-ink: rgba(255, 255, 255, .96); }
-.capsuleDock > .dockBar[data-tone='dark'] .dockAction,
-.capsuleDock > .dockBar[data-tone='dark'] .dockMetaItem { text-shadow: 0 1px 3px rgba(0, 0, 0, .45); }
 /* Clickable items carry no chrome of their own. The padding is only a hit area,
    so hovering lightens and lifts that whole capsule-shaped zone, not the text. */
 .capsuleDock .dockAction {
