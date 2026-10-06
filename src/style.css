@@ -568,14 +568,16 @@ button:focus-visible {
   /* The run of labels is wide, so it is filled by the computed gradient that
      matches the photo slice by slice instead of a single flat colour. */
 }
-.capsuleDock > .dockBar[data-ink='gradient'] .dockMeta {
+.capsuleDock > .dockBar[data-ink='gradient'] .dockMeta,
+.capsuleDock > .dockBar[data-ink='gradient'] .dockAction {
+  /* Every label is a window onto one bar-wide gradient, so the run reads as a
+     single continuous colour that follows the photo behind it. */
   background-image: var(--dock-ink-gradient);
+  background-size: var(--dock-ink-size);
+  background-repeat: no-repeat;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border-radius: inherit;
 }
 .capsuleDock > .dockBar > .dockBack,
 .capsuleDock > .dockBar > .dockFit,

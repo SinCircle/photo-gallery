@@ -34,12 +34,12 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
   // the text with a matching gradient instead: each slice of the gradient takes
   // the opposite tone from the slice of photo behind that part of the bar.
   const SAMPLES = 24
+  const metaList = bar.querySelector<HTMLElement>('.dockMeta')
+  const inkTargets = () => items.filter((item): item is HTMLElement => item instanceof HTMLElement)
   const inkProbe = document.createElement('canvas')
   inkProbe.width = SAMPLES
   inkProbe.height = 1
   const inkCtx = inkProbe.getContext('2d', { willReadFrequently: true })
-  const LIGHT_INK = '#ffffff'
-  const DARK_INK = '#111111'
   let inkReadAt = 0
   const readInk = () => {
     if (!inkCtx) return
@@ -58,27 +58,36 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
     inkCtx.clearRect(0, 0, SAMPLES, 1)
     inkCtx.drawImage(scene, x, y, width, 1, 0, 0, SAMPLES, 1)
     const data = inkCtx.getImageData(0, 0, SAMPLES, 1).data
-    const luma = Array.from({ length: SAMPLES }, (_, i) =>
+    const sampled = Array.from({ length: SAMPLES }, (_, i) =>
       0.2126 * data[i * 4] + 0.7152 * data[i * 4 + 1] + 0.0722 * data[i * 4 + 2])
-    // Piecewise-constant stops: the switch lands exactly where the photo does,
-    // so no slice of text ends up straddling a boundary as a washed-out grey.
+    const lumaAt = (i: number) => sampled[Math.min(SAMPLES - 1, Math.max(0, i))]
+    // One gradient spans the whole row. Rather than inverting anything, each
+    // point takes the tone that sits as far as possible from the photo behind
+    // it, and the crossover is a smooth ramp so the colour never jumps mid-word.
+    const STOPS = 48
     const stops: string[] = []
-    for (let i = 0; i < SAMPLES; i++) {
-      const ink = luma[i] < 133 ? LIGHT_INK : DARK_INK
-      stops.push(`${ink} ${((i / SAMPLES) * 100).toFixed(3)}%`, `${ink} ${(((i + 1) / SAMPLES) * 100).toFixed(3)}%`)
+    for (let i = 0; i < STOPS; i++) {
+      const t = (i / (STOPS - 1)) * (SAMPLES - 1)
+      const low = Math.floor(t)
+      const high = Math.min(SAMPLES - 1, low + 1)
+      const luma = lumaAt(low) + (lumaAt(high) - lumaAt(low)) * (t - low)
+      const ramp = Math.min(1, Math.max(0, (luma - 104) / 56))
+      const eased = ramp * ramp * (3 - 2 * ramp)
+      const value = Math.round(255 * (1 - eased))
+      stops.push(`rgb(${value},${value},${value}) ${((i / (STOPS - 1)) * 100).toFixed(2)}%`)
     }
+    const barBoxNow = bar.getBoundingClientRect()
     bar.style.setProperty('--dock-ink-gradient', `linear-gradient(90deg, ${stops.join(', ')})`)
-    bar.dataset.ink = 'gradient'
-    const middle = luma.map((_, i) => i).filter(i => Math.abs(i - (SAMPLES - 1) / 2) <= 2)
-    const centre = middle.reduce((a, i) => a + luma[i], 0) / middle.length
+    bar.style.setProperty('--dock-ink-size', `${barBoxNow.width}px 100%`)
+    const centre = lumaAt(Math.round((SAMPLES - 1) / 2))
     bar.dataset.tone = centre < 133 ? 'dark' : 'light'
-    // The buttons are short enough to take a flat tone from their own pixels.
-    for (const item of items) {
-      if (!(item instanceof HTMLButtonElement)) continue
-      const box = item.getBoundingClientRect()
-      const mid = Math.min(SAMPLES - 1, Math.max(0, Math.round(((box.left + box.width / 2 - barBox.left) / barBox.width) * SAMPLES)))
-      item.style.color = luma[mid] < 133 ? LIGHT_INK : DARK_INK
-      item.style.textShadow = luma[mid] < 133 ? '0 1px 3px rgba(0,0,0,.45)' : 'none'
+    bar.dataset.ink = 'gradient'
+    // Every label is a window onto that one gradient, so they line up as a
+    // single run instead of each picking its own colour.
+    const scroll = metaList?.scrollLeft ?? 0
+    for (const target of inkTargets()) {
+      const box = target.getBoundingClientRect()
+      target.style.backgroundPosition = `${-(box.left - barBoxNow.left - (target === metaList ? scroll : 0))}px 0`
     }
   }
   const pointers = new Set<number>()
