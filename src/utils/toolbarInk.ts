@@ -79,6 +79,22 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
   const set = (element: HTMLElement, name: string, value: string) => {
     if (element.style.getPropertyValue(name) !== value) element.style.setProperty(name, value)
   }
+  const paintTone = (element: HTMLElement, ink: number, key = element) => {
+    if (paintedTones.get(key) === ink) return
+    paintedTones.set(key, ink)
+    const previous = element.style.getPropertyValue('--dock-tone')
+    const current = previous ? getComputedStyle(element).getPropertyValue('--dock-tone') : String(ink)
+    fades.get(key)?.cancel()
+    set(element, '--dock-tone', String(ink))
+    if (previous && !reduced.matches) {
+      const fade = element.animate([{ '--dock-tone': current }, { '--dock-tone': String(ink) }],
+        { duration: 420, easing: EASE_IN_OUT, fill: 'backwards' })
+      fades.set(key, fade)
+      void fade.finished.catch(() => {}).then(() => {
+        if (fades.get(key) === fade) { fades.delete(key); schedule() }
+      })
+    }
+  }
   const readInk = () => {
     cancelAnimationFrame(pending)
     pending = 0
@@ -110,12 +126,36 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
       }
       return fill
     })
+    // Automatic dark themes can recolour CSS backgrounds after sampling. Tiny
+    // static bitmaps preserve the chosen ink; only their CSS opacity changes.
+    for (const dot of bar.querySelectorAll<HTMLElement>('.capsuleDots i, .capsuleDot')) {
+      if (dot.querySelector('.dockDotInk')) continue
+      for (const ink of [0, 255]) {
+        const canvas = document.createElement('canvas')
+        canvas.className = `dockDotInk${ink ? ' dockDotLight' : ''}`
+        canvas.width = canvas.height = 1
+        canvas.setAttribute('aria-hidden', 'true')
+        const context = canvas.getContext('2d')!
+        context.fillStyle = ink ? '#fff' : '#000'
+        context.fillRect(0, 0, 1, 1)
+        dot.append(canvas)
+      }
+    }
     const targets = expanded ? allTargets : []
     const fills = expanded ? allFills : []
     // Finish DOM writes before taking all geometry reads together.
     const barBox = bar.getBoundingClientRect()
     if (!barBox.width) return
     const boxes = fills.map(fill => fill.getBoundingClientRect())
+    const dots = [...bar.querySelectorAll<HTMLElement>('.capsuleDots, .capsuleDot')]
+    const dotBands = dots.map(dot => {
+      const box = dot.getBoundingClientRect()
+      // The loader travels across 56px even when its absolute container fills
+      // the expanded bar. Sample its actual path, never that container's width.
+      const halfWidth = dot.classList.contains('capsuleDot') ? 3 : 28
+      const x = box.left + box.width / 2, y = box.top + box.height / 2
+      return { left: Math.max(barBox.left, x - halfWidth), right: Math.min(barBox.right, x + halfWidth), top: y - 3, bottom: y + 3 }
+    })
     const visible = boxes.filter(box => box.width && box.height)
     const bandFor = (visible: DOMRect[]) => ({
       left: barBox.left, right: barBox.right,
@@ -149,20 +189,28 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
     const pageLuma = .2126 * linear(bg[0] / 255) + .7152 * linear(bg[1] / 255) + .0722 * linear(bg[2] / 255)
     const samples = strips.map(strip => strip?.sampled || Array<number>(expanded ? 24 : 1).fill(pageLuma))
     const sampled = samples[0]
+    const chooseRegion = (element: HTMLElement, region: number[]) => {
+      region.sort((a, b) => a - b)
+      const ink = inkForBackdrop(region[Math.floor(region.length / 2)], tones.get(element))
+      tones.set(element, ink)
+      return ink
+    }
     const choose = (element: HTMLElement, left: number, right: number, row = 0) => {
       // A small bright/dark patch must not flip an entire label. The median
       // chooses its main fill; per-cell contrast below handles the exceptions.
       const region = Array.from({ length: 11 }, (_, i) => backdropAt(samples[row],
-        ((left + (right - left) * (i + .5) / 11) - barBox.left) / barBox.width, veil)).sort((a, b) => a - b)
-      const ink = inkForBackdrop(region[5], tones.get(element))
-      tones.set(element, ink)
-      return ink
+        ((left + (right - left) * (i + .5) / 11) - barBox.left) / barBox.width, veil))
+      return chooseRegion(element, region)
     }
     const dotInk = choose(bar, barBox.left, barBox.right)
-    const rgb = (ink: number) => `rgb(${ink},${ink},${ink})`
-    set(bar, '--dock-dot-ink', rgb(dotInk))
     const tone = dotInk === 255 ? 'dark' : 'light'
     if (bar.dataset.tone !== tone) bar.dataset.tone = tone
+    // Each icon samples its own position, including the lower mobile row.
+    // Reuse the letters' hysteresis and interrupted colour fade. No timer or
+    // animation-frame loop is added to the compositor-driven loading motion.
+    const dotSamples = dotBands.map(band => ready && source?.width && band.right > band.left ? sampleInkBand(source, band, 11)?.sampled : undefined)
+    dots.forEach((dot, i) => paintTone(dot, chooseRegion(dot,
+      (dotSamples[i] || Array<number>(11).fill(pageLuma)).map(y => veiled(y, veil)))))
     const values = fills.map((fill, i) => choose(fill, boxes[i].left, boxes[i].right, rowFor(i)))
     const labels: { text: string | null; halo: boolean; ink: number }[] = []
     if (expanded) {
@@ -227,25 +275,7 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
         const box = boxes[i]
         const white = values[i] === 255
         const glyph = fill.parentElement!
-        const previous = glyph.style.getPropertyValue('--dock-tone')
-        // Compare the numeric target, not CSSOM colour serialization (which
-        // may insert spaces and otherwise restart a fade on every sample).
-        if (paintedTones.get(fill) !== values[i]) {
-          paintedTones.set(fill, values[i])
-          // Initial labels use the correct ink immediately; subsequent switches
-          // start from the displayed colour, including an interrupted fade.
-          const current = previous ? getComputedStyle(glyph).getPropertyValue('--dock-tone') : String(values[i])
-          fades.get(fill)?.cancel()
-          set(glyph, '--dock-tone', String(values[i]))
-          if (previous && !reduced.matches) {
-            const fade = glyph.animate([{ '--dock-tone': current }, { '--dock-tone': String(values[i]) }],
-              { duration: 420, easing: EASE_IN_OUT, fill: 'backwards' })
-            fades.set(fill, fade)
-            void fade.finished.catch(() => {}).then(() => {
-              if (fades.get(fill) === fade) { fades.delete(fill); schedule() }
-            })
-          }
-        }
+        paintTone(glyph, values[i], fill)
         const { whiteMinima, blackMinima, mask, progressProperty } = fields[rowFor(i)]
         // Each label needs only the cells touching its own ink. Duplicating the
         // whole bar's calc-heavy gradient on every label caused style/layout

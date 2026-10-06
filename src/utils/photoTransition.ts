@@ -66,8 +66,8 @@ function toolbar(source: HTMLElement) {
         copy.style.setProperty('--glass-material', style.getPropertyValue('--glass-material'))
       }
     }
-    if (original.matches('.dockGlyph')) copy.style.setProperty('--dock-tone', getComputedStyle(original).getPropertyValue('--dock-tone'))
-    if (original instanceof HTMLCanvasElement && copy instanceof HTMLCanvasElement && original.matches('[data-glass-output]')) {
+    if (original.matches('.dockGlyph, .capsuleDot, .capsuleDots')) copy.style.setProperty('--dock-tone', getComputedStyle(original).getPropertyValue('--dock-tone'))
+    if (original instanceof HTMLCanvasElement && copy instanceof HTMLCanvasElement && original.matches('[data-glass-output], .dockDotInk')) {
       copy.getContext('2d')?.drawImage(original, 0, 0)
     }
   }

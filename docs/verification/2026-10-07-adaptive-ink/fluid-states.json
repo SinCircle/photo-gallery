@@ -1,0 +1,525 @@
+{
+  "sizes": [
+    {
+      "width": 1440,
+      "fonts": {
+        "fonts": [
+          {
+            "familyName": "Noto Serif SC ExtraLight SemiBold",
+            "postScriptName": "NotoSerifSCExtraLight-SemiBold",
+            "isCustomFont": true,
+            "glyphCount": 2
+          }
+        ]
+      },
+      "weight": "600",
+      "layout": {
+        "bar": {
+          "x": 407.125,
+          "y": 786,
+          "width": 625.75,
+          "height": 44,
+          "top": 786,
+          "right": 1032.875,
+          "bottom": 830,
+          "left": 407.125
+        },
+        "meta": {
+          "x": 607.125,
+          "y": 786,
+          "width": 341.75,
+          "height": 44,
+          "top": 786,
+          "right": 948.875,
+          "bottom": 830,
+          "left": 607.125
+        },
+        "metaBottom": 44,
+        "buttons": [
+          {
+            "x": 423.125,
+            "y": 790,
+            "width": 56,
+            "height": 36,
+            "top": 790,
+            "right": 479.125,
+            "bottom": 826,
+            "left": 423.125,
+            "rowTop": 4
+          },
+          {
+            "x": 491.125,
+            "y": 790,
+            "width": 104,
+            "height": 36,
+            "top": 790,
+            "right": 595.125,
+            "bottom": 826,
+            "left": 491.125,
+            "rowTop": 4
+          },
+          {
+            "x": 960.875,
+            "y": 790,
+            "width": 56,
+            "height": 36,
+            "top": 790,
+            "right": 1016.875,
+            "bottom": 826,
+            "left": 960.875,
+            "rowTop": 4
+          }
+        ],
+        "overflow": false
+      },
+      "glassBlur": {
+        "native": 0.15,
+        "css": "0.15px"
+      },
+      "enter": [
+        {
+          "time": 0,
+          "label": 1,
+          "icon": 0,
+          "labelBlur": "blur(0px)",
+          "iconBlur": "blur(6px)",
+          "balls": 8
+        },
+        {
+          "time": 84,
+          "label": 0.990724,
+          "icon": 0.00927599,
+          "labelBlur": "blur(0.0556559px)",
+          "iconBlur": "blur(5.94434px)",
+          "balls": 8
+        },
+        {
+          "time": 210,
+          "label": 0.918623,
+          "icon": 0.0813774,
+          "labelBlur": "blur(0.488264px)",
+          "iconBlur": "blur(5.51174px)",
+          "balls": 8
+        },
+        {
+          "time": 420,
+          "label": 0.283636,
+          "icon": 0.716364,
+          "labelBlur": "blur(4.29818px)",
+          "iconBlur": "blur(1.70182px)",
+          "balls": 8
+        },
+        {
+          "time": 630,
+          "label": 0.0400438,
+          "icon": 0.959956,
+          "labelBlur": "blur(5.75974px)",
+          "iconBlur": "blur(0.240263px)",
+          "balls": 8
+        },
+        {
+          "time": 840,
+          "label": 0,
+          "icon": 1,
+          "labelBlur": "blur(6px)",
+          "iconBlur": "blur(0px)",
+          "balls": 8
+        }
+      ],
+      "interrupted": {
+        "time": 210,
+        "label": 0.918623,
+        "icon": 0.0813774,
+        "labelBlur": "blur(0.488264px)",
+        "iconBlur": "blur(5.51174px)",
+        "balls": 8
+      },
+      "reverse": {
+        "time": 0,
+        "label": 0.918623,
+        "icon": 0.0813774,
+        "labelBlur": "blur(0.488264px)",
+        "iconBlur": "blur(5.51174px)",
+        "balls": 8
+      },
+      "leave": [
+        {
+          "time": 0,
+          "label": 0.918623,
+          "icon": 0.0813774,
+          "labelBlur": "blur(0.488264px)",
+          "iconBlur": "blur(5.51174px)",
+          "balls": 8
+        },
+        {
+          "time": 210,
+          "label": 0.925245,
+          "icon": 0.0747551,
+          "labelBlur": "blur(0.44853px)",
+          "iconBlur": "blur(5.55147px)",
+          "balls": 8
+        },
+        {
+          "time": 420,
+          "label": 0.976919,
+          "icon": 0.0230816,
+          "labelBlur": "blur(0.138489px)",
+          "iconBlur": "blur(5.86151px)",
+          "balls": 8
+        },
+        {
+          "time": 630,
+          "label": 0.996741,
+          "icon": 0.00325866,
+          "labelBlur": "blur(0.019552px)",
+          "iconBlur": "blur(5.98045px)",
+          "balls": 8
+        },
+        {
+          "time": 840,
+          "label": 1,
+          "icon": 0,
+          "labelBlur": "blur(0px)",
+          "iconBlur": "blur(6px)",
+          "balls": 8
+        }
+      ],
+      "textSwap": {
+        "copies": 0,
+        "animations": [],
+        "incoming": "none"
+      },
+      "maskPhases": [
+        {
+          "time": 0,
+          "tone": 255,
+          "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -10.899%, rgba(0, 0, 0, 0) 36.15%, rgba(0, 0, 0, 0) 51.833%, rgba(0, 0, 0, 0) 67.516%, rgba(0, 0, 0, 0) 114.565%)",
+          "maxAlpha": 0
+        },
+        {
+          "time": 28,
+          "tone": 255,
+          "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -10.899%, rgba(0, 0, 0, 0) 36.15%, rgba(0, 0, 0, 0.494) 51.833%, rgba(0, 0, 0, 0) 67.516%, rgba(0, 0, 0, 0) 114.565%)",
+          "maxAlpha": 0.494
+        },
+        {
+          "time": 70,
+          "tone": 255,
+          "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -10.899%, rgba(0, 0, 0, 0) 36.15%, rgba(0, 0, 0, 0.827) 51.833%, rgba(0, 0, 0, 0) 67.516%, rgba(0, 0, 0, 0) 114.565%)",
+          "maxAlpha": 0.827
+        },
+        {
+          "time": 140,
+          "tone": 255,
+          "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -10.899%, rgba(0, 0, 0, 0) 36.15%, rgba(0, 0, 0, 0.973) 51.833%, rgba(0, 0, 0, 0) 67.516%, rgba(0, 0, 0, 0) 114.565%)",
+          "maxAlpha": 0.973
+        },
+        {
+          "time": 210,
+          "tone": 255,
+          "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -10.899%, rgba(0, 0, 0, 0) 36.15%, rgba(0, 0, 0, 0.996) 51.833%, rgba(0, 0, 0, 0) 67.516%, rgba(0, 0, 0, 0) 114.565%)",
+          "maxAlpha": 0.996
+        },
+        {
+          "time": 280,
+          "tone": 255,
+          "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -10.899%, rgba(0, 0, 0, 0) 36.15%, rgb(0, 0, 0) 51.833%, rgba(0, 0, 0, 0) 67.516%, rgba(0, 0, 0, 0) 114.565%)",
+          "maxAlpha": 1
+        }
+      ],
+      "maskRetargetMaxError": 0,
+      "idle": {
+        "raf": 0,
+        "draws": 0,
+        "animations": 0
+      }
+    },
+    {
+      "width": 390,
+      "fonts": {
+        "fonts": [
+          {
+            "familyName": "Noto Serif SC ExtraLight SemiBold",
+            "postScriptName": "NotoSerifSCExtraLight-SemiBold",
+            "isCustomFont": true,
+            "glyphCount": 2
+          }
+        ]
+      },
+      "weight": "600",
+      "layout": {
+        "bar": {
+          "x": 18,
+          "y": 752,
+          "width": 354,
+          "height": 78,
+          "top": 752,
+          "right": 372,
+          "bottom": 830,
+          "left": 18
+        },
+        "meta": {
+          "x": 31,
+          "y": 758,
+          "width": 328,
+          "height": 30,
+          "top": 758,
+          "right": 359,
+          "bottom": 788,
+          "left": 31
+        },
+        "metaBottom": 36,
+        "buttons": [
+          {
+            "x": 31,
+            "y": 788,
+            "width": 48,
+            "height": 36,
+            "top": 788,
+            "right": 79,
+            "bottom": 824,
+            "left": 31,
+            "rowTop": 36
+          },
+          {
+            "x": 143.16000366210938,
+            "y": 786.5599975585938,
+            "width": 103.67999267578125,
+            "height": 38.8800048828125,
+            "top": 786.5599975585938,
+            "right": 246.83999633789062,
+            "bottom": 825.4400024414062,
+            "left": 143.16000366210938,
+            "rowTop": 36
+          },
+          {
+            "x": 311,
+            "y": 788,
+            "width": 48,
+            "height": 36,
+            "top": 788,
+            "right": 359,
+            "bottom": 824,
+            "left": 311,
+            "rowTop": 36
+          }
+        ],
+        "overflow": false
+      },
+      "glassBlur": {
+        "native": 0.4,
+        "css": "0.4px"
+      },
+      "rowInk": {
+        "meta": [
+          0,
+          0,
+          0
+        ],
+        "actions": [
+          255,
+          255,
+          255
+        ]
+      },
+      "enter": [
+        {
+          "time": 0,
+          "label": 1,
+          "icon": 0,
+          "labelBlur": "blur(0px)",
+          "iconBlur": "blur(6px)",
+          "balls": 8
+        },
+        {
+          "time": 84,
+          "label": 0.990724,
+          "icon": 0.00927599,
+          "labelBlur": "blur(0.0556559px)",
+          "iconBlur": "blur(5.94434px)",
+          "balls": 8
+        },
+        {
+          "time": 210,
+          "label": 0.918623,
+          "icon": 0.0813774,
+          "labelBlur": "blur(0.488264px)",
+          "iconBlur": "blur(5.51174px)",
+          "balls": 8
+        },
+        {
+          "time": 420,
+          "label": 0.283636,
+          "icon": 0.716364,
+          "labelBlur": "blur(4.29818px)",
+          "iconBlur": "blur(1.70182px)",
+          "balls": 8
+        },
+        {
+          "time": 630,
+          "label": 0.0400438,
+          "icon": 0.959956,
+          "labelBlur": "blur(5.75974px)",
+          "iconBlur": "blur(0.240263px)",
+          "balls": 8
+        },
+        {
+          "time": 840,
+          "label": 0,
+          "icon": 1,
+          "labelBlur": "blur(6px)",
+          "iconBlur": "blur(0px)",
+          "balls": 8
+        }
+      ],
+      "interrupted": {
+        "time": 210,
+        "label": 0.918623,
+        "icon": 0.0813774,
+        "labelBlur": "blur(0.488264px)",
+        "iconBlur": "blur(5.51174px)",
+        "balls": 8
+      },
+      "reverse": {
+        "time": 0,
+        "label": 0.918623,
+        "icon": 0.0813774,
+        "labelBlur": "blur(0.488264px)",
+        "iconBlur": "blur(5.51174px)",
+        "balls": 8
+      },
+      "leave": [
+        {
+          "time": 0,
+          "label": 0.918623,
+          "icon": 0.0813774,
+          "labelBlur": "blur(0.488264px)",
+          "iconBlur": "blur(5.51174px)",
+          "balls": 8
+        },
+        {
+          "time": 210,
+          "label": 0.925245,
+          "icon": 0.0747551,
+          "labelBlur": "blur(0.44853px)",
+          "iconBlur": "blur(5.55147px)",
+          "balls": 8
+        },
+        {
+          "time": 420,
+          "label": 0.976919,
+          "icon": 0.0230816,
+          "labelBlur": "blur(0.138489px)",
+          "iconBlur": "blur(5.86151px)",
+          "balls": 8
+        },
+        {
+          "time": 630,
+          "label": 0.996741,
+          "icon": 0.00325866,
+          "labelBlur": "blur(0.019552px)",
+          "iconBlur": "blur(5.98045px)",
+          "balls": 8
+        },
+        {
+          "time": 840,
+          "label": 1,
+          "icon": 0,
+          "labelBlur": "blur(0px)",
+          "iconBlur": "blur(6px)",
+          "balls": 8
+        }
+      ],
+      "textSwap": {
+        "copies": 0,
+        "animations": [],
+        "incoming": "none"
+      },
+      "maskPhases": [
+        {
+          "time": 0,
+          "tone": 255,
+          "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -7.895%, rgba(0, 0, 0, 0) 39.474%, rgba(0, 0, 0, 0) 55.263%, rgba(0, 0, 0, 0) 71.053%, rgba(0, 0, 0, 0) 118.421%)",
+          "maxAlpha": 0
+        },
+        {
+          "time": 28,
+          "tone": 255,
+          "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -7.895%, rgba(0, 0, 0, 0) 39.474%, rgba(0, 0, 0, 0.494) 55.263%, rgba(0, 0, 0, 0) 71.053%, rgba(0, 0, 0, 0) 118.421%)",
+          "maxAlpha": 0.494
+        },
+        {
+          "time": 70,
+          "tone": 255,
+          "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -7.895%, rgba(0, 0, 0, 0) 39.474%, rgba(0, 0, 0, 0.827) 55.263%, rgba(0, 0, 0, 0) 71.053%, rgba(0, 0, 0, 0) 118.421%)",
+          "maxAlpha": 0.827
+        },
+        {
+          "time": 140,
+          "tone": 255,
+          "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -7.895%, rgba(0, 0, 0, 0) 39.474%, rgba(0, 0, 0, 0.973) 55.263%, rgba(0, 0, 0, 0) 71.053%, rgba(0, 0, 0, 0) 118.421%)",
+          "maxAlpha": 0.973
+        },
+        {
+          "time": 210,
+          "tone": 255,
+          "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -7.895%, rgba(0, 0, 0, 0) 39.474%, rgba(0, 0, 0, 0.996) 55.263%, rgba(0, 0, 0, 0) 71.053%, rgba(0, 0, 0, 0) 118.421%)",
+          "maxAlpha": 0.996
+        },
+        {
+          "time": 280,
+          "tone": 255,
+          "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -7.895%, rgba(0, 0, 0, 0) 39.474%, rgb(0, 0, 0) 55.263%, rgba(0, 0, 0, 0) 71.053%, rgba(0, 0, 0, 0) 118.421%)",
+          "maxAlpha": 1
+        }
+      ],
+      "maskRetargetMaxError": 0,
+      "idle": {
+        "raf": 0,
+        "draws": 0,
+        "animations": 0
+      }
+    }
+  ],
+  "errors": [],
+  "lastMask": [
+    {
+      "time": 0,
+      "tone": 255,
+      "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -7.895%, rgba(0, 0, 0, 0) 39.474%, rgba(0, 0, 0, 0) 55.263%, rgba(0, 0, 0, 0) 71.053%, rgba(0, 0, 0, 0) 118.421%)",
+      "maxAlpha": 0
+    },
+    {
+      "time": 28,
+      "tone": 255,
+      "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -7.895%, rgba(0, 0, 0, 0) 39.474%, rgba(0, 0, 0, 0.494) 55.263%, rgba(0, 0, 0, 0) 71.053%, rgba(0, 0, 0, 0) 118.421%)",
+      "maxAlpha": 0.494
+    },
+    {
+      "time": 70,
+      "tone": 255,
+      "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -7.895%, rgba(0, 0, 0, 0) 39.474%, rgba(0, 0, 0, 0.827) 55.263%, rgba(0, 0, 0, 0) 71.053%, rgba(0, 0, 0, 0) 118.421%)",
+      "maxAlpha": 0.827
+    },
+    {
+      "time": 140,
+      "tone": 255,
+      "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -7.895%, rgba(0, 0, 0, 0) 39.474%, rgba(0, 0, 0, 0.973) 55.263%, rgba(0, 0, 0, 0) 71.053%, rgba(0, 0, 0, 0) 118.421%)",
+      "maxAlpha": 0.973
+    },
+    {
+      "time": 210,
+      "tone": 255,
+      "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -7.895%, rgba(0, 0, 0, 0) 39.474%, rgba(0, 0, 0, 0.996) 55.263%, rgba(0, 0, 0, 0) 71.053%, rgba(0, 0, 0, 0) 118.421%)",
+      "maxAlpha": 0.996
+    },
+    {
+      "time": 280,
+      "tone": 255,
+      "mask": "linear-gradient(90deg, rgba(0, 0, 0, 0) -7.895%, rgba(0, 0, 0, 0) 39.474%, rgb(0, 0, 0) 55.263%, rgba(0, 0, 0, 0) 71.053%, rgba(0, 0, 0, 0) 118.421%)",
+      "maxAlpha": 1
+    }
+  ],
+  "camera": "HUAWEI Pura 70 Ultra",
+  "status": "passed"
+}

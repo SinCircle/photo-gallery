@@ -20,6 +20,9 @@
   --stamp-font: 'Cinzel Decorative', 'Cormorant SC', var(--font-chinese);
 
   color-scheme: light;
+  /* Photo pixels and sampled control colours must stay in the same colour
+     space. Browser auto-darkening otherwise inverts text/dots after sampling. */
+  color-scheme: only light;
   --font-chinese: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', SimSun, serif;
   font-family: 'Cormorant Garamond', var(--font-chinese);
   line-height: 1.5;
@@ -642,7 +645,10 @@ button:focus-visible {
   z-index: 1;
   display: inline-block;
   color: rgb(var(--dock-tone) var(--dock-tone) var(--dock-tone));
-  text-shadow: none;
+  /* A zero-offset, zero-blur fill keeps automatic dark themes from replacing
+     sampled text colours. The separate local contrast shadows stay below it. */
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 0 rgb(var(--dock-tone) var(--dock-tone) var(--dock-tone));
 }
 /* Soft opposite-colour shadows behind the fill, masked to failing patches.
    Extra space lets the blur fall off naturally instead of clipping at a glyph.
@@ -708,7 +714,7 @@ button:focus-visible {
   margin: -3px 0 0 -3px;
   border-radius: 50%;
   /* Matches the label ink, which is computed from the photo behind the bar. */
-  background: var(--dock-dot-ink, var(--dock-ink));
+  background: rgb(var(--dock-tone) var(--dock-tone) var(--dock-tone));
   opacity: 0;
   pointer-events: none;
   z-index: 4;
@@ -750,12 +756,21 @@ button:focus-visible {
   border-radius: 50%;
   /* Same ink the labels are filled with, so the dots sit in the picture the way
      the text does instead of being one fixed grey. */
-  background: var(--dock-dot-ink, var(--dock-ink));
+  background: rgb(var(--dock-tone) var(--dock-tone) var(--dock-tone));
   opacity: .9;
 }
 .capsuleDock .capsuleDots i:nth-child(1) { translate: -14px 0; }
 .capsuleDock .capsuleDots i:nth-child(3) { translate: 14px 0; }
 .capsuleDock .capsuleDots i:nth-child(4) { translate: -28px 0; transform: scale(0); }
+.capsuleDock .dockDotInk {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.capsuleDock .dockDotLight { opacity: calc(var(--dock-tone) / 255); }
 @media (max-width: 560px) {
   .photoShell > .toolbarSlot { max-width: none; }
   .capsuleDock { height: 78px; }

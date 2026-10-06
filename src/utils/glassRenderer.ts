@@ -27,7 +27,7 @@ export async function createGlassRenderer(glass: HTMLElement, signal: AbortSigna
       instance = await LiquidGlass.init({ root: glass, glassElements: capsules })
       if (signal.aborted) { cleanup(); throw new DOMException('Aborted', 'AbortError') }
       for (const capsule of capsules) {
-        const output = capsule.querySelector('canvas')!
+        const output = capsule.querySelector<HTMLCanvasElement>(':scope > canvas')!
         output.getContext('2d', { willReadFrequently: true })
         output.dataset.glassOutput = capsule.dataset.glassCapsule
       }
@@ -52,7 +52,7 @@ export async function createGlassRenderer(glass: HTMLElement, signal: AbortSigna
   try {
     instance = await LiquidGlass.init({ root, glassElements: [panel] })
     if (signal.aborted) { instance.destroy(); root.remove(); throw new DOMException('Aborted', 'AbortError') }
-    const output = panel.querySelector('canvas')!
+    const output = panel.querySelector<HTMLCanvasElement>(':scope > canvas')!
     // A stable, read-friendly backing avoids the GPU readback stalls measured
     // on this small output. Keep the large photo and scene canvases accelerated.
     output.getContext('2d', { willReadFrequently: true })

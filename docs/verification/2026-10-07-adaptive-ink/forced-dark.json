@@ -1,0 +1,293 @@
+{
+  "sizes": [
+    {
+      "width": 1440,
+      "mobile": false,
+      "collapsed": [
+        {
+          "mode": "white",
+          "glass": "webgl",
+          "toolbar": "collapsed",
+          "label": "rgb(255, 255, 255)",
+          "back": "rgb(255, 255, 255)",
+          "metadata": [
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)"
+          ],
+          "download": "rgb(0, 0, 0)",
+          "central": "rgb(0, 0, 0)",
+          "idle": "rgb(0, 0, 0)",
+          "animations": 8,
+          "dotPixel": 23
+        },
+        {
+          "mode": "dark",
+          "glass": "webgl",
+          "toolbar": "collapsed",
+          "label": "rgb(255, 255, 255)",
+          "back": "rgb(255, 255, 255)",
+          "metadata": [
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)"
+          ],
+          "download": "rgb(0, 0, 0)",
+          "central": "rgb(255, 255, 255)",
+          "idle": "rgb(255, 255, 255)",
+          "animations": 8,
+          "dotPixel": 231
+        },
+        {
+          "mode": "white",
+          "glass": "webgl",
+          "toolbar": "collapsed",
+          "label": "rgb(255, 255, 255)",
+          "back": "rgb(255, 255, 255)",
+          "metadata": [
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)"
+          ],
+          "download": "rgb(0, 0, 0)",
+          "central": "rgb(0, 0, 0)",
+          "idle": "rgb(0, 0, 0)",
+          "animations": 8,
+          "dotPixel": 23
+        }
+      ],
+      "expanded": [
+        {
+          "mode": "white",
+          "glass": "webgl",
+          "toolbar": "expanded",
+          "label": "rgb(0, 0, 0)",
+          "back": "rgb(0, 0, 0)",
+          "metadata": [
+            "rgb(0, 0, 0)",
+            "rgb(0, 0, 0)",
+            "rgb(0, 0, 0)"
+          ],
+          "download": "rgb(0, 0, 0)",
+          "central": "rgb(0, 0, 0)",
+          "idle": "rgb(0, 0, 0)",
+          "animations": 8,
+          "raster": {
+            "dark": 76,
+            "light": 461,
+            "pixels": 768
+          },
+          "dotPixel": 23
+        },
+        {
+          "mode": "dark",
+          "glass": "webgl",
+          "toolbar": "expanded",
+          "label": "rgb(255, 255, 255)",
+          "back": "rgb(255, 255, 255)",
+          "metadata": [
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)"
+          ],
+          "download": "rgb(255, 255, 255)",
+          "central": "rgb(255, 255, 255)",
+          "idle": "rgb(255, 255, 255)",
+          "animations": 8,
+          "raster": {
+            "dark": 455,
+            "light": 85,
+            "pixels": 768
+          },
+          "dotPixel": 231
+        },
+        {
+          "mode": "light-download",
+          "glass": "webgl",
+          "toolbar": "expanded",
+          "label": "rgb(0, 0, 0)",
+          "back": "rgb(255, 255, 255)",
+          "metadata": [
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)"
+          ],
+          "download": "rgb(0, 0, 0)",
+          "central": "rgb(255, 255, 255)",
+          "idle": "rgb(255, 255, 255)",
+          "animations": 8
+        },
+        {
+          "mode": "dark-download",
+          "glass": "webgl",
+          "toolbar": "expanded",
+          "label": "rgb(255, 255, 255)",
+          "back": "rgb(0, 0, 0)",
+          "metadata": [
+            "rgb(0, 0, 0)",
+            "rgb(0, 0, 0)",
+            "rgb(0, 0, 0)"
+          ],
+          "download": "rgb(255, 255, 255)",
+          "central": "rgb(0, 0, 0)",
+          "idle": "rgb(0, 0, 0)",
+          "animations": 8
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "mobile": true,
+      "collapsed": [
+        {
+          "mode": "white",
+          "glass": "webgl",
+          "toolbar": "collapsed",
+          "label": "rgb(255, 255, 255)",
+          "back": "rgb(255, 255, 255)",
+          "metadata": [
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)"
+          ],
+          "download": "rgb(0, 0, 0)",
+          "central": "rgb(0, 0, 0)",
+          "idle": "rgb(0, 0, 0)",
+          "animations": 8,
+          "dotPixel": 23
+        },
+        {
+          "mode": "dark",
+          "glass": "webgl",
+          "toolbar": "collapsed",
+          "label": "rgb(255, 255, 255)",
+          "back": "rgb(255, 255, 255)",
+          "metadata": [
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)"
+          ],
+          "download": "rgb(0, 0, 0)",
+          "central": "rgb(255, 255, 255)",
+          "idle": "rgb(255, 255, 255)",
+          "animations": 8,
+          "dotPixel": 231
+        },
+        {
+          "mode": "white",
+          "glass": "webgl",
+          "toolbar": "collapsed",
+          "label": "rgb(255, 255, 255)",
+          "back": "rgb(255, 255, 255)",
+          "metadata": [
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)"
+          ],
+          "download": "rgb(0, 0, 0)",
+          "central": "rgb(0, 0, 0)",
+          "idle": "rgb(0, 0, 0)",
+          "animations": 8,
+          "dotPixel": 23
+        }
+      ],
+      "expanded": [
+        {
+          "mode": "white",
+          "glass": "webgl",
+          "toolbar": "expanded",
+          "label": "rgb(0, 0, 0)",
+          "back": "rgb(0, 0, 0)",
+          "metadata": [
+            "rgb(0, 0, 0)",
+            "rgb(0, 0, 0)",
+            "rgb(0, 0, 0)"
+          ],
+          "download": "rgb(0, 0, 0)",
+          "central": "rgb(0, 0, 0)",
+          "idle": "rgb(0, 0, 0)",
+          "animations": 8,
+          "raster": {
+            "dark": 1104,
+            "light": 5131,
+            "pixels": 6912
+          },
+          "dotPixel": 23
+        },
+        {
+          "mode": "dark",
+          "glass": "webgl",
+          "toolbar": "expanded",
+          "label": "rgb(255, 255, 255)",
+          "back": "rgb(255, 255, 255)",
+          "metadata": [
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)"
+          ],
+          "download": "rgb(255, 255, 255)",
+          "central": "rgb(255, 255, 255)",
+          "idle": "rgb(255, 255, 255)",
+          "animations": 8,
+          "raster": {
+            "dark": 5108,
+            "light": 1127,
+            "pixels": 6912
+          },
+          "dotPixel": 231
+        },
+        {
+          "mode": "light-download",
+          "glass": "webgl",
+          "toolbar": "expanded",
+          "label": "rgb(0, 0, 0)",
+          "back": "rgb(255, 255, 255)",
+          "metadata": [
+            "rgb(255, 255, 255)",
+            "rgb(255, 255, 255)",
+            "rgb(0, 0, 0)"
+          ],
+          "download": "rgb(0, 0, 0)",
+          "central": "rgb(255, 255, 255)",
+          "idle": "rgb(255, 255, 255)",
+          "animations": 8
+        },
+        {
+          "mode": "dark-download",
+          "glass": "webgl",
+          "toolbar": "expanded",
+          "label": "rgb(255, 255, 255)",
+          "back": "rgb(0, 0, 0)",
+          "metadata": [
+            "rgb(0, 0, 0)",
+            "rgb(0, 0, 0)",
+            "rgb(0, 0, 0)"
+          ],
+          "download": "rgb(255, 255, 255)",
+          "central": "rgb(0, 0, 0)",
+          "idle": "rgb(0, 0, 0)",
+          "animations": 8
+        },
+        {
+          "mode": "split-rows",
+          "glass": "webgl",
+          "toolbar": "expanded",
+          "label": "rgb(255, 255, 255)",
+          "back": "rgb(255, 255, 255)",
+          "metadata": [
+            "rgb(0, 0, 0)",
+            "rgb(0, 0, 0)",
+            "rgb(0, 0, 0)"
+          ],
+          "download": "rgb(255, 255, 255)",
+          "central": "rgb(255, 255, 255)",
+          "idle": "rgb(255, 255, 255)",
+          "animations": 8
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "failures": [],
+  "status": "passed"
+}
