@@ -6,6 +6,7 @@ const EASING = 'cubic-bezier(.22,.8,.25,1)'
 const MORPH_EASING = 'cubic-bezier(.32,.72,.24,1)'
 
 import { regularGlassConfig } from './glassConfig'
+import { attachToolbarInk } from './toolbarInk'
 
 const IDLE_W = 56
 const IDLE_H = 32
@@ -31,117 +32,7 @@ export function attachCapsuleToolbar(root: HTMLElement, signal: AbortSignal) {
   for (let i = 0; i < 3; i++) dots.append(document.createElement('i'))
   bar.append(dot, dots)
   const reduced = matchMedia('(prefers-reduced-motion: reduce)')
-  // The bar straddles whatever the photo happens to be, so one flat colour for
-  // the labels is wrong somewhere. Sample the pixels the bar sits on and fill
-  // the text with a matching gradient instead: each slice of the gradient takes
-  // the opposite tone from the slice of photo behind that part of the bar.
-  const SAMPLES = 24
-  const inkProbe = document.createElement('canvas')
-  inkProbe.width = SAMPLES
-  inkProbe.height = 1
-  const inkCtx = inkProbe.getContext('2d', { willReadFrequently: true })
-  let inkReadAt = 0
-  const readInk = () => {
-    if (!inkCtx) return
-    // Until the photo has pixels, the scene canvas holds nothing and reads as
-    // black, while the bar is still showing the page behind it. Taking that black
-    // as the backdrop would hand the labels and the dots light ink for a light
-    // bar. The photo lives outside this dock, so it is looked up from the page.
-    if (!document.querySelector<HTMLImageElement>('.photoImgLow')?.naturalWidth) return
-    const now = performance.now()
-    if (now - inkReadAt < 220) return
-    inkReadAt = now
-    const scene = root.querySelector<HTMLCanvasElement>('canvas[data-glass-scene]')
-    const sceneBox = scene?.getBoundingClientRect()
-    if (!scene?.width || !sceneBox?.width || !sceneBox.height) return
-    const barBox = bar.getBoundingClientRect()
-    const scale = scene.width / sceneBox.width
-    const x = Math.max(0, Math.round((barBox.left - sceneBox.left) * scale))
-    // Read the band the labels sit in, not a single pixel row of it. The glass
-    // refracts a neighbourhood, so one row's extremes are not what a glyph sees;
-    // reading them as if they were was enough to fail a whole label over a
-    // stray dark pixel at the bar's rounded end.
-    const y = Math.max(0, Math.round((barBox.top + barBox.height * 0.2 - sceneBox.top) * scale))
-    const height = Math.max(1, Math.min(scene.height - y, Math.round(barBox.height * 0.6 * scale)))
-    const width = Math.min(scene.width - x, Math.round(barBox.width * scale))
-    if (width < 1) return
-    inkCtx.clearRect(0, 0, SAMPLES, 1)
-    inkCtx.drawImage(scene, x, y, width, height, 0, 0, SAMPLES, 1)
-    const data = inkCtx.getImageData(0, 0, SAMPLES, 1).data
-    // Relative luminance, not raw sRGB: contrast has to be reasoned about in
-    // linear light or the ratios below are meaningless.
-    const toLinear = (v: number) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
-    const sampled = Array.from({ length: SAMPLES }, (_, i) =>
-      0.2126 * toLinear(data[i * 4] / 255) + 0.7152 * toLinear(data[i * 4 + 1] / 255) + 0.0722 * toLinear(data[i * 4 + 2] / 255))
-    const lumaAt = (i: number) => sampled[Math.min(SAMPLES - 1, Math.max(0, i))]
-    const toSrgb01 = (y: number) => (y <= 0.0031308 ? y * 12.92 : 1.055 * y ** (1 / 2.4) - 0.055)
-    const toSrgb = (y: number) => Math.round(255 * toSrgb01(y))
-    // The label sits on the photo as the bar renders it, and the bar lays its
-    // own white veil over the photo before the label is drawn. Choosing the ink
-    // against the bare photo therefore overstates the contrast it will have,
-    // which is what let mid-tone photos wash the labels out.
-    const veiled = (y: number) => toLinear(0.9 * toSrgb01(y) + 0.1)
-    const TARGET_RATIO = 9.5
-    const FLOOR_RATIO = 5
-    const contrast = (a: number, b: number) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
-    const inkValue = (y: number, light: boolean) =>
-      light ? TARGET_RATIO * (y + 0.05) - 0.05 : (y + 0.05) / TARGET_RATIO - 0.05
-    const sorted = sampled.map(veiled).sort((a, b) => a - b)
-    const median = sorted[Math.floor(SAMPLES / 2)]
-    // The row's default direction, taken from the backdrop's own middle — the
-    // luminance at which light and dark ink are equally legible. Each slice may
-    // still turn around from it: the ink has to follow the photo, not the row's
-    // average, or a light patch keeps ink it cannot be read in.
-    const preferLight = median < 0.18
-    const choose = (y: number) => {
-      const preferred = Math.min(1, Math.max(0, inkValue(y, preferLight)))
-      if (contrast(y, preferred) >= FLOOR_RATIO) return preferred
-      const other = Math.min(1, Math.max(0, inkValue(y, !preferLight)))
-      return contrast(y, other) > contrast(y, preferred) ? other : preferred
-    }
-    const inkAt = (i: number) => {
-      // Smooth the backdrop the choice is made from, never the ink it produces:
-      // averaging picked ink would blend black and white into the grey middle
-      // this row is trying to avoid.
-      let sum = 0
-      for (let k = -1; k <= 1; k++) sum += veiled(lumaAt(i + k))
-      return choose(sum / 3)
-    }
-    const STOPS = 48
-    const stops: string[] = []
-    for (let i = 0; i < STOPS; i++) {
-      const t = (i / (STOPS - 1)) * (SAMPLES - 1)
-      const low = Math.floor(t)
-      const high = Math.min(SAMPLES - 1, low + 1)
-      const ink = inkAt(low) + (inkAt(high) - inkAt(low)) * (t - low)
-      // Pure black and white are allowed; the ratio formula still only reaches
-      // them where a patch really needs it.
-      const value = toSrgb(ink)
-      stops.push(`rgb(${value},${value},${value}) ${((i / (STOPS - 1)) * 100).toFixed(2)}%`)
-    }
-    const barBoxNow = bar.getBoundingClientRect()
-    bar.style.setProperty('--dock-ink-gradient', `linear-gradient(90deg, ${stops.join(', ')})`)
-    bar.style.setProperty('--dock-ink-size', `${barBoxNow.width}px 100%`)
-    const centre = veiled(lumaAt(Math.round((SAMPLES - 1) / 2)))
-    bar.dataset.tone = centre < 0.18 ? 'dark' : 'light'
-    bar.dataset.ink = 'gradient'
-    // The idle and loading dots sit on the same glass as the labels, so they are
-    // drawn in the same ink rather than a fixed grey that only suits some photos.
-    const dotInk = toSrgb(inkAt(Math.round((SAMPLES - 1) / 2)))
-    bar.style.setProperty('--dock-dot-ink', `rgb(${dotInk},${dotInk},${dotInk})`)
-    // Every label is a window onto that one gradient, so they line up as a
-    // single run instead of each picking its own colour. Metadata is filled per
-    // item rather than as one block so a halo can land on the item that needs
-    // it alone.
-    for (const target of bar.querySelectorAll<HTMLElement>('.dockAction, .dockMetaItem')) {
-      const box = target.getBoundingClientRect()
-      const offset = -(box.left - barBoxNow.left)
-      // Actions carry a second, hover-driven layer under the ink; it stays put.
-      target.style.backgroundPosition = target.classList.contains('dockAction')
-        ? `${offset}px 0, 0 0`
-        : `${offset}px 0`
-    }
-  }
+  const readInk = attachToolbarInk(root, bar, signal)
   const pointers = new Set<number>()
   // `intent` is what the user asked for; `loading` overrides it while the photo
   // is still arriving, because there is nothing to configure yet.

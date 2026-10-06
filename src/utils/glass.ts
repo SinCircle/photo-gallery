@@ -37,11 +37,15 @@ export async function attachGlass(root: HTMLElement, glass: HTMLElement, signal:
       if (!force && previous === scene.key) {
         // A capsule can move over an unchanged shared scene. Its own sampling
         // position still needs the native shader, without repainting the source.
-        if (animated.size) renderer.changed()
+        if (animated.size) {
+          renderer.changed()
+          glass.dispatchEvent(new Event('glassscene'))
+        }
         return
       }
       force = false
       scene.draw(renderer.scene)
+      glass.dispatchEvent(new Event('glassscene'))
       renderer.changed()
       previous = scene.key
     } catch {
