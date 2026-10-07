@@ -1,6 +1,5 @@
 import { renderGalleryView, galleryPhotoElement, rememberGalleryScroll } from './views/gallery.ts'
 import { renderPhotoView } from './views/photo.ts'
-import { renderAdminView } from './views/admin.ts'
 import { transitionPhoto } from './utils/photoTransition.ts'
 
 type Route = { kind: 'gallery' | 'admin' } | { kind: 'photo'; photoId: string }
@@ -51,6 +50,8 @@ export function startRouter(container: HTMLElement) {
           await renderPhotoView(container, route, viewSignal, { settled })
         } else {
           window.scrollTo({ top: 0, behavior: 'instant' })
+          const { renderAdminView } = await import('./views/admin.ts')
+          if (viewSignal.aborted) return
           await renderAdminView(container, viewSignal)
         }
       } finally {

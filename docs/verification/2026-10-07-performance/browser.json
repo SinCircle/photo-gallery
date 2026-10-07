@@ -1,0 +1,2078 @@
+{
+  "method": "Production bundles, sequential tests, desktop 1440x1000 DPR1 CPU1x; mobile 390x844 DPR3 CPU4x. Cold gallery uses 120ms RTT / 1.6Mbps; interactions run unthrottled network. Frame intervals are document RAF cadence, not hardware presented FPS.",
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/154.0.8037.98",
+    "revision": "@b859317bf11f6be47f9b7799ec690a0a42a1fb33",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "jsVersion": "15.4.80.20"
+  },
+  "graphics": {
+    "available": true,
+    "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x000013C0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "baseline": "80b6ddd",
+  "order": "A desktop/mobile, B desktop/mobile, B desktop/mobile, A desktop/mobile",
+  "bundles": [
+    {
+      "directory": ".superpowers/performance-2026-10-07/baseline-80b6ddd",
+      "source": "/assets/index-PItIBAXL.js",
+      "bytes": 115469,
+      "gzip": 39350
+    },
+    {
+      "directory": "dist",
+      "source": "/assets/index-C0kyoD7d.js",
+      "bytes": 110920,
+      "gzip": 38317
+    }
+  ],
+  "summary": [
+    {
+      "mobile": false,
+      "metrics": {
+        "fcp": {
+          "before": 978,
+          "after": 934,
+          "reductionPercent": 4.498977505112478,
+          "beforeSamples": [
+            1024,
+            932
+          ],
+          "afterSamples": [
+            936,
+            932
+          ]
+        },
+        "lcp": {
+          "before": 4824,
+          "after": 4666,
+          "reductionPercent": 3.275290215588722,
+          "beforeSamples": [
+            4792,
+            4856
+          ],
+          "afterSamples": [
+            4676,
+            4656
+          ]
+        },
+        "warm": {
+          "before": 580.75,
+          "after": 577.8499999940395,
+          "reductionPercent": 0.4993542842807508,
+          "beforeSamples": [
+            582.6999999880791,
+            578.8000000119209
+          ],
+          "afterSamples": [
+            578.3999999761581,
+            577.3000000119209
+          ]
+        },
+        "openCPU": {
+          "before": 1986.3055,
+          "after": 1858.8645000000001,
+          "reductionPercent": 6.415981831596385,
+          "beforeSamples": [
+            1947.7750000000003,
+            2024.8359999999996
+          ],
+          "afterSamples": [
+            1814.593,
+            1903.1360000000002
+          ]
+        },
+        "openStyle": {
+          "before": 818.5430000000001,
+          "after": 737.3064999999999,
+          "reductionPercent": 9.924524429382476,
+          "beforeSamples": [
+            780.1270000000001,
+            856.9590000000001
+          ],
+          "afterSamples": [
+            711.9159999999999,
+            762.697
+          ]
+        },
+        "openLongTasks": {
+          "before": 214.5,
+          "after": 134.5,
+          "reductionPercent": 37.2960372960373,
+          "beforeSamples": [
+            269,
+            160
+          ],
+          "afterSamples": [
+            164,
+            105
+          ]
+        },
+        "openFrameP95": {
+          "before": 8.299999999999272,
+          "after": 4.300000000001091,
+          "reductionPercent": 48.192771084319666,
+          "beforeSamples": [
+            8.299999999999272,
+            8.299999999999272
+          ],
+          "afterSamples": [
+            4.300000000001091,
+            4.300000000001091
+          ]
+        },
+        "wheelCPU": {
+          "before": 493.31599999999986,
+          "after": 415.119,
+          "reductionPercent": 15.85130018081713,
+          "beforeSamples": [
+            506.9739999999996,
+            479.65800000000013
+          ],
+          "afterSamples": [
+            418.3330000000001,
+            411.905
+          ]
+        },
+        "wheelStyle": {
+          "before": 34.4405000000001,
+          "after": 32.90899999999996,
+          "reductionPercent": 4.446799552852399,
+          "beforeSamples": [
+            36.37600000000019,
+            32.50500000000001
+          ],
+          "afterSamples": [
+            33.05399999999992,
+            32.76400000000002
+          ]
+        },
+        "wheelLongTasks": {
+          "before": 0,
+          "after": 0,
+          "reductionPercent": null,
+          "beforeSamples": [
+            0,
+            0
+          ],
+          "afterSamples": [
+            0,
+            0
+          ]
+        },
+        "wheelFrameP95": {
+          "before": 4.300000000001091,
+          "after": 4.299999999999272,
+          "reductionPercent": 4.2299497238218464e-11,
+          "beforeSamples": [
+            4.300000000001091,
+            4.300000000001091
+          ],
+          "afterSamples": [
+            4.299999999999272,
+            4.299999999999272
+          ]
+        },
+        "dragCPU": {
+          "before": 361.07950000000005,
+          "after": 322.2025,
+          "reductionPercent": 10.76688097773484,
+          "beforeSamples": [
+            372.8879999999997,
+            349.27100000000036
+          ],
+          "afterSamples": [
+            323.44099999999986,
+            320.96400000000006
+          ]
+        },
+        "dragStyle": {
+          "before": 8.339499999999944,
+          "after": 8.584000000000035,
+          "reductionPercent": -2.9318304454714728,
+          "beforeSamples": [
+            8.756999999999904,
+            7.921999999999985
+          ],
+          "afterSamples": [
+            8.496000000000059,
+            8.672000000000013
+          ]
+        },
+        "dragLongTasks": {
+          "before": 0,
+          "after": 0,
+          "reductionPercent": null,
+          "beforeSamples": [
+            0,
+            0
+          ],
+          "afterSamples": [
+            0,
+            0
+          ]
+        },
+        "dragFrameP95": {
+          "before": 4.300000000000182,
+          "after": 4.300000000000182,
+          "reductionPercent": 0,
+          "beforeSamples": [
+            4.300000000001091,
+            4.299999999999272
+          ],
+          "afterSamples": [
+            4.299999999999272,
+            4.300000000001091
+          ]
+        },
+        "closeCPU": {
+          "before": 125.6275,
+          "after": 164.6105,
+          "reductionPercent": -31.030626256193905,
+          "beforeSamples": [
+            117.92800000000003,
+            133.32699999999997
+          ],
+          "afterSamples": [
+            157.13299999999998,
+            172.08800000000002
+          ]
+        },
+        "closeStyle": {
+          "before": 14.10850000000008,
+          "after": 15.149999999999999,
+          "reductionPercent": -7.382074635857205,
+          "beforeSamples": [
+            12.69700000000018,
+            15.519999999999978
+          ],
+          "afterSamples": [
+            14.11399999999996,
+            16.186000000000035
+          ]
+        },
+        "closeLongTasks": {
+          "before": 0,
+          "after": 0,
+          "reductionPercent": null,
+          "beforeSamples": [
+            0,
+            0
+          ],
+          "afterSamples": [
+            0,
+            0
+          ]
+        },
+        "closeFrameP95": {
+          "before": 12.550000000001091,
+          "after": 8.400000000001455,
+          "reductionPercent": 33.06772908365957,
+          "beforeSamples": [
+            16.700000000000728,
+            8.400000000001455
+          ],
+          "afterSamples": [
+            8.400000000001455,
+            8.400000000001455
+          ]
+        }
+      }
+    },
+    {
+      "mobile": true,
+      "metrics": {
+        "fcp": {
+          "before": 1376,
+          "after": 1342,
+          "reductionPercent": 2.470930232558144,
+          "beforeSamples": [
+            1396,
+            1356
+          ],
+          "afterSamples": [
+            1328,
+            1356
+          ]
+        },
+        "lcp": {
+          "before": 3528,
+          "after": 3386,
+          "reductionPercent": 4.024943310657592,
+          "beforeSamples": [
+            3560,
+            3496
+          ],
+          "afterSamples": [
+            3372,
+            3400
+          ]
+        },
+        "warm": {
+          "before": 899.9000000059605,
+          "after": 861.9000000059605,
+          "reductionPercent": 4.2226914101287205,
+          "beforeSamples": [
+            920.3000000119209,
+            879.5
+          ],
+          "afterSamples": [
+            848.5,
+            875.3000000119209
+          ]
+        },
+        "openCPU": {
+          "before": 3829.478,
+          "after": 3629.363,
+          "reductionPercent": 5.225646941959194,
+          "beforeSamples": [
+            3809.2990000000004,
+            3849.657
+          ],
+          "afterSamples": [
+            3637.5519999999997,
+            3621.174
+          ]
+        },
+        "openStyle": {
+          "before": 1079.2455,
+          "after": 946.26,
+          "reductionPercent": 12.322080564616666,
+          "beforeSamples": [
+            1074.499,
+            1083.992
+          ],
+          "afterSamples": [
+            951.6179999999999,
+            940.902
+          ]
+        },
+        "openLongTasks": {
+          "before": 1467.5,
+          "after": 1137,
+          "reductionPercent": 22.52129471890971,
+          "beforeSamples": [
+            1453,
+            1482
+          ],
+          "afterSamples": [
+            1166,
+            1108
+          ]
+        },
+        "openFrameP95": {
+          "before": 62.649999999999636,
+          "after": 39.649999999999636,
+          "reductionPercent": 36.711891460495025,
+          "beforeSamples": [
+            62.600000000000364,
+            62.69999999999891
+          ],
+          "afterSamples": [
+            41.69999999999891,
+            37.600000000000364
+          ]
+        },
+        "pinchCPU": {
+          "before": 10660.659499999998,
+          "after": 8112.3634999999995,
+          "reductionPercent": 23.903736912336417,
+          "beforeSamples": [
+            10599.934999999998,
+            10721.384
+          ],
+          "afterSamples": [
+            8073.105,
+            8151.621999999999
+          ]
+        },
+        "pinchStyle": {
+          "before": 5792.586499999999,
+          "after": 4073.362,
+          "reductionPercent": 29.67973805829226,
+          "beforeSamples": [
+            5774.312,
+            5810.861
+          ],
+          "afterSamples": [
+            4085.8340000000003,
+            4060.89
+          ]
+        },
+        "pinchLongTasks": {
+          "before": 7588.5,
+          "after": 4447.5,
+          "reductionPercent": 41.39157936351058,
+          "beforeSamples": [
+            7596,
+            7581
+          ],
+          "afterSamples": [
+            4212,
+            4683
+          ]
+        },
+        "pinchFrameP95": {
+          "before": 98.05000000000018,
+          "after": 66.85000000000036,
+          "reductionPercent": 31.820499745027796,
+          "beforeSamples": [
+            96,
+            100.10000000000036
+          ],
+          "afterSamples": [
+            66.90000000000146,
+            66.79999999999927
+          ]
+        },
+        "dragCPU": {
+          "before": 10402.4015,
+          "after": 7858.207,
+          "reductionPercent": 24.45776102758579,
+          "beforeSamples": [
+            10237.257,
+            10567.546
+          ],
+          "afterSamples": [
+            7680.524,
+            8035.89
+          ]
+        },
+        "dragStyle": {
+          "before": 5801.5645,
+          "after": 4014.7194999999997,
+          "reductionPercent": 30.79936455071732,
+          "beforeSamples": [
+            5670.718,
+            5932.411
+          ],
+          "afterSamples": [
+            3912.1009999999997,
+            4117.338
+          ]
+        },
+        "dragLongTasks": {
+          "before": 7396.5,
+          "after": 4237,
+          "reductionPercent": 42.71614953018319,
+          "beforeSamples": [
+            7274,
+            7519
+          ],
+          "afterSamples": [
+            3895,
+            4579
+          ]
+        },
+        "dragFrameP95": {
+          "before": 93.89999999999964,
+          "after": 68.75,
+          "reductionPercent": 26.783812566559885,
+          "beforeSamples": [
+            91.79999999999927,
+            96
+          ],
+          "afterSamples": [
+            66.79999999999927,
+            70.70000000000073
+          ]
+        },
+        "wheelCPU": {
+          "before": 15581.7925,
+          "after": 13084.634500000002,
+          "reductionPercent": 16.026127931045142,
+          "beforeSamples": [
+            15180.070999999998,
+            15983.514
+          ],
+          "afterSamples": [
+            12961.556000000002,
+            13207.713000000002
+          ]
+        },
+        "wheelStyle": {
+          "before": 7554.367500000001,
+          "after": 5805.3395,
+          "reductionPercent": 23.152540566764866,
+          "beforeSamples": [
+            7347.149000000001,
+            7761.586000000001
+          ],
+          "afterSamples": [
+            5729.839999999999,
+            5880.839
+          ]
+        },
+        "wheelLongTasks": {
+          "before": 13312,
+          "after": 10390.5,
+          "reductionPercent": 21.946364182692314,
+          "beforeSamples": [
+            13172,
+            13452
+          ],
+          "afterSamples": [
+            10410,
+            10371
+          ]
+        },
+        "wheelFrameP95": {
+          "before": 104.39999999999782,
+          "after": 73.04999999999927,
+          "reductionPercent": 30.028735632183146,
+          "beforeSamples": [
+            104.39999999999418,
+            104.40000000000146
+          ],
+          "afterSamples": [
+            71,
+            75.09999999999854
+          ]
+        },
+        "closeCPU": {
+          "before": 832.7154999999991,
+          "after": 830.9995000000043,
+          "reductionPercent": 0.20607278236021154,
+          "beforeSamples": [
+            825.5460000000028,
+            839.8849999999953
+          ],
+          "afterSamples": [
+            837.565000000005,
+            824.4340000000036
+          ]
+        },
+        "closeStyle": {
+          "before": 92.06249999999905,
+          "after": 91.91500000000019,
+          "reductionPercent": 0.16021724371906299,
+          "beforeSamples": [
+            89.71599999999924,
+            94.40899999999885
+          ],
+          "afterSamples": [
+            93.9350000000001,
+            89.89500000000028
+          ]
+        },
+        "closeLongTasks": {
+          "before": 114,
+          "after": 113.5,
+          "reductionPercent": 0.43859649122807154,
+          "beforeSamples": [
+            113,
+            115
+          ],
+          "afterSamples": [
+            113,
+            114
+          ]
+        },
+        "closeFrameP95": {
+          "before": 8.450000000000728,
+          "after": 8.400000000001455,
+          "reductionPercent": 0.5917159763227042,
+          "beforeSamples": [
+            8.400000000001455,
+            8.5
+          ],
+          "afterSamples": [
+            8.400000000001455,
+            8.400000000001455
+          ]
+        }
+      }
+    }
+  ],
+  "runs": [
+    {
+      "base": "http://127.0.0.1:5196",
+      "repeat": 0,
+      "mobile": false,
+      "cold": {
+        "fcp": 1024,
+        "lcp": 4792,
+        "ready": 6548,
+        "cls": 0,
+        "transferBytes": 1013175,
+        "thirdPartyRequests": 1
+      },
+      "phases": {
+        "open": {
+          "elapsed": 3312.300000011921,
+          "inputChanged": false,
+          "frames": {
+            "count": 632,
+            "p95": 8.299999999999272,
+            "max": 183.69999999999982,
+            "total": 3310.5
+          },
+          "longTasks": {
+            "count": 2,
+            "p95": 164,
+            "max": 164,
+            "total": 269
+          },
+          "counts": {
+            "reads": 160,
+            "readMs": 37.999999940395355,
+            "draws": 296,
+            "drawMs": 22.90000009536743,
+            "ink": 46,
+            "raf": 1504,
+            "drawsGL": 1890
+          },
+          "cpu": {
+            "TaskDuration": 1947.7750000000003,
+            "ScriptDuration": 467.55899999999997,
+            "LayoutDuration": 72.707,
+            "RecalcStyleDuration": 780.1270000000001
+          }
+        },
+        "wheel": {
+          "elapsed": 1958.300000011921,
+          "inputChanged": true,
+          "frames": {
+            "count": 467,
+            "p95": 4.300000000001091,
+            "max": 12.300000000001091,
+            "total": 1958.5
+          },
+          "longTasks": {
+            "count": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "counts": {
+            "reads": 392,
+            "readMs": 9.999999940395355,
+            "draws": 392,
+            "drawMs": 10.299999713897705,
+            "ink": 98,
+            "raf": 1015,
+            "drawsGL": 1470
+          },
+          "cpu": {
+            "TaskDuration": 506.9739999999996,
+            "ScriptDuration": 267.074,
+            "LayoutDuration": 0,
+            "RecalcStyleDuration": 36.37600000000019
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(0px, 111.1px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(3.45495)"
+            }
+          }
+        },
+        "drag": {
+          "elapsed": 1957.5,
+          "inputChanged": true,
+          "frames": {
+            "count": 468,
+            "p95": 4.300000000001091,
+            "max": 4.5,
+            "total": 1953.6000000000004
+          },
+          "longTasks": {
+            "count": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "counts": {
+            "reads": 348,
+            "readMs": 10.200000166893005,
+            "draws": 348,
+            "drawMs": 7.20000022649765,
+            "ink": 87,
+            "raf": 930,
+            "drawsGL": 1305
+          },
+          "cpu": {
+            "TaskDuration": 372.8879999999997,
+            "ScriptDuration": 231.15700000000007,
+            "LayoutDuration": 0,
+            "RecalcStyleDuration": 8.756999999999904
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(35.0715px, 137.785px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(3.45495)"
+            }
+          }
+        },
+        "close": {
+          "elapsed": 792,
+          "inputChanged": false,
+          "frames": {
+            "count": 131,
+            "p95": 16.700000000000728,
+            "max": 37.5,
+            "total": 792.2000000000007
+          },
+          "longTasks": {
+            "count": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "counts": {
+            "reads": 0,
+            "readMs": 0,
+            "draws": 19,
+            "drawMs": 0.800000011920929,
+            "ink": 0,
+            "raf": 132,
+            "drawsGL": 0
+          },
+          "cpu": {
+            "TaskDuration": 117.92800000000003,
+            "ScriptDuration": 8.839000000000041,
+            "LayoutDuration": 3.084000000000003,
+            "RecalcStyleDuration": 12.69700000000018
+          }
+        }
+      },
+      "idle": {
+        "raf": 0,
+        "draws": 0
+      },
+      "warm": {
+        "ready": 582.6999999880791,
+        "fcp": 48,
+        "bytes": 15980
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5196",
+      "repeat": 0,
+      "mobile": true,
+      "cold": {
+        "fcp": 1396,
+        "lcp": 3560,
+        "ready": 4805.5,
+        "cls": 0,
+        "transferBytes": 635997,
+        "thirdPartyRequests": 1
+      },
+      "phases": {
+        "open": {
+          "elapsed": 4105.900000035763,
+          "inputChanged": false,
+          "frames": {
+            "count": 226,
+            "p95": 62.600000000000364,
+            "max": 496.8000000000002,
+            "total": 4087.000000000001
+          },
+          "longTasks": {
+            "count": 13,
+            "p95": 327,
+            "max": 327,
+            "total": 1453
+          },
+          "counts": {
+            "reads": 160,
+            "readMs": 66.59999996423721,
+            "draws": 142,
+            "drawMs": 204.7000002861023,
+            "ink": 40,
+            "raf": 383,
+            "drawsGL": 990
+          },
+          "cpu": {
+            "TaskDuration": 3809.2990000000004,
+            "ScriptDuration": 1137.8469999999998,
+            "LayoutDuration": 264.61600000000004,
+            "RecalcStyleDuration": 1074.499
+          }
+        },
+        "pinch": {
+          "elapsed": 10782.899999976158,
+          "inputChanged": true,
+          "frames": {
+            "count": 235,
+            "p95": 96,
+            "max": 104.39999999999782,
+            "total": 10783
+          },
+          "longTasks": {
+            "count": 94,
+            "p95": 99,
+            "max": 104,
+            "total": 7596
+          },
+          "counts": {
+            "reads": 510,
+            "readMs": 169.70000052452087,
+            "draws": 356,
+            "drawMs": 79.70000040531158,
+            "ink": 102,
+            "raf": 517,
+            "drawsGL": 1335
+          },
+          "cpu": {
+            "TaskDuration": 10599.934999999998,
+            "ScriptDuration": 3318.311,
+            "LayoutDuration": 120.64000000000009,
+            "RecalcStyleDuration": 5774.312
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(0px, 2.5205px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(0.984813)"
+            }
+          }
+        },
+        "drag": {
+          "elapsed": 10311.099999964237,
+          "inputChanged": true,
+          "frames": {
+            "count": 224,
+            "p95": 91.79999999999927,
+            "max": 175.29999999999927,
+            "total": 10307.099999999999
+          },
+          "longTasks": {
+            "count": 91,
+            "p95": 99,
+            "max": 171,
+            "total": 7274
+          },
+          "counts": {
+            "reads": 490,
+            "readMs": 166.10000050067902,
+            "draws": 372,
+            "drawMs": 179.99999994039536,
+            "ink": 98,
+            "raf": 502,
+            "drawsGL": 1335
+          },
+          "cpu": {
+            "TaskDuration": 10237.257,
+            "ScriptDuration": 3101.3250000000003,
+            "LayoutDuration": 61.20599999999998,
+            "RecalcStyleDuration": 5670.718
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(35.0715px, 29.2054px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(0.984813)"
+            }
+          }
+        },
+        "wheel": {
+          "elapsed": 15280.5,
+          "inputChanged": true,
+          "frames": {
+            "count": 221,
+            "p95": 104.39999999999418,
+            "max": 137.70000000000437,
+            "total": 15258.100000000006
+          },
+          "longTasks": {
+            "count": 160,
+            "p95": 104,
+            "max": 135,
+            "total": 13172
+          },
+          "counts": {
+            "reads": 990,
+            "readMs": 351.3999996781349,
+            "draws": 692,
+            "drawMs": 167.20000052452087,
+            "ink": 198,
+            "raf": 625,
+            "drawsGL": 2895
+          },
+          "cpu": {
+            "TaskDuration": 15180.070999999998,
+            "ScriptDuration": 6050.935,
+            "LayoutDuration": 39.41399999999995,
+            "RecalcStyleDuration": 7347.149000000001
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(35.0715px, 29.2054px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(0.984813)"
+            }
+          }
+        },
+        "close": {
+          "elapsed": 907.1999999880791,
+          "inputChanged": false,
+          "frames": {
+            "count": 139,
+            "p95": 8.400000000001455,
+            "max": 141.09999999999854,
+            "total": 904.9000000000015
+          },
+          "longTasks": {
+            "count": 1,
+            "p95": 113,
+            "max": 113,
+            "total": 113
+          },
+          "counts": {
+            "reads": 0,
+            "readMs": 0,
+            "draws": 19,
+            "drawMs": 10.000000178813934,
+            "ink": 0,
+            "raf": 140,
+            "drawsGL": 0
+          },
+          "cpu": {
+            "TaskDuration": 825.5460000000028,
+            "ScriptDuration": 76.23000000000069,
+            "LayoutDuration": 28.251000000000026,
+            "RecalcStyleDuration": 89.71599999999924
+          }
+        }
+      },
+      "idle": {
+        "raf": 0,
+        "draws": 0
+      },
+      "warm": {
+        "ready": 920.3000000119209,
+        "fcp": 420,
+        "bytes": 15980
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 0,
+      "mobile": false,
+      "cold": {
+        "fcp": 936,
+        "lcp": 4676,
+        "ready": 6192.800000011921,
+        "cls": 0,
+        "transferBytes": 982876,
+        "thirdPartyRequests": 0
+      },
+      "phases": {
+        "open": {
+          "elapsed": 3209.399999976158,
+          "inputChanged": false,
+          "frames": {
+            "count": 690,
+            "p95": 4.300000000001091,
+            "max": 112.69999999999982,
+            "total": 3206.2
+          },
+          "longTasks": {
+            "count": 2,
+            "p95": 113,
+            "max": 113,
+            "total": 164
+          },
+          "counts": {
+            "reads": 53,
+            "readMs": 45.09999990463257,
+            "draws": 331,
+            "drawMs": 24.199999809265137,
+            "ink": 52,
+            "raf": 1548,
+            "drawsGL": 1995
+          },
+          "cpu": {
+            "TaskDuration": 1814.593,
+            "ScriptDuration": 359.713,
+            "LayoutDuration": 72.39500000000001,
+            "RecalcStyleDuration": 711.9159999999999
+          }
+        },
+        "wheel": {
+          "elapsed": 1965.5999999642372,
+          "inputChanged": true,
+          "frames": {
+            "count": 470,
+            "p95": 4.299999999999272,
+            "max": 4.799999999999272,
+            "total": 1962.699999999999
+          },
+          "longTasks": {
+            "count": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "counts": {
+            "reads": 99,
+            "readMs": 11.099999725818634,
+            "draws": 396,
+            "drawMs": 8.199999988079071,
+            "ink": 99,
+            "raf": 978,
+            "drawsGL": 1485
+          },
+          "cpu": {
+            "TaskDuration": 418.3330000000001,
+            "ScriptDuration": 222.17599999999993,
+            "LayoutDuration": 0,
+            "RecalcStyleDuration": 33.05399999999992
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(0px, 111.1px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(3.45495)"
+            }
+          }
+        },
+        "drag": {
+          "elapsed": 1958.699999988079,
+          "inputChanged": true,
+          "frames": {
+            "count": 467,
+            "p95": 4.299999999999272,
+            "max": 8.299999999999272,
+            "total": 1953.6000000000004
+          },
+          "longTasks": {
+            "count": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "counts": {
+            "reads": 85,
+            "readMs": 7.600000023841858,
+            "draws": 340,
+            "drawMs": 4.700000286102295,
+            "ink": 85,
+            "raf": 848,
+            "drawsGL": 1275
+          },
+          "cpu": {
+            "TaskDuration": 323.44099999999986,
+            "ScriptDuration": 184.09699999999995,
+            "LayoutDuration": 0,
+            "RecalcStyleDuration": 8.496000000000059
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(35.0715px, 137.785px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(3.45495)"
+            }
+          }
+        },
+        "close": {
+          "elapsed": 789.5,
+          "inputChanged": false,
+          "frames": {
+            "count": 141,
+            "p95": 8.400000000001455,
+            "max": 20.900000000001455,
+            "total": 788
+          },
+          "longTasks": {
+            "count": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "counts": {
+            "reads": 0,
+            "readMs": 0,
+            "draws": 19,
+            "drawMs": 0.7000000476837158,
+            "ink": 0,
+            "raf": 142,
+            "drawsGL": 0
+          },
+          "cpu": {
+            "TaskDuration": 157.13299999999998,
+            "ScriptDuration": 9.664000000000005,
+            "LayoutDuration": 3.636,
+            "RecalcStyleDuration": 14.11399999999996
+          }
+        }
+      },
+      "idle": {
+        "raf": 0,
+        "draws": 0
+      },
+      "warm": {
+        "ready": 578.3999999761581,
+        "fcp": 48,
+        "bytes": 2100
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 0,
+      "mobile": true,
+      "cold": {
+        "fcp": 1328,
+        "lcp": 3372,
+        "ready": 4799.200000047684,
+        "cls": 0,
+        "transferBytes": 650787,
+        "thirdPartyRequests": 0
+      },
+      "phases": {
+        "open": {
+          "elapsed": 3873.600000023842,
+          "inputChanged": false,
+          "frames": {
+            "count": 255,
+            "p95": 41.69999999999891,
+            "max": 425.8000000000002,
+            "total": 3874.0999999999995
+          },
+          "longTasks": {
+            "count": 9,
+            "p95": 286,
+            "max": 286,
+            "total": 1166
+          },
+          "counts": {
+            "reads": 46,
+            "readMs": 50.1000000834465,
+            "draws": 170,
+            "drawMs": 197.09999984502792,
+            "ink": 46,
+            "raf": 460,
+            "drawsGL": 1200
+          },
+          "cpu": {
+            "TaskDuration": 3637.5519999999997,
+            "ScriptDuration": 1084.452,
+            "LayoutDuration": 293.00899999999996,
+            "RecalcStyleDuration": 951.6179999999999
+          }
+        },
+        "pinch": {
+          "elapsed": 8238.199999988079,
+          "inputChanged": true,
+          "frames": {
+            "count": 240,
+            "p95": 66.90000000000146,
+            "max": 83.5,
+            "total": 8232.3
+          },
+          "longTasks": {
+            "count": 71,
+            "p95": 78,
+            "max": 82,
+            "total": 4212
+          },
+          "counts": {
+            "reads": 101,
+            "readMs": 110.49999958276749,
+            "draws": 356,
+            "drawMs": 81.49999970197678,
+            "ink": 101,
+            "raf": 521,
+            "drawsGL": 1335
+          },
+          "cpu": {
+            "TaskDuration": 8073.105,
+            "ScriptDuration": 2482.556,
+            "LayoutDuration": 140.30200000000005,
+            "RecalcStyleDuration": 4085.8340000000003
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(0px, 2.5205px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(0.984813)"
+            }
+          }
+        },
+        "drag": {
+          "elapsed": 7865.600000023842,
+          "inputChanged": true,
+          "frames": {
+            "count": 234,
+            "p95": 66.79999999999927,
+            "max": 75.20000000000073,
+            "total": 7860.700000000001
+          },
+          "longTasks": {
+            "count": 67,
+            "p95": 69,
+            "max": 73,
+            "total": 3895
+          },
+          "counts": {
+            "reads": 98,
+            "readMs": 108.60000020265579,
+            "draws": 372,
+            "drawMs": 180.29999995231628,
+            "ink": 98,
+            "raf": 511,
+            "drawsGL": 1335
+          },
+          "cpu": {
+            "TaskDuration": 7680.524,
+            "ScriptDuration": 2388.7800000000007,
+            "LayoutDuration": 72.052,
+            "RecalcStyleDuration": 3912.1009999999997
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(35.0715px, 29.2054px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(0.984813)"
+            }
+          }
+        },
+        "wheel": {
+          "elapsed": 13089.899999976158,
+          "inputChanged": true,
+          "frames": {
+            "count": 250,
+            "p95": 71,
+            "max": 83.5,
+            "total": 13087.400000000001
+          },
+          "longTasks": {
+            "count": 175,
+            "p95": 70,
+            "max": 83,
+            "total": 10410
+          },
+          "counts": {
+            "reads": 226,
+            "readMs": 255.50000029802322,
+            "draws": 848,
+            "drawMs": 189.40000009536743,
+            "ink": 226,
+            "raf": 707,
+            "drawsGL": 3375
+          },
+          "cpu": {
+            "TaskDuration": 12961.556000000002,
+            "ScriptDuration": 5323.8820000000005,
+            "LayoutDuration": 48.94600000000005,
+            "RecalcStyleDuration": 5729.839999999999
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(35.0715px, 29.2054px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(0.984813)"
+            }
+          }
+        },
+        "close": {
+          "elapsed": 927.2000000476837,
+          "inputChanged": false,
+          "frames": {
+            "count": 142,
+            "p95": 8.400000000001455,
+            "max": 146.10000000000582,
+            "total": 925.7999999999956
+          },
+          "longTasks": {
+            "count": 1,
+            "p95": 113,
+            "max": 113,
+            "total": 113
+          },
+          "counts": {
+            "reads": 0,
+            "readMs": 0,
+            "draws": 19,
+            "drawMs": 8.699999928474426,
+            "ink": 0,
+            "raf": 143,
+            "drawsGL": 0
+          },
+          "cpu": {
+            "TaskDuration": 837.565000000005,
+            "ScriptDuration": 77.7190000000001,
+            "LayoutDuration": 28.061000000000003,
+            "RecalcStyleDuration": 93.9350000000001
+          }
+        }
+      },
+      "idle": {
+        "raf": 0,
+        "draws": 0
+      },
+      "warm": {
+        "ready": 848.5,
+        "fcp": 344,
+        "bytes": 2100
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 1,
+      "mobile": false,
+      "cold": {
+        "fcp": 932,
+        "lcp": 4656,
+        "ready": 6195.199999988079,
+        "cls": 0,
+        "transferBytes": 982876,
+        "thirdPartyRequests": 0
+      },
+      "phases": {
+        "open": {
+          "elapsed": 3283.899999976158,
+          "inputChanged": false,
+          "frames": {
+            "count": 702,
+            "p95": 4.300000000001091,
+            "max": 104.40000000000055,
+            "total": 3277.1000000000004
+          },
+          "longTasks": {
+            "count": 1,
+            "p95": 105,
+            "max": 105,
+            "total": 105
+          },
+          "counts": {
+            "reads": 55,
+            "readMs": 48.099999845027924,
+            "draws": 337,
+            "drawMs": 23.29999965429306,
+            "ink": 54,
+            "raf": 1612,
+            "drawsGL": 2025
+          },
+          "cpu": {
+            "TaskDuration": 1903.1360000000002,
+            "ScriptDuration": 369.99,
+            "LayoutDuration": 74.81099999999999,
+            "RecalcStyleDuration": 762.697
+          }
+        },
+        "wheel": {
+          "elapsed": 1959,
+          "inputChanged": true,
+          "frames": {
+            "count": 469,
+            "p95": 4.299999999999272,
+            "max": 4.800000000001091,
+            "total": 1958.5
+          },
+          "longTasks": {
+            "count": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "counts": {
+            "reads": 99,
+            "readMs": 10.099999904632568,
+            "draws": 396,
+            "drawMs": 7.6999998688697815,
+            "ink": 99,
+            "raf": 1022,
+            "drawsGL": 1485
+          },
+          "cpu": {
+            "TaskDuration": 411.905,
+            "ScriptDuration": 218.20700000000005,
+            "LayoutDuration": 0,
+            "RecalcStyleDuration": 32.76400000000002
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(0px, 111.1px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(3.45495)"
+            }
+          }
+        },
+        "drag": {
+          "elapsed": 1947.1000000238419,
+          "inputChanged": true,
+          "frames": {
+            "count": 465,
+            "p95": 4.300000000001091,
+            "max": 4.700000000000728,
+            "total": 1941.0999999999985
+          },
+          "longTasks": {
+            "count": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "counts": {
+            "reads": 86,
+            "readMs": 8.600000321865082,
+            "draws": 344,
+            "drawMs": 7.300000071525574,
+            "ink": 86,
+            "raf": 895,
+            "drawsGL": 1290
+          },
+          "cpu": {
+            "TaskDuration": 320.96400000000006,
+            "ScriptDuration": 182.8580000000001,
+            "LayoutDuration": 0,
+            "RecalcStyleDuration": 8.672000000000013
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(35.0715px, 137.785px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(3.45495)"
+            }
+          }
+        },
+        "close": {
+          "elapsed": 790.5999999642372,
+          "inputChanged": false,
+          "frames": {
+            "count": 145,
+            "p95": 8.400000000001455,
+            "max": 25,
+            "total": 792.0999999999985
+          },
+          "longTasks": {
+            "count": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "counts": {
+            "reads": 0,
+            "readMs": 0,
+            "draws": 19,
+            "drawMs": 0.3999999165534973,
+            "ink": 0,
+            "raf": 146,
+            "drawsGL": 0
+          },
+          "cpu": {
+            "TaskDuration": 172.08800000000002,
+            "ScriptDuration": 9.96600000000003,
+            "LayoutDuration": 3.2030000000000114,
+            "RecalcStyleDuration": 16.186000000000035
+          }
+        }
+      },
+      "idle": {
+        "raf": 0,
+        "draws": 0
+      },
+      "warm": {
+        "ready": 577.3000000119209,
+        "fcp": 48,
+        "bytes": 2100
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5187",
+      "repeat": 1,
+      "mobile": true,
+      "cold": {
+        "fcp": 1356,
+        "lcp": 3400,
+        "ready": 4851.300000011921,
+        "cls": 0,
+        "transferBytes": 650787,
+        "thirdPartyRequests": 0
+      },
+      "phases": {
+        "open": {
+          "elapsed": 3867.600000023842,
+          "inputChanged": false,
+          "frames": {
+            "count": 272,
+            "p95": 37.600000000000364,
+            "max": 446.60000000000036,
+            "total": 3865.7
+          },
+          "longTasks": {
+            "count": 9,
+            "p95": 294,
+            "max": 294,
+            "total": 1108
+          },
+          "counts": {
+            "reads": 45,
+            "readMs": 44.39999997615814,
+            "draws": 168,
+            "drawMs": 198.60000032186508,
+            "ink": 45,
+            "raf": 498,
+            "drawsGL": 1185
+          },
+          "cpu": {
+            "TaskDuration": 3621.174,
+            "ScriptDuration": 1038.0479999999998,
+            "LayoutDuration": 286.1520000000001,
+            "RecalcStyleDuration": 940.902
+          }
+        },
+        "pinch": {
+          "elapsed": 8284.099999964237,
+          "inputChanged": true,
+          "frames": {
+            "count": 236,
+            "p95": 66.79999999999927,
+            "max": 75.20000000000073,
+            "total": 8278.2
+          },
+          "longTasks": {
+            "count": 80,
+            "p95": 68,
+            "max": 73,
+            "total": 4683
+          },
+          "counts": {
+            "reads": 101,
+            "readMs": 116.299999833107,
+            "draws": 356,
+            "drawMs": 83.40000027418137,
+            "ink": 101,
+            "raf": 517,
+            "drawsGL": 1335
+          },
+          "cpu": {
+            "TaskDuration": 8151.621999999999,
+            "ScriptDuration": 2541.213,
+            "LayoutDuration": 133.5329999999999,
+            "RecalcStyleDuration": 4060.89
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(0px, 2.5205px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(0.984813)"
+            }
+          }
+        },
+        "drag": {
+          "elapsed": 8191.199999988079,
+          "inputChanged": true,
+          "frames": {
+            "count": 232,
+            "p95": 70.70000000000073,
+            "max": 91.90000000000146,
+            "total": 8186.4000000000015
+          },
+          "longTasks": {
+            "count": 77,
+            "p95": 75,
+            "max": 89,
+            "total": 4579
+          },
+          "counts": {
+            "reads": 96,
+            "readMs": 110.59999996423721,
+            "draws": 372,
+            "drawMs": 187.599999666214,
+            "ink": 96,
+            "raf": 508,
+            "drawsGL": 1335
+          },
+          "cpu": {
+            "TaskDuration": 8035.89,
+            "ScriptDuration": 2497.185,
+            "LayoutDuration": 71.09200000000004,
+            "RecalcStyleDuration": 4117.338
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(35.0715px, 29.2054px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(0.984813)"
+            }
+          }
+        },
+        "wheel": {
+          "elapsed": 13312.199999988079,
+          "inputChanged": true,
+          "frames": {
+            "count": 256,
+            "p95": 75.09999999999854,
+            "max": 87.69999999999709,
+            "total": 13308.7
+          },
+          "longTasks": {
+            "count": 173,
+            "p95": 73,
+            "max": 87,
+            "total": 10371
+          },
+          "counts": {
+            "reads": 231,
+            "readMs": 263.2000000476837,
+            "draws": 858,
+            "drawMs": 199.09999948740005,
+            "ink": 231,
+            "raf": 721,
+            "drawsGL": 3435
+          },
+          "cpu": {
+            "TaskDuration": 13207.713000000002,
+            "ScriptDuration": 5389.504000000001,
+            "LayoutDuration": 47.31700000000005,
+            "RecalcStyleDuration": 5880.839
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(35.0715px, 29.2054px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(0.984813)"
+            }
+          }
+        },
+        "close": {
+          "elapsed": 922.9000000357628,
+          "inputChanged": false,
+          "frames": {
+            "count": 139,
+            "p95": 8.400000000001455,
+            "max": 146.09999999999854,
+            "total": 921.5999999999985
+          },
+          "longTasks": {
+            "count": 1,
+            "p95": 114,
+            "max": 114,
+            "total": 114
+          },
+          "counts": {
+            "reads": 0,
+            "readMs": 0,
+            "draws": 19,
+            "drawMs": 8.999999940395355,
+            "ink": 0,
+            "raf": 140,
+            "drawsGL": 0
+          },
+          "cpu": {
+            "TaskDuration": 824.4340000000036,
+            "ScriptDuration": 77.3539999999997,
+            "LayoutDuration": 29.673999999999978,
+            "RecalcStyleDuration": 89.89500000000028
+          }
+        }
+      },
+      "idle": {
+        "raf": 0,
+        "draws": 0
+      },
+      "warm": {
+        "ready": 875.3000000119209,
+        "fcp": 360,
+        "bytes": 2100
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5196",
+      "repeat": 1,
+      "mobile": false,
+      "cold": {
+        "fcp": 932,
+        "lcp": 4856,
+        "ready": 6621.199999988079,
+        "cls": 0,
+        "transferBytes": 1013175,
+        "thirdPartyRequests": 1
+      },
+      "phases": {
+        "open": {
+          "elapsed": 3289.600000023842,
+          "inputChanged": false,
+          "frames": {
+            "count": 681,
+            "p95": 8.299999999999272,
+            "max": 108.5,
+            "total": 3285.500000000001
+          },
+          "longTasks": {
+            "count": 2,
+            "p95": 108,
+            "max": 108,
+            "total": 160
+          },
+          "counts": {
+            "reads": 182,
+            "readMs": 47.49999976158142,
+            "draws": 332,
+            "drawMs": 23.499999701976776,
+            "ink": 53,
+            "raf": 1530,
+            "drawsGL": 1980
+          },
+          "cpu": {
+            "TaskDuration": 2024.8359999999996,
+            "ScriptDuration": 380.888,
+            "LayoutDuration": 78.02999999999999,
+            "RecalcStyleDuration": 856.9590000000001
+          }
+        },
+        "wheel": {
+          "elapsed": 1962.5,
+          "inputChanged": true,
+          "frames": {
+            "count": 467,
+            "p95": 4.300000000001091,
+            "max": 16.700000000000728,
+            "total": 1962.800000000001
+          },
+          "longTasks": {
+            "count": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "counts": {
+            "reads": 392,
+            "readMs": 11.299999833106995,
+            "draws": 392,
+            "drawMs": 8.399999856948853,
+            "ink": 98,
+            "raf": 969,
+            "drawsGL": 1470
+          },
+          "cpu": {
+            "TaskDuration": 479.65800000000013,
+            "ScriptDuration": 252.03200000000004,
+            "LayoutDuration": 0,
+            "RecalcStyleDuration": 32.50500000000001
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(0px, 111.1px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(3.45495)"
+            }
+          }
+        },
+        "drag": {
+          "elapsed": 1952.6000000238419,
+          "inputChanged": true,
+          "frames": {
+            "count": 466,
+            "p95": 4.299999999999272,
+            "max": 4.5,
+            "total": 1945.3999999999996
+          },
+          "longTasks": {
+            "count": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "counts": {
+            "reads": 344,
+            "readMs": 9.800000190734863,
+            "draws": 344,
+            "drawMs": 6.099999904632568,
+            "ink": 86,
+            "raf": 868,
+            "drawsGL": 1290
+          },
+          "cpu": {
+            "TaskDuration": 349.27100000000036,
+            "ScriptDuration": 216.13100000000009,
+            "LayoutDuration": 0,
+            "RecalcStyleDuration": 7.921999999999985
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(35.0715px, 137.785px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(3.45495)"
+            }
+          }
+        },
+        "close": {
+          "elapsed": 794.8000000119209,
+          "inputChanged": false,
+          "frames": {
+            "count": 148,
+            "p95": 8.400000000001455,
+            "max": 25.099999999998545,
+            "total": 796.2999999999993
+          },
+          "longTasks": {
+            "count": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "counts": {
+            "reads": 0,
+            "readMs": 0,
+            "draws": 19,
+            "drawMs": 0.699999988079071,
+            "ink": 0,
+            "raf": 149,
+            "drawsGL": 0
+          },
+          "cpu": {
+            "TaskDuration": 133.32699999999997,
+            "ScriptDuration": 10.056000000000065,
+            "LayoutDuration": 3.2669999999999924,
+            "RecalcStyleDuration": 15.519999999999978
+          }
+        }
+      },
+      "idle": {
+        "raf": 0,
+        "draws": 0
+      },
+      "warm": {
+        "ready": 578.8000000119209,
+        "fcp": 48,
+        "bytes": 15980
+      }
+    },
+    {
+      "base": "http://127.0.0.1:5196",
+      "repeat": 1,
+      "mobile": true,
+      "cold": {
+        "fcp": 1356,
+        "lcp": 3496,
+        "ready": 4779.900000035763,
+        "cls": 0,
+        "transferBytes": 635997,
+        "thirdPartyRequests": 1
+      },
+      "phases": {
+        "open": {
+          "elapsed": 4047.2000000476837,
+          "inputChanged": false,
+          "frames": {
+            "count": 226,
+            "p95": 62.69999999999891,
+            "max": 446.8000000000002,
+            "total": 4036.7999999999993
+          },
+          "longTasks": {
+            "count": 13,
+            "p95": 301,
+            "max": 301,
+            "total": 1482
+          },
+          "counts": {
+            "reads": 154,
+            "readMs": 66.10000014305115,
+            "draws": 144,
+            "drawMs": 195.700000166893,
+            "ink": 38,
+            "raf": 395,
+            "drawsGL": 1005
+          },
+          "cpu": {
+            "TaskDuration": 3849.657,
+            "ScriptDuration": 1132.8799999999999,
+            "LayoutDuration": 299.401,
+            "RecalcStyleDuration": 1083.992
+          }
+        },
+        "pinch": {
+          "elapsed": 10970,
+          "inputChanged": true,
+          "frames": {
+            "count": 260,
+            "p95": 100.10000000000036,
+            "max": 129.40000000000146,
+            "total": 10970.900000000001
+          },
+          "longTasks": {
+            "count": 92,
+            "p95": 108,
+            "max": 130,
+            "total": 7581
+          },
+          "counts": {
+            "reads": 520,
+            "readMs": 179.90000051259995,
+            "draws": 356,
+            "drawMs": 82.80000042915344,
+            "ink": 104,
+            "raf": 544,
+            "drawsGL": 1335
+          },
+          "cpu": {
+            "TaskDuration": 10721.384,
+            "ScriptDuration": 3324.0040000000004,
+            "LayoutDuration": 121.66199999999994,
+            "RecalcStyleDuration": 5810.861
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(0px, 2.5205px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(0.984813)"
+            }
+          }
+        },
+        "drag": {
+          "elapsed": 10697,
+          "inputChanged": true,
+          "frames": {
+            "count": 230,
+            "p95": 96,
+            "max": 125.30000000000291,
+            "total": 10691.200000000004
+          },
+          "longTasks": {
+            "count": 92,
+            "p95": 103,
+            "max": 122,
+            "total": 7519
+          },
+          "counts": {
+            "reads": 490,
+            "readMs": 167.0999994277954,
+            "draws": 372,
+            "drawMs": 190.5,
+            "ink": 98,
+            "raf": 508,
+            "drawsGL": 1335
+          },
+          "cpu": {
+            "TaskDuration": 10567.546,
+            "ScriptDuration": 3178.1730000000002,
+            "LayoutDuration": 58.27800000000005,
+            "RecalcStyleDuration": 5932.411
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(35.0715px, 29.2054px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(0.984813)"
+            }
+          }
+        },
+        "wheel": {
+          "elapsed": 16085.300000011921,
+          "inputChanged": true,
+          "frames": {
+            "count": 235,
+            "p95": 104.40000000000146,
+            "max": 137.90000000000146,
+            "total": 16064
+          },
+          "longTasks": {
+            "count": 161,
+            "p95": 102,
+            "max": 140,
+            "total": 13452
+          },
+          "counts": {
+            "reads": 1025,
+            "readMs": 372.0999990105629,
+            "draws": 714,
+            "drawMs": 170.09999948740005,
+            "ink": 205,
+            "raf": 659,
+            "drawsGL": 3000
+          },
+          "cpu": {
+            "TaskDuration": 15983.514,
+            "ScriptDuration": 6366.351,
+            "LayoutDuration": 44.22399999999993,
+            "RecalcStyleDuration": 7761.586000000001
+          },
+          "endState": {
+            "glass": "webgl",
+            "toolbar": "expanded",
+            "scale": 1,
+            "geometry": {
+              "pan": "translate3d(35.0715px, 29.2054px, 0px)",
+              "zoom": "translate3d(-50%, -50%, 0px) scale(0.984813)"
+            }
+          }
+        },
+        "close": {
+          "elapsed": 915,
+          "inputChanged": false,
+          "frames": {
+            "count": 125,
+            "p95": 8.5,
+            "max": 140.3000000000029,
+            "total": 913.4000000000015
+          },
+          "longTasks": {
+            "count": 1,
+            "p95": 115,
+            "max": 115,
+            "total": 115
+          },
+          "counts": {
+            "reads": 0,
+            "readMs": 0,
+            "draws": 19,
+            "drawMs": 10.600000143051147,
+            "ink": 0,
+            "raf": 126,
+            "drawsGL": 0
+          },
+          "cpu": {
+            "TaskDuration": 839.8849999999953,
+            "ScriptDuration": 78.1969999999994,
+            "LayoutDuration": 29.492000000000075,
+            "RecalcStyleDuration": 94.40899999999885
+          }
+        }
+      },
+      "idle": {
+        "raf": 0,
+        "draws": 0
+      },
+      "warm": {
+        "ready": 879.5,
+        "fcp": 376,
+        "bytes": 15980
+      }
+    }
+  ]
+}

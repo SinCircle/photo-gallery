@@ -2,7 +2,8 @@ import { spawn, execFileSync } from 'node:child_process'
 import { mkdir, writeFile, access } from 'node:fs/promises'
 import path from 'node:path'
 import assert from 'node:assert/strict'
-import sharp from '../server/node_modules/sharp/lib/index.js'
+import { createRequire } from 'node:module'
+const sharp = createRequire(new URL('../server/package.json', import.meta.url))('sharp')
 
 const out=path.resolve('.superpowers/verification')
 const base=process.env.VERIFY_ADMIN_URL||'http://127.0.0.1:8085'
@@ -26,7 +27,13 @@ async function click(selector){
     await send('Input.dispatchMouseEvent',{type:'mouseMoved',x:r.x+r.width/2,y:r.y+r.height/2})
     await until(`document.querySelector('.topbarInner').dataset.toolbar==='expanded' && !document.querySelector('.topbarInner').getAnimations().length`)
   }
-  const p=await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});e.scrollIntoView({block:'center'});const r=e.getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2}})()`);await send('Input.dispatchMouseEvent',{type:'mousePressed',...p,button:'left',clickCount:1});await send('Input.dispatchMouseEvent',{type:'mouseReleased',...p,button:'left',clickCount:1})
+  const point=()=>evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});e.scrollIntoView({block:'center'});const r=e.getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2}})()`)
+  await send('Input.dispatchMouseEvent',{type:'mouseMoved',...await point()})
+  await sleep(300)
+  const p=await point()
+  const hit=await evaluate(`document.querySelector(${JSON.stringify(selector)}).contains(document.elementFromPoint(${p.x},${p.y}))`)
+  assert.ok(hit, 'Intended button must receive the click: '+selector)
+  await send('Input.dispatchMouseEvent',{type:'mousePressed',...p,button:'left',clickCount:1});await send('Input.dispatchMouseEvent',{type:'mouseReleased',...p,button:'left',clickCount:1})
 }
 const photos=async()=>(await(await fetch(`${base}/api/photos`)).json()).photos
 let uploadedId
@@ -92,7 +99,7 @@ try{
   for(const dir of ['originals','thumbs','web']){
     const response=await fetch(`${base}/media/${dir}/${encodeURIComponent(uploadedId)}`)
     assert.equal(response.status,404)
-    await assert.rejects(access(path.join(out,'library',dir,uploadedId)))
+    await assert.rejects(access(path.join(process.env.VERIFY_PHOTOS_DIR||path.join(out,'library'),dir,uploadedId)))
   }
   report.checks.management={before:before.length,after:(await photos()).length,upload:true,derived:true,unicodeEdit:true,persistedAfterReload:true,deleteOriginalAndDerived:true}
   await click('.topbarInner .actions button')
@@ -111,5 +118,5 @@ try{
   console.log('PASS admin: wrong-password rejection; login; upload; Chinese edit/reload; delete all renditions; logout')
   if(report.checks.development)console.log('PASS development: local Node API + Vite direct media; 44 tiles; visible images loaded')
   }
-}catch(e){report.status='failed';report.failure=e.stack;process.exitCode=1;console.error(e.stack)}
+}catch(e){report.status='failed';report.failure=e.stack;process.exitCode=1;console.error(e.stack);if(ws){report.failureState=await evaluate(`({text:document.body.innerText,toolbar:document.querySelector('.topbarInner')?.dataset,buttons:[...document.querySelectorAll('button')].map(e=>({text:e.textContent,rect:e.getBoundingClientRect().toJSON()}))})`);const shot=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});await writeFile(path.join(out,'admin-failure.png'),Buffer.from(shot.data,'base64'))}}
 finally{const name=galleryOnly?'dev-without-docker-results.json':'admin-results.json';await writeFile(path.join(out,name),JSON.stringify(report,null,2));ws?.close();browser.kill();console.log(`Evidence: ${path.join(out,name)}`)}

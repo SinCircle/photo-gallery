@@ -10,6 +10,7 @@ export type Photo = {
 }
 
 let knownPhotos: Photo[] | undefined
+const fileOrder = new Intl.Collator(undefined, { numeric: true })
 export const getKnownPhotos = () => knownPhotos
 
 export function thumbnailUrl(photo: Photo): string {
@@ -29,11 +30,11 @@ export function webUrl(photo: Photo): string {
 }
 
 export async function getAllPhotos(): Promise<Photo[]> {
-  const response = await fetch('/api/photos', { cache: 'no-store' })
+  const response = await fetch('/api/photos', { cache: 'no-cache' })
   if (!response.ok) throw new Error('照片读取失败')
   const result = await response.json() as { photos: Photo[] }
   // Keep the legacy filename order (including featured filenames without !).
   // Reading the new API must not silently change gallery/navigation order.
-  knownPhotos = result.photos.sort((a, b) => photoFileName(b).localeCompare(photoFileName(a), undefined, { numeric: true }))
+  knownPhotos = result.photos.sort((a, b) => fileOrder.compare(photoFileName(b), photoFileName(a)))
   return knownPhotos
 }

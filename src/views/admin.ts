@@ -43,8 +43,12 @@ export async function renderAdminView(container: HTMLElement, signal: AbortSigna
   content.append(feedback, list)
   shell.append(topbar, content)
   container.append(shell)
-  attachIdleToolbar(bar, controls.signal, 'top')
-  void attachGlass(shell, bar, controls.signal)
+  // Wrap and measure after all controls exist. Appending the upload form
+  // outside the measured wrapper overlapped the return/logout buttons.
+  const attachToolbar = () => {
+    attachIdleToolbar(bar, controls.signal, 'top')
+    void attachGlass(shell, bar, controls.signal)
+  }
 
   const showError = (error: unknown) => {
     feedback.textContent = error instanceof Error ? error.message : '请求失败'
@@ -64,6 +68,7 @@ export async function renderAdminView(container: HTMLElement, signal: AbortSigna
       } catch (error) { showError(error) }
       finally { login.disabled = false }
     })
+    attachToolbar()
     return
   }
 
@@ -154,5 +159,6 @@ export async function renderAdminView(container: HTMLElement, signal: AbortSigna
   })
   actions.append(logout)
   bar.append(uploadForm)
+  attachToolbar()
   await refresh()
 }

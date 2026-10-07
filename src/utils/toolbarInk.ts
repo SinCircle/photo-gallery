@@ -8,12 +8,26 @@ export const veiled = (y: number, veil = .1) => linear((1 - veil) * srgb(y) + ve
 const channels = Float64Array.from({ length: 256 }, (_, i) => linear(i / 255))
 const luminance = (data: Uint8ClampedArray, p: number) =>
   .2126 * channels[data[p]] + .7152 * channels[data[p + 1]] + .0722 * channels[data[p + 2]]
+type InkBand = { left: number; top: number; right: number; bottom: number }
+type InkPixels = { data: Uint8ClampedArray; x: number; y: number; stride: number; box: DOMRect }
+
+function readInkPixels(scene: HTMLCanvasElement, bands: InkBand[]): InkPixels | undefined {
+  const box = scene.getBoundingClientRect()
+  const sx = scene.width / box.width, sy = scene.height / box.height
+  const x = Math.max(0, Math.floor((Math.min(...bands.map(b => b.left)) - box.left) * sx))
+  const y = Math.max(0, Math.floor((Math.min(...bands.map(b => b.top)) - box.top) * sy))
+  const right = Math.min(scene.width, Math.ceil((Math.max(...bands.map(b => b.right)) - box.left) * sx))
+  const bottom = Math.min(scene.height, Math.ceil((Math.max(...bands.map(b => b.bottom)) - box.top) * sy))
+  if (right <= x || bottom <= y) return
+  return { data: scene.getContext('2d', { willReadFrequently: true })!.getImageData(x, y, right - x, bottom - y).data,
+    x, y, stride: (right - x) * 4, box }
+}
 
 // Read at the scene's native resolution. Each source pixel contributes its
 // actual intersection area, including fractional top/bottom and bin boundaries.
 // drawImage(..., 24, 1) is interpolation, not an area integral.
-export function sampleInkBand(scene: HTMLCanvasElement, band: { left: number, top: number, right: number, bottom: number }, count: number) {
-  const box = scene.getBoundingClientRect()
+export function sampleInkBand(scene: HTMLCanvasElement, band: InkBand, count: number, pixels?: InkPixels, extrema = false) {
+  const box = pixels?.box ?? scene.getBoundingClientRect()
   const sx = scene.width / box.width, sy = scene.height / box.height
   const left = Math.max(0, (band.left - box.left) * sx)
   const right = Math.min(scene.width, (band.right - box.left) * sx)
@@ -22,11 +36,22 @@ export function sampleInkBand(scene: HTMLCanvasElement, band: { left: number, to
   if (right <= left || bottom <= top) return
   const x = Math.floor(left), y = Math.floor(top)
   const width = Math.ceil(right) - x, height = Math.ceil(bottom) - y
-  const data = scene.getContext('2d', { willReadFrequently: true })!.getImageData(x, y, width, height).data
+  const data = pixels?.data ?? scene.getContext('2d', { willReadFrequently: true })!.getImageData(x, y, width, height).data
+  const stride = pixels?.stride ?? width * 4
+  const offset = pixels ? (y - pixels.y) * stride + (x - pixels.x) * 4 : 0
   const columns = new Float64Array(width)
+  const low = extrema ? new Float64Array(width).fill(Infinity) : undefined
+  const high = extrema ? new Float64Array(width).fill(-Infinity) : undefined
   for (let row = 0; row < height; row++) {
     const weight = Math.min(y + row + 1, bottom) - Math.max(y + row, top)
-    for (let col = 0; col < width; col++) columns[col] += weight * luminance(data, (row * width + col) * 4)
+    for (let col = 0, p = offset + row * stride; col < width; col++, p += 4) {
+      const value = luminance(data, p)
+      columns[col] += weight * value
+      if (low && high) {
+        if (value < low[col]) low[col] = value
+        if (value > high[col]) high[col] = value
+      }
+    }
   }
   const sampled = Array.from({ length: count }, (_, i) => {
     const a = left + i * (right - left) / count, b = left + (i + 1) * (right - left) / count
@@ -36,7 +61,7 @@ export function sampleInkBand(scene: HTMLCanvasElement, band: { left: number, to
     }
     return sum / ((b - a) * (bottom - top))
   })
-  return { sampled, data, x, y, width, height, sx, sy, box }
+  return { sampled, data, x, y, width, height, sx, sy, box, stride, offset, low, high }
 }
 
 // Keep the fill crisp. Mid-tone glass favours white, with local dark support;
@@ -55,8 +80,44 @@ export function backdropAt(sampled: number[], fraction: number, veil = .1) {
 
 export { luminance }
 
-// Veil conversion is a lookup during the pixel scan, not two powers per pixel.
+// White contrast decreases with luminance; black contrast increases. Preserve
+// the exact per-pixel minima by converting just each cell's extrema. Walking
+// the RGBA buffer in row order also avoids strided reads through tall bands.
 const veilTables = new Map<number, Float64Array>()
+export function cellContrastMinima(strip: NonNullable<ReturnType<typeof sampleInkBand>>, left: number, width: number, count: number, veil: number) {
+  const low = new Float64Array(count).fill(Infinity)
+  const high = new Float64Array(count).fill(-Infinity)
+  const cells = new Uint32Array(strip.width)
+  for (let col = 0; col < strip.width; col++) {
+    const px = strip.box.left + (strip.x + col + .5) / strip.sx
+    cells[col] = Math.min(count - 1, Math.floor(clamp((px - left) / width) * count))
+  }
+  if (strip.low && strip.high) {
+    for (let col = 0; col < strip.width; col++) {
+      const cell = cells[col]
+      if (strip.low[col] < low[cell]) low[cell] = strip.low[col]
+      if (strip.high[col] > high[cell]) high[cell] = strip.high[col]
+    }
+  } else {
+    for (let row = 0; row < strip.height; row++) {
+      for (let col = 0, p = strip.offset + row * strip.stride; col < strip.width; col++, p += 4) {
+        const y = luminance(strip.data, p), cell = cells[col]
+        if (y < low[cell]) low[cell] = y
+        if (y > high[cell]) high[cell] = y
+      }
+    }
+  }
+  let lookup = veilTables.get(veil)
+  if (!lookup) { lookup = Float64Array.from({ length: 4097 }, (_, i) => veiled(i / 4096, veil)); veilTables.set(veil, lookup) }
+  const whiteMinima = new Float64Array(count).fill(Infinity)
+  const blackMinima = new Float64Array(count).fill(Infinity)
+  for (let cell = 0; cell < count; cell++) {
+    if (low[cell] === Infinity) continue
+    whiteMinima[cell] = contrast(1, lookup[Math.round(high[cell] * 4096)])
+    blackMinima[cell] = contrast(0, lookup[Math.round(low[cell] * 4096)])
+  }
+  return { whiteMinima, blackMinima }
+}
 const clamp = (v: number) => Math.max(0, Math.min(1, v))
 const smooth = (v: number) => { const t = clamp(v); return t * t * (3 - 2 * t) }
 type MaskState = { from: [number[], number[]]; to: [number[], number[]]; fade?: Animation }
@@ -79,11 +140,13 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
   const set = (element: HTMLElement, name: string, value: string) => {
     if (element.style.getPropertyValue(name) !== value) element.style.setProperty(name, value)
   }
-  const paintTone = (element: HTMLElement, ink: number, key = element) => {
+  const readTone = (element: HTMLElement, ink: number, key = element) =>
+    paintedTones.get(key) !== ink && element.style.getPropertyValue('--dock-tone')
+      ? getComputedStyle(element).getPropertyValue('--dock-tone') : String(ink)
+  const paintTone = (element: HTMLElement, ink: number, current: string, key = element) => {
     if (paintedTones.get(key) === ink) return
     paintedTones.set(key, ink)
     const previous = element.style.getPropertyValue('--dock-tone')
-    const current = previous ? getComputedStyle(element).getPropertyValue('--dock-tone') : String(ink)
     fades.get(key)?.cancel()
     set(element, '--dock-tone', String(ink))
     if (previous && !reduced.matches) {
@@ -182,7 +245,10 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
       const shell = root.closest<HTMLElement>('.photoShell')
       if (shell) source = captureGlassScene(shell, root)?.draw(fallback)
     }
-    const strips = bands.map(band => ready && source?.width ? sampleInkBand(source, band, expanded ? 24 : 1) : undefined)
+    // All bands share one native-resolution readback; their fractional area
+    // integrals and extrema still use the original source pixels.
+    const pixels = ready && source?.width ? readInkPixels(source, [...bands, ...dotBands]) : undefined
+    const strips = bands.map(band => pixels && source ? sampleInkBand(source, band, expanded ? 24 : 1, pixels, expanded) : undefined)
     const strip = strips[0]
     const veil = nativeReady && root.dataset.glass === 'webgl' ? .1 : .415
     const bg = getComputedStyle(document.body).backgroundColor.match(/[\d.]+/g)?.map(Number) || [244, 244, 244]
@@ -204,14 +270,21 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
     }
     const dotInk = choose(bar, barBox.left, barBox.right)
     const tone = dotInk === 255 ? 'dark' : 'light'
-    if (bar.dataset.tone !== tone) bar.dataset.tone = tone
     // Each icon samples its own position, including the lower mobile row.
     // Reuse the letters' hysteresis and interrupted colour fade. No timer or
     // animation-frame loop is added to the compositor-driven loading motion.
-    const dotSamples = dotBands.map(band => ready && source?.width && band.right > band.left ? sampleInkBand(source, band, 11)?.sampled : undefined)
-    dots.forEach((dot, i) => paintTone(dot, chooseRegion(dot,
-      (dotSamples[i] || Array<number>(11).fill(pageLuma)).map(y => veiled(y, veil)))))
+    const dotSamples = dotBands.map(band => pixels && source && band.right > band.left ? sampleInkBand(source, band, 11, pixels)?.sampled : undefined)
+    const dotValues = dots.map((dot, i) => chooseRegion(dot,
+      (dotSamples[i] || Array<number>(11).fill(pageLuma)).map(y => veiled(y, veil))))
     const values = fills.map((fill, i) => choose(fill, boxes[i].left, boxes[i].right, rowFor(i)))
+    // Snapshot interrupted animations before changing any tone or mask. Reading
+    // computed styles between individual writes repeatedly recalculated the
+    // toolbar's inherited gradients during the first expansion.
+    const dotTones = dots.map((dot, i) => readTone(dot, dotValues[i]))
+    const fillTones = fills.map((fill, i) => readTone(fill.parentElement!, values[i], fill))
+    const maskProgress = masks.map(state => state.fade?.effect?.getComputedTiming().progress ?? 1)
+    if (bar.dataset.tone !== tone) bar.dataset.tone = tone
+    dots.forEach((dot, i) => paintTone(dot, dotValues[i], dotTones[i]))
     const labels: { text: string | null; halo: boolean; ink: number }[] = []
     if (expanded) {
       if (bar.dataset.ink !== 'binary') bar.dataset.ink = 'binary'
@@ -220,23 +293,8 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
       // No label-wide outline and no per-frame PNG encoding are needed.
       const count = Math.max(1, Math.ceil(barBox.width / 6))
       const fields = strips.map((strip, rowIndex) => {
-        const whiteMinima = new Float64Array(count).fill(Infinity)
-        const blackMinima = new Float64Array(count).fill(Infinity)
-        if (strip) {
-          let lookup = veilTables.get(veil)
-          if (!lookup) { lookup = Float64Array.from({ length: 4097 }, (_, i) => veiled(i / 4096, veil)); veilTables.set(veil, lookup) }
-          for (let col = 0; col < strip.width; col++) {
-            const px = strip.box.left + (strip.x + col + .5) / strip.sx
-            const fraction = clamp((px - barBox.left) / barBox.width)
-            const cell = Math.min(count - 1, Math.floor(fraction * count))
-            for (let row = 0; row < strip.height; row++) {
-              const y = luminance(strip.data, (row * strip.width + col) * 4)
-              const backdrop = lookup[Math.round(y * 4096)]
-              whiteMinima[cell] = Math.min(whiteMinima[cell], contrast(1, backdrop))
-              blackMinima[cell] = Math.min(blackMinima[cell], contrast(0, backdrop))
-            }
-          }
-        }
+        const { whiteMinima, blackMinima } = strip ? cellContrastMinima(strip, barBox.left, barBox.width, count, veil)
+          : { whiteMinima: new Float64Array(count).fill(Infinity), blackMinima: new Float64Array(count).fill(Infinity) }
         const dark: number[] = [], light: number[] = []
         for (let i = 0; i < count; i++) {
           dark.push(smooth((5 - whiteMinima[i]) / 2))
@@ -257,7 +315,7 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
         const changed = !maskTo || maskTo[0].length !== count || dark.some((v, i) => Math.abs(v - maskTo[0][i]) > .005) ||
           light.some((v, i) => Math.abs(v - maskTo[1][i]) > .005)
         if (changed) {
-          const progress = state?.fade ? clamp(Number(getComputedStyle(bar).getPropertyValue(progressProperty))) : 1
+          const progress = maskProgress[rowIndex] ?? 1
           const previous = maskTo
           const current = previous && state ? state.from.map((field, j) => Array.from({ length: count }, (_, i) =>
             resample(field, i) * (1 - progress) + resample(previous[j], i) * progress)) as [number[], number[]] : [dark, light] as [number[], number[]]
@@ -275,7 +333,7 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
         const box = boxes[i]
         const white = values[i] === 255
         const glyph = fill.parentElement!
-        paintTone(glyph, values[i], fill)
+        paintTone(glyph, values[i], fillTones[i], fill)
         const { whiteMinima, blackMinima, mask, progressProperty } = fields[rowFor(i)]
         // Each label needs only the cells touching its own ink. Duplicating the
         // whole bar's calc-heavy gradient on every label caused style/layout
@@ -297,13 +355,17 @@ export function attachToolbarInk(root: HTMLElement, bar: HTMLElement, signal: Ab
         }
         const compact = stops.filter((stop, i) => !i || i === stops.length - 1 ||
           stop.color !== stops[i - 1].color || stop.color !== stops[i + 1].color)
-        set(glyph, '--dock-shadow-mask', compact.length > 1 ?
-          `linear-gradient(90deg,${compact.map(stop => `${stop.color} ${stop.position.toFixed(3)}%`).join(',')})` : 'linear-gradient(transparent,transparent)')
+        const maskImage = compact.length > 1 ?
+          `linear-gradient(90deg,${compact.map(stop => `${stop.color} ${stop.position.toFixed(3)}%`).join(',')})` : 'linear-gradient(transparent,transparent)'
         const a = Math.max(0, Math.floor((box.left - barBox.left) / barBox.width * count))
         const z = Math.min(count, Math.ceil((box.right - barBox.left) / barBox.width * count))
         const halo = fades.has(fill) || (white ? whiteMinima : blackMinima).slice(a, z).some(v => v < 5)
         if (targets[i].hasAttribute('data-halo') !== halo) targets[i].toggleAttribute('data-halo', halo)
         for (const shadow of glyph.querySelectorAll<HTMLElement>('.dockShadow')) {
+          // Only this element consumes the gradient. An inherited custom
+          // property made every text descendant resolve its many calc/var
+          // stops again on each animated progress update.
+          set(shadow, 'mask-image', maskImage)
           if (shadow.dataset.label !== fill.textContent) shadow.dataset.label = fill.textContent || ''
         }
         labels.push({ text: fill.textContent, halo, ink: values[i] })

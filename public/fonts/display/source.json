@@ -1,0 +1,111 @@
+{
+  "source": "https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@400;500;600&family=Cormorant+SC:wght@400;600&display=swap",
+  "files": [
+    {
+      "url": "https://fonts.gstatic.com/s/cinzel/v26/8vIJ7ww63mVu7gt7-GT7LEc.woff2",
+      "file": "8fc2606f8ae6c569.woff2",
+      "bytes": 14540
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cinzel/v26/8vIJ7ww63mVu7gt79mT7.woff2",
+      "file": "09941fb1c169c38f.woff2",
+      "bytes": 25904
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cinzeldecorative/v19/daaCSScvJGqLYhG8nNt8KPPswUAPni7dTMx7aA.woff2",
+      "file": "57d6cf9d284ab796.woff2",
+      "bytes": 8024
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cinzeldecorative/v19/daaCSScvJGqLYhG8nNt8KPPswUAPni7TTMw.woff2",
+      "file": "97d28bf5a628c4f0.woff2",
+      "bytes": 14416
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cinzeldecorative/v19/daaHSScvJGqLYhG8nNt8KPPswUAPniZoadlKSTG7lQ.woff2",
+      "file": "3e593aeea80c7313.woff2",
+      "bytes": 8600
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cinzeldecorative/v19/daaHSScvJGqLYhG8nNt8KPPswUAPniZoadlESTE.woff2",
+      "file": "0826d61da654ac98.woff2",
+      "bytes": 15488
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cormorantgaramond/v21/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYpHtKgS4.woff2",
+      "file": "a4d7cf345b8091e1.woff2",
+      "bytes": 23416
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cormorantgaramond/v21/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYrXtKgS4.woff2",
+      "file": "017fab69b4be8ffc.woff2",
+      "bytes": 21168
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cormorantgaramond/v21/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYpntKgS4.woff2",
+      "file": "6252e819a7665ae5.woff2",
+      "bytes": 11220
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cormorantgaramond/v21/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYp3tKgS4.woff2",
+      "file": "cfa9a397d86f66c5.woff2",
+      "bytes": 33736
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cormorantgaramond/v21/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYqXtK.woff2",
+      "file": "d80df8ff5aecd299.woff2",
+      "bytes": 37640
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cormorantsc/v19/0yb5GD4kxqXBmOVLG30OGwsupjAxxTY.woff2",
+      "file": "d0ac7b60324d2465.woff2",
+      "bytes": 13384
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cormorantsc/v19/0yb5GD4kxqXBmOVLG30OGwsurzAxxTY.woff2",
+      "file": "79af42c6bd45be77.woff2",
+      "bytes": 10960
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cormorantsc/v19/0yb5GD4kxqXBmOVLG30OGwsupDAxxTY.woff2",
+      "file": "00467cdbf4ccdb9a.woff2",
+      "bytes": 6312
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cormorantsc/v19/0yb5GD4kxqXBmOVLG30OGwsupTAxxTY.woff2",
+      "file": "658b0b11eb853fcc.woff2",
+      "bytes": 19272
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cormorantsc/v19/0yb5GD4kxqXBmOVLG30OGwsuqzAx.woff2",
+      "file": "e66dc315308055ae.woff2",
+      "bytes": 20876
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cormorantsc/v19/0ybmGD4kxqXBmOVLG30OGwsmdBQk9xfzwDM.woff2",
+      "file": "6dbde8138ce1e895.woff2",
+      "bytes": 13508
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cormorantsc/v19/0ybmGD4kxqXBmOVLG30OGwsmdBQk_hfzwDM.woff2",
+      "file": "a668d86417bb2227.woff2",
+      "bytes": 10980
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cormorantsc/v19/0ybmGD4kxqXBmOVLG30OGwsmdBQk9RfzwDM.woff2",
+      "file": "3431bb73bf4e24a2.woff2",
+      "bytes": 6296
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cormorantsc/v19/0ybmGD4kxqXBmOVLG30OGwsmdBQk9BfzwDM.woff2",
+      "file": "ef8839337c078ccb.woff2",
+      "bytes": 19428
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cormorantsc/v19/0ybmGD4kxqXBmOVLG30OGwsmdBQk-hfz.woff2",
+      "file": "12e0111fadbbbd00.woff2",
+      "bytes": 20940
+    }
+  ],
+  "bytes": 356108
+}

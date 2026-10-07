@@ -124,7 +124,7 @@ try {
       document.querySelector('.dockInner').dispatchEvent(new Event('glassscene'));
       return {ink:document.querySelector('.dockBar').__ink,gradient:getComputedStyle(label).backgroundImage,
         mask:getComputedStyle(label.parentElement.querySelector('.dockShadow')).maskImage,
-        source:label.parentElement.style.getPropertyValue('--dock-shadow-mask')};})()`)
+        source:label.parentElement.querySelector('.dockShadow').style.maskImage};})()`)
     assert.ok(local.ink.values.every(v => v === 255))
     assert.notEqual(local.mask, 'none')
     assert.ok(/--dock-(?:meta-)?shadow-progress/.test(local.source) && local.source.includes('--dock-tone'))

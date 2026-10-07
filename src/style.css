@@ -533,7 +533,7 @@ button:focus-visible {
 }
 @property --glass-material {
   syntax: '<number>';
-  inherits: true;
+  inherits: false;
   initial-value: 1;
 }
 @property --dock-tone {
@@ -543,12 +543,12 @@ button:focus-visible {
 }
 @property --dock-shadow-progress {
   syntax: '<number>';
-  inherits: true;
+  inherits: false;
   initial-value: 1;
 }
 @property --dock-meta-shadow-progress {
   syntax: '<number>';
-  inherits: true;
+  inherits: false;
   initial-value: 1;
 }
 .capsuleDock {
@@ -594,6 +594,7 @@ button:focus-visible {
 }
 /* One faint white veil over the whole bar, in place of plates behind labels. */
 .capsuleDock > .dockBar::after {
+  --glass-material: inherit;
   content: '';
   position: absolute;
   inset: 0;
@@ -619,6 +620,7 @@ button:focus-visible {
 .capsuleDock[data-glass-pending] > .dockBar::after,
 .capsuleDock[data-glass-pending] > .dockBar > canvas[data-glass-output] { opacity: 0; }
 .capsuleDock > .dockBar > canvas[data-glass-output] {
+  --glass-material: inherit;
   z-index: 0;
   border-radius: inherit;
   opacity: var(--glass-material);
@@ -639,6 +641,14 @@ button:focus-visible {
   /* Each label keeps a crisp black or white fill; shadow masks remain local. */
 }
 .capsuleDock .dockGlyph { position: relative; display: inline-block; }
+/* Pass animation progress only along the paths that consume a shadow mask.
+   Dots, canvases, fills and shadow pseudo-elements need no per-frame update. */
+.capsuleDock :is(.dockAction, .dockMeta, .dockGlyph, .dockShadow) {
+  --dock-shadow-progress: inherit;
+}
+.capsuleDock :is(.dockMeta, .dockMetaItem, .dockShadow) {
+  --dock-meta-shadow-progress: inherit;
+}
 .capsuleDock .dockFill {
   position: relative;
   z-index: 1;
@@ -660,7 +670,7 @@ button:focus-visible {
   mask-size: 100% 100%;
   mask-position: 0 0;
   mask-repeat: no-repeat;
-  mask-image: var(--dock-shadow-mask);
+  mask-image: linear-gradient(transparent, transparent);
 }
 
 
